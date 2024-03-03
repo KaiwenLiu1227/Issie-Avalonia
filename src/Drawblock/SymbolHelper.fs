@@ -4,7 +4,7 @@
 
 module SymbolHelper =
     open Avalonia.Media
-    open DisplayModelTypes
+    open ModelType
 
     let componentTypes = [| "Input1"; "Output"; "NotConnected"; "IOLabel"; "Viewer"; "Constant1"; "MergeWires"; "Mux2"; "BusSelection"; "BusCompare"; "Not" |]
 

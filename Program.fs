@@ -1,22 +1,20 @@
 ﻿namespace Issie_Avalonia
 
-open Avalonia
-open Avalonia.Controls
-open Avalonia.Themes.Fluent
 open Elmish
+open Avalonia
+open Avalonia.Themes.Fluent
 open Avalonia.FuncUI.Hosts
-open Avalonia.FuncUI
 open Avalonia.FuncUI.Elmish
 open Avalonia.Controls.ApplicationLifetimes
 
 type MainWindow() as this =
     inherit HostWindow()
     do
-        base.Height <- 400.0
-        base.Width <- 600.0
-        base.Title <- "Selector Example"
+        base.Height <- 900.0
+        base.Width <- 1600.0
+        base.Title <- "Issie Avalonia"
         this.AttachDevTools();
-        Program.mkSimple SheetModel.init SheetModel.update SheetView.view 
+        Program.mkSimple MainView.init Update.update MainView.view 
         |> Program.withHost this
         |> Program.run    
 

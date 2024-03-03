@@ -11,14 +11,19 @@
 
 
     <ItemGroup>
-        <Compile Include="DisplayModelTypes.fs" />
-        <Compile Include="SymbolHelper.fs" />
-        <Compile Include="Sheet.fs" />
-        <Compile Include="SymbolUpdate.fs" />
-        <Compile Include="Symbol.fs" />
-        <Compile Include="SymbolView.fs" />
-        <Compile Include="SheetView.fs" />
+        
+        <Compile Include="src\Model\ModelType.fs" />
+        
+        <Compile Include="src\Drawblock\SymbolHelper.fs" />
+        <Compile Include="src\Drawblock\SymbolView.fs" />
+        <Compile Include="src\Drawblock\SheetView.fs" />
+        
+        <Compile Include="src\UI\MainView.fs" />
+        <Compile Include="src\UI\Update.fs" />
+        <Compile Include="src\UI\TopMenuView.fs" />
+        
         <Compile Include="Program.fs" />
+        
     </ItemGroup>
 
     <ItemGroup>
@@ -31,4 +36,5 @@
         <PackageReference Include="Avalonia.Diagnostics" Version="11.0.0" />
         <PackageReference Include="Elmish" Version="4.1.0" />
     </ItemGroup>
+    
 </Project>
