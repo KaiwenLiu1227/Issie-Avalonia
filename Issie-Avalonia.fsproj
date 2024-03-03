@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net7.0</TargetFramework>
+        <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+        <ApplicationManifest>app.manifest</ApplicationManifest>
+        <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+        <RootNamespace>Issie_Avalonia</RootNamespace>
+        <RuntimeIdentifiers>win-x64;osx-x64;linux-x64</RuntimeIdentifiers>
+    </PropertyGroup>
+
+
+    <ItemGroup>
+        <Compile Include="DisplayModelTypes.fs" />
+        <Compile Include="SymbolHelper.fs" />
+        <Compile Include="Sheet.fs" />
+        <Compile Include="SymbolUpdate.fs" />
+        <Compile Include="Symbol.fs" />
+        <Compile Include="SymbolView.fs" />
+        <Compile Include="SheetView.fs" />
+        <Compile Include="Program.fs" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Avalonia" Version="11.0.2" />
+        <PackageReference Include="Avalonia.Desktop" Version="11.0.0" />
+        <PackageReference Include="Avalonia.FuncUI" Version="1.0.0" />
+        <PackageReference Include="Avalonia.FuncUI.Elmish" Version="1.0.0" />
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.0" />
+        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.2" />
+        <PackageReference Include="Avalonia.Diagnostics" Version="11.0.0" />
+        <PackageReference Include="Elmish" Version="4.1.0" />
+    </ItemGroup>
+</Project>
