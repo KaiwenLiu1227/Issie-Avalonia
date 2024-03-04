@@ -11,30 +11,31 @@
 
 
     <ItemGroup>
-        
-        <Compile Include="src\Model\ModelType.fs" />
-        
-        <Compile Include="src\Drawblock\SymbolHelper.fs" />
-        <Compile Include="src\Drawblock\SymbolView.fs" />
-        <Compile Include="src\Drawblock\SheetView.fs" />
 
-        <Compile Include="src\UI\TopMenuView.fs" />
-        <Compile Include="src\UI\MainView.fs" />
-        <Compile Include="src\UI\Update.fs" />
-        
-        <Compile Include="Program.fs" />
-        
+        <Compile Include="src\Model\ModelType.fs"/>
+
+        <Compile Include="src\Drawblock\SymbolHelper.fs"/>
+        <Compile Include="src\Drawblock\SymbolView.fs"/>
+        <Compile Include="src\Drawblock\SheetView.fs"/>
+
+        <Compile Include="src\UI\TopMenuView.fs"/>
+        <Compile Include="src\UI\CatalogueView.fs"/>
+        <Compile Include="src\UI\MainView.fs"/>
+        <Compile Include="src\UI\Update.fs"/>
+
+        <Compile Include="Program.fs"/>
+
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="11.0.2" />
-        <PackageReference Include="Avalonia.Desktop" Version="11.0.0" />
-        <PackageReference Include="Avalonia.FuncUI" Version="1.0.0" />
-        <PackageReference Include="Avalonia.FuncUI.Elmish" Version="1.0.0" />
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.0" />
-        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.2" />
-        <PackageReference Include="Avalonia.Diagnostics" Version="11.0.0" />
-        <PackageReference Include="Elmish" Version="4.1.0" />
+        <PackageReference Include="Avalonia" Version="11.0.2"/>
+        <PackageReference Include="Avalonia.Desktop" Version="11.0.0"/>
+        <PackageReference Include="Avalonia.FuncUI" Version="1.0.0"/>
+        <PackageReference Include="Avalonia.FuncUI.Elmish" Version="1.0.0"/>
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.0"/>
+        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.2"/>
+        <PackageReference Include="Avalonia.Diagnostics" Version="11.0.0"/>
+        <PackageReference Include="Elmish" Version="4.1.0"/>
     </ItemGroup>
-    
+
 </Project>

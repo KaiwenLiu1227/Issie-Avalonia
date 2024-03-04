@@ -43,10 +43,10 @@ module SheetView =
 
             Canvas.create [
                 Canvas.renderTransform matrixTransform
-                Canvas.height 250
-                Canvas.width 250
+                (*Canvas.height 250
+                Canvas.width 250*)
                 Canvas.onPointerWheelChanged (fun args -> dispatch (Rotate args))
-                Canvas.background (SolidColorBrush(Color.FromArgb(255uy, 255uy, 255uy, 255uy)))
+                Canvas.background (SolidColorBrush(Color.FromArgb(25uy, 25uy, 0uy, 0uy)))
                 Canvas.children [
                     (*Path.create [
                         Canvas.top -100
