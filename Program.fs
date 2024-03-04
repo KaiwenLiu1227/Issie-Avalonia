@@ -6,12 +6,13 @@ open Avalonia.Themes.Fluent
 open Avalonia.FuncUI.Hosts
 open Avalonia.FuncUI.Elmish
 open Avalonia.Controls.ApplicationLifetimes
+open Avalonia.Media
 
 type MainWindow() as this =
     inherit HostWindow()
     do
-        base.Height <- 900.0
-        base.Width <- 1600.0
+        base.Height <- 700.0
+        base.Width <- 1200.0
         base.Title <- "Issie Avalonia"
         this.AttachDevTools();
         Program.mkSimple MainView.init Update.update MainView.view 
@@ -23,7 +24,7 @@ type App() =
 
     override this.Initialize() =
         this.Styles.Add (FluentTheme())
-        this.RequestedThemeVariant <- Styling.ThemeVariant.Dark
+        this.RequestedThemeVariant <- Styling.ThemeVariant.Light
 
     override this.OnFrameworkInitializationCompleted() =
         match this.ApplicationLifetime with

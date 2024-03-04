@@ -48,13 +48,13 @@ module SheetView =
                 Canvas.onPointerWheelChanged (fun args -> dispatch (Rotate args))
                 Canvas.background (SolidColorBrush(Color.FromArgb(255uy, 255uy, 255uy, 255uy)))
                 Canvas.children [
-                    Path.create [
+                    (*Path.create [
                         Canvas.top -100
                         Canvas.left -100
                         Path.data (Geometry.Parse(gridPathData)) // Define your grid lines
                         Path.stroke (Brushes.Black)
                         Path.strokeThickness 1.0
-                    ]
+                    ]*)
                     symbolView state dispatch
                 ]    
             ]
