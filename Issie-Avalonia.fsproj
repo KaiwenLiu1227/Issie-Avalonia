@@ -17,7 +17,8 @@
         <Compile Include="src\Drawblock\SymbolHelper.fs"/>
         <Compile Include="src\Drawblock\SymbolView.fs"/>
         <Compile Include="src\Drawblock\SheetView.fs"/>
-
+        
+        <Compile Include="src\UI\UIPopups.fs" />
         <Compile Include="src\UI\TopMenuView.fs"/>
         <Compile Include="src\UI\CatalogueView.fs"/>
         <Compile Include="src\UI\MainView.fs"/>

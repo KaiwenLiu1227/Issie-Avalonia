@@ -3,6 +3,7 @@
 open Avalonia.Controls
 open Avalonia.FuncUI.DSL
 open Avalonia.Media
+open ModelType
 
 module TopMenuView =
     let topMenuView model dispatch =
@@ -20,7 +21,9 @@ module TopMenuView =
                             [ MenuItem.create
                                   [ MenuItem.header "Project"
                                     MenuItem.viewItems
-                                        [ MenuItem.create [ MenuItem.header "File" ]
+                                        [ MenuItem.create [ MenuItem.header "File"
+                                                            MenuItem.onClick (fun _ -> dispatch ShowOverlay)
+                                                            ]
                                           MenuItem.create [ MenuItem.header "Edit" ] ] ]
                               MenuItem.create
                                   [ MenuItem.header "Sheet"

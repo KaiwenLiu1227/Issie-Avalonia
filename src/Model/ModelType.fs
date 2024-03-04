@@ -26,7 +26,8 @@ module ModelType =
         { polygonParameters: PolygonParameters[]
           compNum: int
           rotation: float
-          holdingState: bool}
+          holdingState: bool
+          IsOverlayVisible: bool}
 
     type Msg =
         | Forward
@@ -36,3 +37,5 @@ module ModelType =
         | Move of XYPos
         | OnPress of int
         | OnRelease
+        | ShowOverlay
+        | HideOverlay

@@ -70,5 +70,7 @@ module Update =
             { model with
                 compNum = compPressed
                 holdingState = true 
-            }    
+            }
+        | ShowOverlay -> { model with IsOverlayVisible = true }
+        | HideOverlay -> { model with IsOverlayVisible = false }    
         | _ -> model

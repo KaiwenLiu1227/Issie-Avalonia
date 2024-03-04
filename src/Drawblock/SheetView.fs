@@ -15,17 +15,6 @@ open SymbolHelper
 open SymbolView
 
 module SheetView =
-
-
-
-    let init () = {
-       polygonParameters = genPolyParam
-       compNum = 0
-       rotation = 0.0
-       holdingState = false
-    }
-
-
     
     let generateGridPathData (rows: int) (cols: int) (width: float) (height: float) =
         let rowSpacing = height / float rows
