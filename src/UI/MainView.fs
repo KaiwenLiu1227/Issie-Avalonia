@@ -23,6 +23,7 @@ module MainView =
         { polygonParameters = genPolyParam
           compNum = 0
           rotation = 0.0
+          projectState = "new" 
           holdingState = false
           IsOverlayVisible = true }
 

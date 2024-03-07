@@ -13,6 +13,11 @@
     <ItemGroup>
 
         <Compile Include="src\Model\ModelType.fs"/>
+        <Compile Include="src\Common\CommonTypes.fs" />
+        <Compile Include="src\Common\Helpers.fs" />
+        <Compile Include="src\Common\Extractor.fs" />
+        <Compile Include="src\Common\EEExtensions.fs" />
+        <Compile Include="src\Interface\FileIO.fs"/>
 
         <Compile Include="src\Drawblock\SymbolHelper.fs"/>
         <Compile Include="src\Drawblock\SymbolView.fs"/>
@@ -37,6 +42,15 @@
         <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.2"/>
         <PackageReference Include="Avalonia.Diagnostics" Version="11.0.0"/>
         <PackageReference Include="Elmish" Version="4.1.0"/>
+        <PackageReference Include="Thoth.Json" Version="6.0.0"/>
+        <PackageReference Include="Thoth.Json.Net" Version="6.0.0"/>
     </ItemGroup>
+
+    <ItemGroup>
+        <None Include="demos\**">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+
 
 </Project>

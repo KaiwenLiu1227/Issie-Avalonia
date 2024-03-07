@@ -1,9 +1,11 @@
 ﻿namespace Issie_Avalonia
+open ModelType
+open SymbolHelper
+open FilesIO
 
 module Update =
 
-    open ModelType
-    open SymbolHelper
+
 
     let update msg model =
         match msg with
@@ -72,5 +74,11 @@ module Update =
                 holdingState = true 
             }
         | ShowOverlay -> { model with IsOverlayVisible = true }
-        | HideOverlay -> { model with IsOverlayVisible = false }    
+        | HideOverlay -> { model with IsOverlayVisible = false }
+        | ChangeProjState ->
+            printfn $"project: {model.projectState}"
+            
+            { model with
+                IsOverlayVisible = false
+            }
         | _ -> model

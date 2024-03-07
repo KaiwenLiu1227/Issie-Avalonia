@@ -42,7 +42,8 @@ module UIPopups =
                                         "Open Project"
                                         "Open Demo Project"
                                     ]
-                                    ListBox.onSelectionChanged (fun args -> dispatch HideOverlay)
+                                    ListBox.selectedItem model.projectState
+                                    ListBox.onSelectionChanged  (fun _ -> dispatch (ChangeProjState))
                                 ]
                             ]
                         ]

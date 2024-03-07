@@ -27,6 +27,7 @@ module ModelType =
           compNum: int
           rotation: float
           holdingState: bool
+          projectState: string
           IsOverlayVisible: bool}
 
     type Msg =
@@ -39,3 +40,4 @@ module ModelType =
         | OnRelease
         | ShowOverlay
         | HideOverlay
+        | ChangeProjState 
