@@ -1,18 +1,14 @@
-﻿namespace Issie_Avalonia
-
-open System
-open Avalonia
-open Avalonia.Controls
-open Avalonia.Controls.Shapes
-open Avalonia.FuncUI
-open Avalonia.FuncUI.DSL
-open Avalonia.Media
-open Avalonia.FuncUI.Types
-open ModelType
-open SymbolHelper
-
-module SymbolView =
-    
+﻿module SymbolView 
+    open System
+    open Avalonia
+    open Avalonia.Controls
+    open Avalonia.Controls.Shapes
+    open Avalonia.FuncUI
+    open Avalonia.FuncUI.DSL
+    open Avalonia.Media
+    open Avalonia.FuncUI.Types
+    open ModelType
+    open SymbolHelper
     let drawComponent polygonParameter dispatch=
             let points = genPoints polygonParameter.compType 20 20
             let pointList = points |> Array.toList |> List.map (fun p -> Point(p.X, p.Y))

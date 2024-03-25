@@ -1,6 +1,5 @@
-namespace Issie_Avalonia
 
-module CatalogueView =
+module CatalogueView 
 
     open Avalonia.Controls
     open Avalonia.FuncUI.DSL

@@ -1,4 +1,4 @@
-namespace Issie_Avalonia
+module MainView
 
 open Avalonia.Controls
 open Avalonia.FuncUI
@@ -15,8 +15,6 @@ open SheetView
 open TopMenuView
 open CatalogueView
 open UIPopups
-
-module MainView =
 
 
     let init () =

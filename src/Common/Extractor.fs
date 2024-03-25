@@ -1,9 +1,6 @@
-namespace Issie_Avalonia
-
-open CommonTypes
-open Fable.Core
-
-module Extractor = 
+module Extractor
+    open CommonTypes
+    open Fable.Core
 
 
     /// access javascript reference equality

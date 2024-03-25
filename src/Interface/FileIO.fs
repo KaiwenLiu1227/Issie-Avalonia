@@ -1,15 +1,13 @@
-namespace Issie_Avalonia
+module FilesIO
 
-open System.IO
-open System.Text
-open Thoth.Json.Net
-open CommonTypes
-open LegacyCanvas
-open Helpers
-open Extractor
-open EEExtensions
-
-module FilesIO =
+    open System.IO
+    open System.Text
+    open Thoth.Json.Net
+    open CommonTypes
+    open LegacyCanvas
+    open Helpers
+    open Extractor
+    open EEExtensions
 
     let readFile (filePath: string) =
         File.ReadAllText(filePath, Encoding.UTF8)

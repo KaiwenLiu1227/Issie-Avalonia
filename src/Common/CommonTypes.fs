@@ -1,10 +1,9 @@
-namespace Issie_Avalonia
 (*
     These are types used throughout the application
 *)
-open Thoth.Json.Net
 
-module CommonTypes =
+module CommonTypes 
+open Thoth.Json.Net
 
     /// Position on SVG canvas
     /// Positions can be added, subtracted, scaled using overloaded +,-, *  operators

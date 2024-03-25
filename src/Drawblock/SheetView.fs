@@ -1,4 +1,4 @@
-﻿namespace Issie_Avalonia
+﻿module SheetView
 
 open System
 open Avalonia
@@ -14,7 +14,6 @@ open ModelType
 open SymbolHelper
 open SymbolView
 
-module SheetView =
     
     let generateGridPathData (rows: int) (cols: int) (width: float) (height: float) =
         let rowSpacing = height / float rows

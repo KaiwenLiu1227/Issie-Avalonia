@@ -1,11 +1,10 @@
-﻿namespace Issie_Avalonia
-open ModelType
-open SymbolHelper
-open FilesIO
+﻿
 
-module Update =
+module Update 
 
-
+    open ModelType
+    open SymbolHelper
+    open FilesIO
 
     let update msg model =
         match msg with

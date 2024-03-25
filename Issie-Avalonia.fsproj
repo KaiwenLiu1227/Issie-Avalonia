@@ -13,6 +13,7 @@
     <ItemGroup>
 
         <Compile Include="src\Model\ModelType.fs"/>
+        <Compile Include="src\Common\Optics.fs" />
         <Compile Include="src\Common\CommonTypes.fs" />
         <Compile Include="src\Common\Helpers.fs" />
         <Compile Include="src\Common\Extractor.fs" />

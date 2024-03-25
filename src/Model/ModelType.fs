@@ -1,6 +1,4 @@
-﻿namespace Issie_Avalonia
-
-module ModelType =
+﻿module ModelType
     open Avalonia
     open Avalonia.Media
 

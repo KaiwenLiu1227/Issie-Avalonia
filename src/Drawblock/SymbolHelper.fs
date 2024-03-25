@@ -1,8 +1,4 @@
-﻿namespace Issie_Avalonia
-
-
-
-module SymbolHelper =
+﻿module SymbolHelper 
     open Avalonia.Media
     open ModelType
 

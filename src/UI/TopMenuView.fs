@@ -1,13 +1,11 @@
-﻿namespace Issie_Avalonia
+﻿module TopMenuView
 
-open Avalonia.Controls
-open Avalonia.FuncUI.DSL
-open Avalonia.Media
-open ModelType
-open FilesIO
+    open Avalonia.Controls
+    open Avalonia.FuncUI.DSL
+    open Avalonia.Media
+    open ModelType
+    open FilesIO
 
-module TopMenuView =
-    
     let loadDemoProject basename =
             let newDir = ".\\demos\\" + basename
             let sourceDir = staticDir() + "\\demos\\" + basename
