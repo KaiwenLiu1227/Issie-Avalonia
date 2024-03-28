@@ -2,8 +2,14 @@
     These are types used throughout the application
 *)
 
-module CommonTypes 
-open Thoth.Json.Net
+module CommonTypes
+    open Fable.Core               
+    open Optics
+    #if FABLE_COMPILER
+    open Thoth.Json
+    #else
+    open Thoth.Json.Net
+    #endif
 
     /// Position on SVG canvas
     /// Positions can be added, subtracted, scaled using overloaded +,-, *  operators
@@ -197,6 +203,7 @@ open Thoth.Json.Net
         |LSR
         |ASR
     
+    [<StringEnum>]
     type GateComponentType =
         | And
         | Or
@@ -352,7 +359,9 @@ open Thoth.Json.Net
         with member this.Centre() = this.TopLeft + {X=this.W/2.; Y=this.H/2.}
 
 
+    let topLeft_ = Lens.create (fun a -> a.TopLeft) (fun s a -> {a with TopLeft = s})
 
+    [<StringEnum>]
     type ScaleAdjustment =
         | Horizontal
         | Vertical
@@ -367,6 +376,10 @@ open Thoth.Json.Net
         HScale: float option
         VScale: float option
     }
+
+    let portOrder_ = Lens.create (fun c -> c.PortOrder) (fun n c -> {c with PortOrder = n})
+    let portOrientation_ = Lens.create (fun c -> c.PortOrientation) (fun n c -> {c with PortOrientation = n})
+
 
     let getSTransformWithDefault (infoOpt: SymbolInfo option) =
         match infoOpt with
@@ -394,6 +407,12 @@ open Thoth.Json.Net
             List.tryFind (fun (port:Port) -> port.Id = portId ) (this.InputPorts @ this.OutputPorts)
      
      
+    let type_ = Lens.create (fun c -> c.Type) (fun n c -> {c with Type = n})
+    let inputPorts_ = Lens.create (fun c -> c.InputPorts) (fun n c -> {c with InputPorts = n})
+    let outputPorts_ = Lens.create (fun c -> c.OutputPorts) (fun n c -> {c with OutputPorts = n})
+    let h_ = Lens.create (fun c -> c.H) (fun n c -> {c with H= n})
+    let w_ = Lens.create (fun c -> c.W) (fun n c -> {c with W= n})
+
 
     /// JSConnection mapped to F# record.
     /// Id uniquely identifies connection globally and is used by library.
@@ -726,6 +745,7 @@ open Thoth.Json.Net
     // Used consistently they provide type protection that greatly reduces coding errors
 
     /// SHA hash unique to a component - common between JS and F#
+    [<Erase>]
     type ComponentId = | ComponentId of string
 
     let componentIdEncoder (cid: ComponentId) =
@@ -747,6 +767,7 @@ open Thoth.Json.Net
     type FComponentId = ComponentId * ComponentId list
 
     /// SHA hash unique to a connection - common between JS and F#
+    [<Erase>]
     type ConnectionId     = | ConnectionId of string
 
     /// type to uniquely identify a segment
@@ -755,29 +776,31 @@ open Thoth.Json.Net
 
     /// Human-readable name of component as displayed on sheet.
     /// For I/O/labelIO components a width indication eg (7:0) is also displayed, but NOT included here
+    [<Erase>]
     type ComponentLabel   = | ComponentLabel of string
 
     /// SHA hash unique to a component port - common between JS and F#.
     /// Connection ports and connected component ports have the same port Id
     /// InputPortId and OutputPortID wrap the hash to distinguish component
     /// inputs and outputs some times (e.g. in simulation)
+    [<Erase>]
     type InputPortId      = | InputPortId of string
 
     /// SHA hash unique to a component port - common between JS and F#.
     /// Connection ports and connected component ports have the same port Id
     /// InputPortId and OutputPortID wrap the hash to distinguish component
     /// inputs and outputs some times (e.g. in simulation)
-   
+    [<Erase>]
     type OutputPortId     = | OutputPortId of string
 
     /// Port numbers are sequential unique with port lists.
     /// Inputs and Outputs are both numberd from 0 up.
-   
+    [<Erase>]
     type InputPortNumber  = | InputPortNumber of int
 
     /// Port numbers are sequential unique with port lists.
     /// Inputs and Outputs are both numberd from 0 up.
-   
+    [<Erase>]
     type OutputPortNumber = | OutputPortNumber of int
 
     (*---------------------------Types for wave Simulation----------------------------------------*)
@@ -901,6 +924,13 @@ open Thoth.Json.Net
         Form : CCForm option
         Description: string option
     }
+
+    open Optics.Operators
+
+    let formOpt_ = Lens.create (fun a -> a.Form) (fun s a -> match s with | None -> a | Some s -> {a with Form = Some s})
+    let canvasState_ = Lens.create (fun a -> a.CanvasState) (fun s a -> {a with CanvasState = s})
+    let componentsState_ = canvasState_ >-> Optics.fst_
+
     /// Returns true if a component is clocked
     let rec isClocked (visitedSheets: string list) (ldcs: LoadedComponent list) (comp: Component) =
         match comp.Type with
@@ -939,7 +969,20 @@ open Thoth.Json.Net
 
         
 
-    
+    let loadedComponents_ = Lens.create (fun a -> a.LoadedComponents) (fun s a -> {a with LoadedComponents = s})
+
+    let openLoadedComponent_ = 
+        Lens.create 
+            (fun a -> List.find (fun lc -> lc.Name = a.OpenFileName) a.LoadedComponents) 
+            (fun lc' a -> {a with LoadedComponents = List.map (fun lc -> if lc.Name = a.OpenFileName then lc' else lc) a.LoadedComponents})
+
+    let openFileName_ = Lens.create (fun a -> a.OpenFileName) (fun s a -> {a with OpenFileName = s})
+
+    let loadedComponentOf_ (name:string) = 
+        Lens.create 
+            (fun a -> List.find (fun lc -> lc.Name = name) a.LoadedComponents) 
+            (fun lc' a -> {a with LoadedComponents = List.map (fun lc -> if lc.Name = name then lc' else lc) a.LoadedComponents})
+
 
     /// Value set to None if the connection width could not be inferred.
     type ConnectionsWidth = Map<ConnectionId, int option>

@@ -16,8 +16,13 @@
         <Compile Include="src\Common\Optics.fs" />
         <Compile Include="src\Common\CommonTypes.fs" />
         <Compile Include="src\Common\Helpers.fs" />
-        <Compile Include="src\Common\Extractor.fs" />
         <Compile Include="src\Common\EEExtensions.fs" />
+
+        <Compile Include="src\Simulator\SimulatorTypes.fs" />
+        <Compile Include="src\Simulator\Extractor.fs" />
+        <Compile Include="src\Simulator\NumberHelpers.fs" />
+
+
         <Compile Include="src\Interface\FileIO.fs"/>
 
         <Compile Include="src\Drawblock\SymbolHelper.fs"/>
@@ -45,6 +50,8 @@
         <PackageReference Include="Elmish" Version="4.1.0"/>
         <PackageReference Include="Thoth.Json" Version="6.0.0"/>
         <PackageReference Include="Thoth.Json.Net" Version="6.0.0"/>
+        <PackageReference Include="Fable.Core" Version="3.7.1"/>
+        <PackageReference Include="Fable.SimpleJson" Version="3.24.0"/>
     </ItemGroup>
 
     <ItemGroup>
