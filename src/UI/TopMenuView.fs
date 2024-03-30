@@ -8,26 +8,7 @@
 
     let loadDemoProject basename =
             let newDir = ".\\demos\\" + basename
-            let sourceDir = staticDir() + "\\demos\\" + basename
-            printfn "%s" $"loading demo {sourceDir} into {newDir}"
-
-            (*ensureDirectory ".\\demos\\"
-            ensureDirectory newDir*)
-
-            (*readFilesFromDirectory newDir
-            |> List.iter (fun path -> unlink <| pathJoin[|newDir; path|])*)
-
-            let files = readFilesFromDirectory sourceDir
-            printfn $"coping {files}"
-
-            // copy over files from source path to new path
-            (*
-            files
-            |> List.iter (fun basename ->
-                let newPath = pathJoin [|newDir; basename|]
-                copyFile (pathJoin [|sourceDir; basename|]) newPath)
-                *)
-
+            
             match loadAllComponentFiles newDir with
             | Ok(_) -> () // Explicitly return unit
             | Error(_) -> () // Explicitly return unit

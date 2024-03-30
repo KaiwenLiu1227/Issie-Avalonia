@@ -48,8 +48,8 @@
         <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.2"/>
         <PackageReference Include="Avalonia.Diagnostics" Version="11.0.0"/>
         <PackageReference Include="Elmish" Version="4.1.0"/>
-        <PackageReference Include="Thoth.Json" Version="6.0.0"/>
-        <PackageReference Include="Thoth.Json.Net" Version="6.0.0"/>
+        <PackageReference Include="Thoth.Json" Version="7.0.0"/>
+        <PackageReference Include="Thoth.Json.Net" Version="11.0.0"/>
         <PackageReference Include="Fable.Core" Version="3.7.1"/>
         <PackageReference Include="Fable.SimpleJson" Version="3.24.0"/>
     </ItemGroup>

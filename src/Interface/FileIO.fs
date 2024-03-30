@@ -42,8 +42,9 @@ let staticDirFromStatic() :string = jsNative
 let staticDir() =
     (*if productionBuild then
         "./resources/static"
-    else*)
-        staticDirFromStatic()
+    else
+        staticDirFromStatic()*)
+    Directory.GetCurrentDirectory()
 
 /// absolute path to repo directory ./static
 /// NB this path is not fixed (even as relative path) between
@@ -700,11 +701,12 @@ let loadAllComponentFiles (folderPath:string)  =
                     match (ldComp, autoComp) with
                     | Ok ldComp, Ok autoComp when ldComp.TimeStamp < autoComp.TimeStamp ->
                         Resolve(ldComp,autoComp) |> Ok
-                    | Ok ldComp, _ -> 
+                    | Ok ldComp, _ ->
                         OkComp ldComp |> Ok
                     | Error _, Ok autoComp ->
                         OkAuto autoComp |> Ok
-                    | Error msg, _ -> Error msg
+                    | Error msg, _ -> 
+                        Error msg
             )
         |> tryFindError
 
