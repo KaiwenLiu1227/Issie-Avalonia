@@ -569,7 +569,8 @@ module CommonTypes
             | JSONComponent.Constant(w,v) -> Constant1(w,v,sprintf "%d" v)
             | JSONComponent.Input n -> Input1(n, None)
             | JSONComponent.BusCompare(w,v) -> BusCompare1(w,v, sprintf "%x" v)
-        {unbox comp with Type = newType comp.Type}
+        let newCompType = newType comp.Type    
+        {unbox comp with Type = newCompType}
 
     /// Transforms normal Components into JSON Components which can be saved.
     /// This is always an identity transformation since the normal ComponentType

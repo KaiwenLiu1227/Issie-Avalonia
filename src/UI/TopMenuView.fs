@@ -33,7 +33,7 @@
                                                             MenuItem.onClick (fun _ -> dispatch ShowOverlay)
                                                             ]
                                           MenuItem.create [ MenuItem.header "Demo"
-                                                            MenuItem.onClick (fun _ -> loadDemoProject "1fulladder")
+                                                            MenuItem.onClick (fun _ -> loadDemoProject "test")
                                                           ]
                                                         
                                           ] ]
