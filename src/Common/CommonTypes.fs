@@ -569,8 +569,18 @@ module CommonTypes
             | JSONComponent.Constant(w,v) -> Constant1(w,v,sprintf "%d" v)
             | JSONComponent.Input n -> Input1(n, None)
             | JSONComponent.BusCompare(w,v) -> BusCompare1(w,v, sprintf "%x" v)
-        let newCompType = newType comp.Type    
-        {unbox comp with Type = newCompType}
+        {
+            Id = comp.Id
+            Type = newType comp.Type // Assuming direct compatibility or define a mapping function for ComponentType
+            Label = comp.Label
+            InputPorts = comp.InputPorts  // Directly assignable if Port types are compatible
+            OutputPorts = comp.OutputPorts
+            X = comp.X
+            Y = comp.Y
+            H = comp.H
+            W = comp.W
+            SymbolInfo = comp.SymbolInfo  // Directly assignable if SymbolInfo types are compatible or None
+        }
 
     /// Transforms normal Components into JSON Components which can be saved.
     /// This is always an identity transformation since the normal ComponentType

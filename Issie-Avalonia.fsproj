@@ -13,8 +13,10 @@
     <ItemGroup>
 
         <Compile Include="src\Model\ModelType.fs"/>
+        
         <Compile Include="src\Common\Optics.fs" />
         <Compile Include="src\Common\CommonTypes.fs" />
+        <Compile Include="src\Model\DrawModelType.fs" />
         <Compile Include="src\Common\Helpers.fs" />
         <Compile Include="src\Common\EEExtensions.fs" />
 
@@ -34,6 +36,7 @@
         <Compile Include="src\UI\CatalogueView.fs"/>
         <Compile Include="src\UI\MainView.fs"/>
         <Compile Include="src\UI\Update.fs"/>
+        <Compile Include="src\UI\MenuHelpers.fs" />
 
         <Compile Include="Program.fs"/>
 
