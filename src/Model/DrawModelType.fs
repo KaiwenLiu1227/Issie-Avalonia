@@ -241,7 +241,9 @@ module SymbolT =
 
     /// The different messages coming from sheet, normally represent events
     type Msg =
+        (*
         | MouseMsg of MouseT
+        *)
         | AddSymbol of (LoadedComponent list) * pos:XYPos * compType:ComponentType * lbl: string
         | CopySymbols of ComponentId list
         | DeleteSymbols of sIds:ComponentId list
@@ -293,7 +295,9 @@ module SymbolT =
     let symbols_ = Lens.create (fun m -> m.Symbols) (fun s m -> {m with Symbols = s})
     let ports_ = Lens.create (fun m -> m.Ports) (fun w m -> {m with Ports = w})
     let symbolOf_ k = symbols_ >-> Map.valueForce_ "What? Symbol id lookup in model failed" k
+    (*
     let hintPane_ = Lens.create (fun m -> m.HintPane) (fun s m -> {m with HintPane = s})
+    *)
 
 
     //------------------------------------------------------------------------//
@@ -399,7 +403,9 @@ module BusWireT =
         | SelectWires of list<ConnectionId>
         | UpdateWires of list<ComponentId> * XYPos
         | UpdateSymbolWires of ComponentId
+        (*
         | DragSegment of SegmentId list * MouseT
+        *)
         | CoalesceWire of ConnectionId
         | ColorWires of list<ConnectionId> * HighLightColor
         | ErrorWires of list<ConnectionId>
@@ -548,7 +554,9 @@ module SheetT =
         | KeyPress of KeyboardMsg
         | ToggleGrid
         | KeepZoomCentered of XYPos
+        (*
         | MouseMsg of MouseT
+        *)
         | UpdateBoundingBoxes
         | UpdateSingleBoundingBox of ComponentId
         | UpdateScrollPos of XYPos
@@ -559,7 +567,9 @@ module SheetT =
         | CheckAutomaticScrolling
         | DoNothing
         // ------------------- Popup Dialog Management Messages----------------------//
+        (*
         | ShowPopup of ((Msg -> Unit) -> PopupDialogData -> ReactElement)
+        *)
         | ClosePopup
         | SetPopupDialogText of string option
         | SetPopupDialogInt of int option
@@ -581,11 +591,13 @@ module SheetT =
         | RotateLabels
         | WireType of WireTypeMsg
         | IssieInterface of IssieInterfaceMsg
+        (*
         | MovePort of MouseT //different from mousemsg because ctrl pressed too
+        *)
         | SaveSymbols
         // ------------------- Compilation and Debugging ----------------------
-        | StartCompiling of path: string * name: string * profile: Verilog.CompilationProfile
-        | StartCompilationStage of CompilationStageLabel * path: string * name: string * profile: Verilog.CompilationProfile
+        (*| StartCompiling of path: string * name: string * profile: Verilog.CompilationProfile
+        | StartCompilationStage of CompilationStageLabel * path: string * name: string * profile: Verilog.CompilationProfile*)
         | StopCompilation
         | TickCompilation of float
         | FinishedCompilationStage
@@ -617,7 +629,9 @@ module SheetT =
     type Model = {
         Wire: BusWireT.Model
         // function to create popup pane if present
+        (*
         PopupViewFunc : ((Msg -> Unit) -> PopupDialogData -> Fable.React.ReactElement) option
+        *)
         // data to populate popup (may not all be used)
         PopupDialogData : PopupDialogData
         BoundingBoxes: Map<CommonTypes.ComponentId, BoundingBox>
@@ -664,7 +678,9 @@ module SheetT =
         ScalingBox: ScalingBox Option
         Compiling: bool
         CompilationStatus: CompileStatus
+        (*
         CompilationProcess: ChildProcess option
+        *)
         DebugState: DebugState
         DebugData: int list
         DebugMappings: string array

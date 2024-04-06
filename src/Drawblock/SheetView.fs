@@ -26,14 +26,11 @@ open SymbolView
 
     
     let sheetView state dispatch =
-            let matrixTransform = MatrixTransform(Matrix.CreateRotation(state.rotation))
             let gridPathData = generateGridPathData 40 40 400.0 400.0
 
             Canvas.create [
-                Canvas.renderTransform matrixTransform
                 (*Canvas.height 250
                 Canvas.width 250*)
-                Canvas.onPointerWheelChanged (fun args -> dispatch (Rotate args))
                 Canvas.background (SolidColorBrush(Color.FromArgb(25uy, 25uy, 0uy, 0uy)))
                 Canvas.children [
                     (*Path.create [

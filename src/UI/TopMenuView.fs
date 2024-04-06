@@ -4,13 +4,15 @@
     open Avalonia.FuncUI.DSL
     open Avalonia.Media
     open ModelType
+    open MenuHelpers
     open FilesIO
 
-    let loadDemoProject basename =
+    let loadDemoProject basename model dispatch =
             let newDir = ".\\demos\\" + basename
             
             match loadAllComponentFiles newDir with
-            | Ok(_) -> () // Explicitly return unit
+            | Ok (componentsToResolve: LoadStatus list) ->
+                resolveComponentOpenPopup newDir [] componentsToResolve model dispatch
             | Error(_) -> () // Explicitly return unit
         
 
@@ -30,10 +32,12 @@
                                   [ MenuItem.header "Project"
                                     MenuItem.viewItems
                                         [ MenuItem.create [ MenuItem.header "File"
+                                                            (*
                                                             MenuItem.onClick (fun _ -> dispatch ShowOverlay)
+                                                            *)
                                                             ]
                                           MenuItem.create [ MenuItem.header "Demo"
-                                                            MenuItem.onClick (fun _ -> loadDemoProject "test")
+                                                            MenuItem.onClick (fun _ -> loadDemoProject "test" model dispatch)
                                                           ]
                                                         
                                           ] ]
