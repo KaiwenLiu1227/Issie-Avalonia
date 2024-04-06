@@ -25,7 +25,7 @@ open SymbolView
         String.concat " " (horizontalLines @ verticalLines)
 
     
-    let sheetView state dispatch =
+    let sheetView model dispatch =
             let gridPathData = generateGridPathData 40 40 400.0 400.0
 
             Canvas.create [
@@ -40,7 +40,7 @@ open SymbolView
                         Path.stroke (Brushes.Black)
                         Path.strokeThickness 1.0
                     ]*)
-                    symbolView state dispatch
+                    symbolView model dispatch
                 ]    
             ]
           

@@ -1,14 +1,16 @@
 ﻿module SymbolHelper 
+    open System
     open Avalonia.Media
     open ModelType
+    open CommonTypes
 
     let componentTypes = [| "Input1"; "Output"; "NotConnected"; "IOLabel"; "Viewer"; "Constant1"; "MergeWires"; "Mux2"; "BusSelection"; "BusCompare"; "Not" |]
 
-    let genPoints (compType: string) H W =
+    let genPoints (compType: ComponentType) H W =
         match compType with
-        | "Input1" | "Output"  -> 
+        | Input  -> 
             [|{X=0;Y=0};{X=0;Y=H};{X=W*4./5.;Y=H};{X=W;Y=H/2.};{X=W*0.8;Y=0}|] 
-        | "Constant1"  -> 
+        | Constant1  -> 
             [|{X=W;Y=H/2.};{X=W/2.;Y=H/2.};{X=0;Y=H};{X=0;Y=0};{X=W/2.;Y=H/2.}|]
         | "IOLabel" ->
             [|{X=0.;Y=H/2.};{X=W;Y=H/2.}|]

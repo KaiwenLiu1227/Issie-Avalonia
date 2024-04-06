@@ -19,6 +19,7 @@
         <Compile Include="src\Model\ModelType.fs"/>
         <Compile Include="src\Common\Helpers.fs" />
         <Compile Include="src\Common\EEExtensions.fs" />
+        <Compile Include="src\Common\DrawHelpers.fs" />
 
         <Compile Include="src\Simulator\SimulatorTypes.fs" />
         <Compile Include="src\Simulator\Extractor.fs" />
@@ -27,10 +28,18 @@
 
         <Compile Include="src\Interface\FileIO.fs"/>
 
+        <Compile Include="src\Drawblock\SymbolHelpers.fs" />
         <Compile Include="src\Drawblock\SymbolHelper.fs"/>
-        <Compile Include="src\Drawblock\SymbolView.fs"/>
-        <Compile Include="src\Drawblock\SheetView.fs"/>
+        <Compile Include="src\Drawblock\BlockHelpers.fs" />
+        <Compile Include="src\Drawblock\BusWire.fs" />
+        <Compile Include="src\Drawblock\Symbol.fs" />
         <Compile Include="src\Drawblock\Sheet.fs" />
+        <Compile Include="src\Drawblock\SymbolView.fs"/>
+        <Compile Include="src\Drawblock\BusWireUpdate.fs" />
+        <Compile Include="src\Drawblock\SheetUpdate.fs" />
+        <Compile Include="src\Drawblock\SheetView.fs"/>
+
+
 
         <Compile Include="src\UI\UIPopups.fs" />
         <Compile Include="src\UI\MenuHelpers.fs" />

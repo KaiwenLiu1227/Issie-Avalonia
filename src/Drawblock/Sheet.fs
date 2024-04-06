@@ -16,11 +16,15 @@ open Operators
 
 // HLP 23 AUTHOR: BRYAN TAN
 open SymbolHelpers
+(*
 open BusWireRoutingHelpers
+*)
 
 /// Keep track of HTML "Canvas" element used by Draw Blcok to read and write HTML scroll info.
 /// Set in view function from react hook.
+(*
 let mutable canvasDiv:Types.Element option = None
+*)
 
 (*
 
@@ -102,12 +106,14 @@ let sheetCmd (msg: SheetT.Msg) = Cmd.ofMsg (ModelType.Msg.Sheet msg)
 module SheetInterface =
     type Model with
         /// Given a compType, return a label
+        (*
         member this.GenerateLabel (compType: ComponentType) : string =
             SymbolUpdate.generateLabel this.Wire.Symbol compType
 
         /// Given a compId, return the corresponding component
         member this.GetComponentById (compId: ComponentId) =
             SymbolUpdate.extractComponent this.Wire.Symbol compId
+            *)
 
         /// Change the label of Component specified by compId to lbl
         member this.ChangeLabel (dispatch: Dispatch<Msg>) (compId: ComponentId) (lbl: string) =
@@ -127,7 +133,7 @@ module SheetInterface =
             dispatch <| (Wire (BusWireT.Symbol (SymbolT.ChangeScale (compId, newScale, whichScale) ) ) )
             dispatch <| (Wire (BusWireT.UpdateSymbolWires compId))
 
-        member this.ChangeAdderComp (dispatch: Dispatch<Msg>) (compId: ComponentId) (newComp:ComponentType) =
+        (*member this.ChangeAdderComp (dispatch: Dispatch<Msg>) (compId: ComponentId) (newComp:ComponentType) =
             dispatch <| (Wire (BusWireT.Symbol (SymbolT.ChangeAdderComponent (compId,(this.GetComponentById compId), newComp) ) ) )
             let delPorts = SymbolPortHelpers.findDeletedPorts this.Wire.Symbol compId (this.GetComponentById compId) newComp
             dispatch <| (Wire (BusWireT.DeleteWiresOnPort delPorts))
@@ -168,6 +174,7 @@ module SheetInterface =
             dispatch <| (Wire (BusWireT.DeleteWiresOnPort delPorts))
             dispatch <| (Wire (BusWireT.UpdateSymbolWires compId))
             this.DoBusWidthInference dispatch
+            *)
 
         /// Given a compId and a LSB, update the LSB of the Component specified by compId
         member this.ChangeLSB (dispatch: Dispatch<Msg>) (compId: ComponentId) (lsb: int64) =
@@ -182,11 +189,11 @@ module SheetInterface =
             this.Wire.Notifications
 
         /// Get the current canvas state in the form of (Component list * Connection list)
-        member this.GetCanvasState () =
+        (*member this.GetCanvasState () =
             let compList = SymbolUpdate.extractComponents this.Wire.Symbol
             let connList = BusWire.extractConnections this.Wire
 
-            compList, connList
+            compList, connList*)
 
         /// Clears the Undo and Redo stack of Sheet
         member this.FlushCommandStack dispatch =
@@ -199,6 +206,7 @@ module SheetInterface =
             dispatch <| Wire (BusWireT.Symbol (SymbolT.ResetModel ) ) 
 
         /// Returns a list of selected components
+        (*
         member this.GetSelectedComponents =
             this.SelectedComponents
             |> List.collect ( fun compId ->
@@ -219,6 +227,7 @@ module SheetInterface =
         /// Returns a list of selected components and connections in the form of (Component list * Connection list)
         member this.GetSelectedCanvasState =
             this.GetSelectedComponents, this.GetSelectedConnections
+            *)
 
         /// Given a list of connIds, select those connections
         member this.SelectConnections dispatch on connIds =
@@ -249,7 +258,7 @@ let symDiff lst1 lst2 =
     |> Set.toList
 
 /// return screen edge coords
-let getScreenEdgeCoords (model:Model) =
+(*let getScreenEdgeCoords (model:Model) =
     let canvas = document.getElementById "Canvas"
     let wholeApp = document.getElementById "WholeApp"
     let rightSelection = document.getElementById "RightSelection"
@@ -266,7 +275,7 @@ let centreOfScreen model : XYPos =
     {
         X = (edge.Left + edge.Right)/(2. * model.Zoom)
         Y = (edge.Top + edge.Bottom)/(2. * model.Zoom)
-    }
+    }*)
 
 
 /// helper used inside Map.tryFind hence the unused parameter
@@ -391,7 +400,7 @@ let symbolBBUnion (centresOnly: bool) (symbols: SymbolT.Symbol list) :BoundingBo
 
 /// Returns the smallest BB that contains all symbols, labels, and wire segments.
 /// For empty circuit a BB is returned in middle of viewable screen.
-let symbolWireBBUnion (model:Model) =
+(*let symbolWireBBUnion (model:Model) =
     let symbols =
         model.Wire.Symbol.Symbols
         |> Helpers.mapValues
@@ -439,7 +448,7 @@ let getWindowParasToFitBox model (box: BoundingBox)  =
     let xScroll = xMiddle - (rh-lh)/2.
     let yMiddle = (box.TopLeft.Y + (box.H)/2.)*magToUse
     let yScroll = yMiddle - (bottom-top)/2.
-    {|Scroll={X=xScroll; Y=yScroll}; MagToUse=magToUse|}
+    {|Scroll={X=xScroll; Y=yScroll}; MagToUse=magToUse|}*)
 
 let addBoxMargin (fractionalMargin:float) (absoluteMargin:float) (box: BoundingBox) =
     let boxMargin = 
@@ -452,7 +461,7 @@ let addBoxMargin (fractionalMargin:float) (absoluteMargin:float) (box: BoundingB
         H = box.H + boxMargin*2.
      }
 
-/// Check that canvas is large enough to have space all round the visible area.
+(*/// Check that canvas is large enough to have space all round the visible area.
 /// If not, then change model by moving circuit on canvas and/or extending canvas.
 /// Keep components in same visible position during this process.
 /// returns new model with all positions updated if need be.
@@ -545,7 +554,7 @@ let isBBoxAllVisible model (bb: BoundingBox) =
     lh < bb.TopLeft.Y && 
     top < bb.TopLeft.X && 
     bb.TopLeft.Y+bb.H < bottom && 
-    bb.TopLeft.X+bb.W < rh
+    bb.TopLeft.X+bb.W < rh*)
 
 /// could be made more efficient, since segments contain redundant info
 let getWireBBox (wire: BusWireT.Wire) =
@@ -558,6 +567,7 @@ let getWireBBox (wire: BusWireT.Wire) =
     BlockHelpers.foldOverSegs updateBoundingBox {TopLeft = wire.StartPos; W=0; H=0;} wire
     
 
+(*
 let isAllVisible (model: Model)(conns: ConnectionId list) (comps: ComponentId list) =
     let wVisible =
         conns
@@ -576,6 +586,7 @@ let isAllVisible (model: Model)(conns: ConnectionId list) (comps: ComponentId li
         |> List.map (isBBoxAllVisible model)
         |> List.fold (&&) true
     wVisible && cVisible
+    *)
 
 
     
@@ -632,13 +643,13 @@ let mouseOn (model: Model) (pos: XYPos) : MouseOn =
             | None ->
                 match tryInsideLabelBox model pos with
                 | Some sym -> Label sym.Id
-                | None ->
-                    match BusWireUpdate.getClickedWire model.Wire pos (Constants.wireBoundingBoxSize/model.Zoom) with
+                | None -> Canvas
+                    (*match BusWireUpdate.getClickedWire model.Wire pos (Constants.wireBoundingBoxSize/model.Zoom) with
                     | Some connId -> Connection connId
                     | None ->
                         match insideBoxMap model.BoundingBoxes pos with
                         | Some compId -> Component compId
-                        | None -> Canvas
+                        | None -> Canvas*)
 
 
 let notIntersectingComponents (model: Model) (box1: BoundingBox) (inputId: CommonTypes.ComponentId) =
