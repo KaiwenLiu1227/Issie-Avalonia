@@ -15,14 +15,16 @@ open CommonTypes
 open DrawModelType.SymbolT
 open SymbolHelper
 
-let drawComponent (polygonParameter:Component) dispatch=
-        let points = genPoints polygonParameter.Type 20 20
+let drawComponent (symbol:Symbol) dispatch=
+        let points = genPoints symbol.Component 20 20
         let pointList = points |> Array.toList |> List.map (fun p -> Point(p.X, p.Y))
+        let appear = symbol.Appearance
+
         Polygon.create [
             Polygon.points pointList
-            Polygon.stroke (SolidColorBrush(polygonParameter.Stroke))
-            Polygon.strokeThickness polygonParameter.StrokeThickness
-            Polygon.fill (SolidColorBrush(polygonParameter.Fill, polygonParameter.FillOpacity))
+            Polygon.stroke (SolidColorBrush(Color.FromArgb(255uy, 0uy, 0uy, 0uy)))
+            Polygon.strokeThickness 2.0
+            Polygon.fill (SolidColorBrush(Color.FromArgb(255uy, 255uy, 235uy, 47uy), appear.Opacity))
             (*
             Component.onPointerPressed (fun args -> dispatch (OnPress polygonParameter.Id))
         *)
@@ -38,7 +40,7 @@ let renderSymbol props dispatch :IView=
                 TranslateTransform(xPosition, yPosition)
             )
         ]
-        drawComponent props.Component dispatch
+        drawComponent props dispatch
     )
 
  (*// STANDARD IMPLEMENTATION WITHOUT COMPONENT KEY BIND FOR CACHING 

@@ -8,7 +8,7 @@ module Update
 
     let update msg model =
         match msg with
-        | Forward ->
+        (*| Forward ->
             printfn "forward"
             let updatedPolygonParam = 
                 {
@@ -79,5 +79,5 @@ module Update
             
             { model with
                 IsOverlayVisible = false
-            }
+            }*)
         | _ -> model

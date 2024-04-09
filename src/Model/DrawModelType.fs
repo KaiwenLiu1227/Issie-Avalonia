@@ -1,5 +1,7 @@
 ﻿module DrawModelType
 
+open System.Drawing
+open Avalonia.Media
 open Fable.Core
 open CommonTypes
 (*

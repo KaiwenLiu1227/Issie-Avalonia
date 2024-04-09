@@ -16,7 +16,6 @@ type MainWindow() as this =
         base.Title <- "Issie Avalonia"
         this.AttachDevTools();
         Program.mkSimple MainView.init Update.update MainView.view 
-        |> Program.withHost this
         |> Program.run    
 
 type App() =

@@ -46,7 +46,9 @@ module CatalogueView
                                                     SolidColorBrush(Color.FromArgb(55uy, 0uy, 0uy, 0uy))
                                                 ) // Example: Set a distinct background for the button
                                                 Button.dock Dock.Bottom
+                                                (*
                                                 Button.onClick (fun _ -> dispatch Forward)
+                                                *)
                                                 Button.content "+"
                                                 Button.horizontalAlignment HorizontalAlignment.Stretch
                                                 Button.horizontalContentAlignment HorizontalAlignment.Center ]
@@ -55,7 +57,9 @@ module CatalogueView
                                                     SolidColorBrush(Color.FromArgb(55uy, 0uy, 0uy, 0uy))
                                                 ) // Example: Set a distinct background for the button
                                                 Button.dock Dock.Bottom
+                                                (*
                                                 Button.onClick (fun _ -> dispatch Backward)
+                                                *)
                                                 Button.content "-"
                                                 Button.horizontalAlignment HorizontalAlignment.Stretch
                                                 Button.horizontalContentAlignment HorizontalAlignment.Center ] ] ]

@@ -13,6 +13,8 @@ open Avalonia.FuncUI.Types
 open ModelType
 open SymbolHelper
 open SymbolView
+open DrawModelType.SheetT
+
 
     
     let generateGridPathData (rows: int) (cols: int) (width: float) (height: float) =
@@ -33,14 +35,14 @@ open SymbolView
                 Canvas.width 250*)
                 Canvas.background (SolidColorBrush(Color.FromArgb(25uy, 25uy, 0uy, 0uy)))
                 Canvas.children [
-                    (*Path.create [
+                    Path.create [
                         Canvas.top -100
                         Canvas.left -100
                         Path.data (Geometry.Parse(gridPathData)) // Define your grid lines
                         Path.stroke (Brushes.Black)
                         Path.strokeThickness 1.0
-                    ]*)
-                    symbolView model dispatch
+                    ]
+                    symbolView model.Wire.Symbol dispatch
                 ]    
             ]
           

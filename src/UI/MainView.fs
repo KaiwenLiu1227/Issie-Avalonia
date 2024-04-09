@@ -102,7 +102,7 @@ open UIPopups
                               [
                                 catalogueView model dispatch
                                 topMenuView model dispatch
-                                sheetView model dispatch ] ]
+                                sheetView model.Sheet dispatch ] ]
                     // Overlay
                     overlayView model dispatch 
                 ]

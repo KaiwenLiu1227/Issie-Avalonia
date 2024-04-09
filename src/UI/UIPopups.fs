@@ -8,7 +8,7 @@ open ModelType
 
 
 let overlayView model dispatch =
-    if model.IsOverlayVisible then
+    (*if model.IsOverlayVisible then
         Border.create [
             Border.background (SolidColorBrush(Color.FromArgb(128uy, 0uy, 0uy, 0uy))) // Semi-transparent background
             Border.child (
@@ -33,5 +33,5 @@ let overlayView model dispatch =
                     ]
                 )
         ]
-    else
+    else*)
         Border.create [] // Return an empty control when not visible
