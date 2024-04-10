@@ -32,6 +32,8 @@ let drawComponent (symbol:Symbol) dispatch=
 
 // WITH COMPONENT KEY BIND FOR CACHING 
 let renderSymbol props dispatch :IView=
+    printf $"comp-{props.Id} rendered" 
+
     Component.create($"comp-{props.Id}", fun ctx ->
         let xPosition = getCompPos props "X"
         let yPosition = getCompPos props "Y"
@@ -59,19 +61,7 @@ let renderSymbol props dispatch :IView=
 
 
 let symbolView (model:Model) dispatch =
-        (*let handlePointerMoved (args: Input.PointerEventArgs) =
-                let newPos = args.GetPosition(null) 
-                let roundUpToTen n = Math.Ceiling(n / 10.0) * 10.0
-                // Apply the function to both X and Y coordinates
-                let roundedX = roundUpToTen newPos.X
-                let roundedY = roundUpToTen newPos.Y
-                // Dispatch the Move message with the rounded coordinates
-                dispatch (Move { X = roundedX; Y = roundedY })
-            
-        let matrixTransform = MatrixTransform(Matrix.CreateRotation(state.rotation))*)
-
-
-
+        printf $"{model.Symbols}"
         Canvas.create [
             (*
             Canvas.renderTransform matrixTransform
@@ -84,7 +74,9 @@ let symbolView (model:Model) dispatch =
             Canvas.children (
                 model.Symbols
                 |> Map.toSeq // Convert the map to a sequence of key-value pairs
-                |> Seq.map (fun (_, symbol) -> renderSymbol symbol dispatch) // Ignore the key with '_'
+                |> Seq.map (fun (idx, symbol) ->
+                    printf $"{idx}"
+                    renderSymbol symbol dispatch) // Ignore the key with '_'
                 |> Seq.toList // Convert back to a list if needed for Canvas.children
             )
         ]    

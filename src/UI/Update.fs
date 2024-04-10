@@ -67,12 +67,18 @@ let update (msg : Msg) oldModel =
     //-------------------------------------------------------------------------------//
     //------------------------------MAIN MESSAGE DISPATCH----------------------------//
     //-------------------------------------------------------------------------------//
-
+    let doBatchOfMsgsAsynch (msgs: seq<Msg>) =
+        msgs
+        |> Seq.map Elmish.Cmd.ofMsg 
+        |> Elmish.Cmd.batch
+        |> ExecCmdAsynch
+        |> Elmish.Cmd.ofMsg
+        
     match testMsg with
     | DoNothing -> //Acts as a placeholder to propergrate the ExecutePendingMessages message in a Cmd
         model, cmd
     | SetProject project ->
-        printf $"Setting project with component: '{project.OpenFileName}'"
+        printfn $"Setting project with component: '{project.OpenFileName}'"
         model
         |> set currentProj_ (Some project) 
         |> withNoMsg    
@@ -82,7 +88,7 @@ let update (msg : Msg) oldModel =
         // in this case we do not want the save button to be active, because moving the circuit is not a "real" change
         // updating loaded component CanvasState to equal draw bloack canvasstate will ensure the button stays inactive.
         let canvas = model.Sheet.GetCanvasState ()
-        printf "synchronising canvas..."
+        printfn "synchronising canvas..."
         // this should disable the saev button by making loadedcomponent and draw blokc canvas the same
         model
         |> map openLoadedComponentOfModel_ (fun ldc -> {ldc with CanvasState = canvas})
@@ -95,7 +101,9 @@ let update (msg : Msg) oldModel =
             // do not allow keys to affect Sheet when popup is on.
             model, Cmd.none
         | _ -> sheetMsg sMsg model
-
+    | SendSeqMsgAsynch msgs ->
+        model, doBatchOfMsgsAsynch msgs
+    | _ -> model,Cmd.none
     (*    
     // special messages for mouse control of screen vertical dividing bar, active when Wavesim is selected as rightTab
     | SetDragMode mode ->

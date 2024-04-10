@@ -17,6 +17,9 @@ open DrawModelType.SheetT
    
     
     let sheetView model dispatch =
+            (*
+            printfn $"{model}"
+            *)
 
             Canvas.create [
                 (*Canvas.height 250

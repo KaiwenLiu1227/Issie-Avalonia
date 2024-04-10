@@ -37,7 +37,7 @@ let private loadStateIntoModel (finishUI:bool) (compToSetup:LoadedComponent) _ l
     let ldcs = tryGetLoadedComponents model
     let name = compToSetup.Name
     let components, connections = compToSetup.CanvasState
-    //printfn "Loading..."
+    printfn "Loading..."
     let msgs = 
         [
             (*
@@ -94,14 +94,16 @@ let private loadStateIntoModel (finishUI:bool) (compToSetup:LoadedComponent) _ l
     //INFO - Currently the spinner will ALWAYS load after 'SetTopMenu x', probably it is the last command in a chain
     //Ideally it should happen before this, but it is not currently doing this despite the async call
     //This will set a spinner for both Open project and Change sheet which are the two most lengthly processes
-    dispatch <| (Sheet (SheetT.SetSpinner true))
     (*
+    dispatch <| (Sheet (SheetT.SetSpinner true))
+    
     dispatch <| SendSeqMsgAsynch msgs
     *)
     // msgs is bundled together and as a result a scroll from the ctrl-W scroll change is inserted in the event queue
     // after the ctrl-w. We need anotehr ctrl-w to make sure this scroll event does not reset scroll
     // the order in which messages get processed is problematic here - and the solution ad hoc - a better
     // solution would be to understand exactly what determines event order in the event queue
+    dispatch <| SendSeqMsgAsynch msgs
     dispatch <| Sheet (SheetT.KeyPress  SheetT.KeyboardMsg.CtrlW)
     dispatch SynchroniseCanvas
     //dispatch <| Sheet (SheetT.KeyPress  SheetT.KeyboardMsg.CtrlW)
@@ -119,6 +121,7 @@ let setupProjectFromComponents (finishUI:bool) (sheetName: string) (ldComps: Loa
             | Some comp -> comp
     match model.CurrentProj with
     | None -> ()
+    | _ -> ()
     (*| Some p ->
         dispatch EndSimulation // Message ends any running simulation.
         dispatch <|TruthTableMsg CloseTruthTable // Message closes any open Truth Table.

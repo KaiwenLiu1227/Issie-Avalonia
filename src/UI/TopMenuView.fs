@@ -12,6 +12,9 @@
             
             match loadAllComponentFiles newDir with
             | Ok (componentsToResolve: LoadStatus list) ->
+                (*
+                printf $"{componentsToResolve}"
+                *)
                 resolveComponentOpenPopup newDir [] componentsToResolve model dispatch
             | Error(_) -> () // Explicitly return unit
         

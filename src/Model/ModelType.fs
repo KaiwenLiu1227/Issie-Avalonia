@@ -356,6 +356,8 @@ type Msg =
     | Sheet of DrawModelType.SheetT.Msg
     | SynchroniseCanvas
     | SetProject of Project
+    | SendSeqMsgAsynch of seq<Msg>
+    | ExecCmdAsynch of Elmish.Cmd<Msg>
     (*| ShowExitDialog
     | Sheet of DrawModelType.SheetT.Msg
     | UpdateUISheetTrail of (string list -> string list)
