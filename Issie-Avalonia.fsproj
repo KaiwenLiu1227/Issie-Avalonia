@@ -33,20 +33,25 @@
         <Compile Include="src\Drawblock\BlockHelpers.fs" />
         <Compile Include="src\Drawblock\BusWire.fs" />
         <Compile Include="src\Drawblock\Symbol.fs" />
-        <Compile Include="src\Drawblock\Sheet.fs" />
         <Compile Include="src\Drawblock\SymbolView.fs"/>
+        <Compile Include="src\Drawblock\SymbolUpdate.fs" />
+        <Compile Include="src\Drawblock\Sheet.fs" />
+        <Compile Include="src\Drawblock\BusWireUpdateHelpers.fs" />
         <Compile Include="src\Drawblock\BusWireUpdate.fs" />
         <Compile Include="src\Drawblock\SheetUpdate.fs" />
         <Compile Include="src\Drawblock\SheetView.fs"/>
+        
 
 
-
+        <Compile Include="src\UI\ModelHelpers.fs" />
         <Compile Include="src\UI\UIPopups.fs" />
         <Compile Include="src\UI\MenuHelpers.fs" />
         <Compile Include="src\UI\TopMenuView.fs"/>
         <Compile Include="src\UI\CatalogueView.fs"/>
         <Compile Include="src\UI\MainView.fs"/>
+        <Compile Include="src\UI\UpdateHelpers.fs" />
         <Compile Include="src\UI\Update.fs"/>
+
 
         <Compile Include="Program.fs"/>
 

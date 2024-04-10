@@ -19,8 +19,8 @@ open UIPopups
 
 
     let init() = {
-        SpinnerPayload = None
-        Spinner = None
+        (*SpinnerPayload = None
+        Spinner = None*)
         UISheetTrail = []
         UserData = {
             WireType = BusWireT.Radial
@@ -54,7 +54,6 @@ open UIPopups
         SavedSheetIsOutOfDate = false
         (*
         PopupViewFunc = None
-        *)
         PopupDialogData = {
             ProjectPath = ""
             Text = None
@@ -64,31 +63,33 @@ open UIPopups
             MemorySetup = None
             MemoryEditorData = None
             Progress = None
-            (*ConstraintTypeSel = None
+            ConstraintTypeSel = None
             ConstraintIOSel = None
             ConstraintErrorMsg = None
             NewConstraint = None
             AlgebraInputs = None
             AlgebraError = None
             VerilogCode = None
-            VerilogErrors = []*)
+            VerilogErrors = []
             BadLabel = false
             IntList = None
             IntList2 = None
         }
-        (*Notifications = {
+        Notifications = {
             FromDiagram = None
             FromSimulation = None
             FromWaveSim = None
             FromFiles = None
             FromMemoryEditor = None
             FromProperties = None
-        }*)
-        TopMenuOpenState = Closed
+        }
+        TopMenuOpenState = Closed*)
         DividerDragMode = DragModeOff
         WaveSimViewerWidth = 0
         ConnsOfSelectedWavesAreHighlighted= false
+        (*
         Pending = []
+        *)
         UIState = None
         BuildVisible = false
     }

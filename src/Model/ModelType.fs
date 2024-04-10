@@ -26,6 +26,7 @@ module Constants =
 /// NB: There are fields which are commented out: these can be added back in
 /// later on if we want to group those components together by type rather than
 /// separately by name.
+[<StructuralEquality; StructuralComparison>]
 type ComponentGroup =
     | WireLabel
     | InputOutput
@@ -41,6 +42,7 @@ type ComponentGroup =
 
 
 /// control checkboxes in waveform simulator wave selection
+[<StructuralEquality; StructuralComparison>]
 type CheckBoxStyle =
     | PortItem of Wave * string
     (*
@@ -49,6 +51,7 @@ type CheckBoxStyle =
     | GroupItem of ComponentGroup * string list
     | SheetItem of string list
 
+[<StructuralEquality; StructuralComparison>]
 type RightTab =
     | Properties
     | Catalogue
@@ -56,11 +59,13 @@ type RightTab =
     | Build
     | Transition // hack to make a transition from Simulation to Catalog without a scrollbar artifact
 
+[<StructuralEquality; StructuralComparison>]
 type SimSubTab =
     | StepSim
     | TruthTable
     | WaveSim
 
+[<StructuralEquality; StructuralComparison>]
 type MemoryEditorData = {
     OnlyDiff : bool // Only show diffs in Memory Diff Viewer.
     Address : int64 option // Only show the specified memory address.
@@ -68,11 +73,13 @@ type MemoryEditorData = {
     NumberBase : NumberBase
 }
 
+[<StructuralEquality; StructuralComparison>]
 type ImportDecision =
     | Overwrite
     | Rename
 
 /// Possible fields that may (or may not) be used in a dialog popup.
+[<StructuralEquality; StructuralComparison>]
 type PopupDialogData = {
     Text : string option;
     Int : int option;
@@ -114,6 +121,8 @@ let verilogErrors_ = Lens.create (fun a -> a.VerilogErrors) (fun s a -> {a with 
 let badLabel_ = Lens.create (fun a -> a.BadLabel) (fun s a -> {a with BadLabel = s})
 let intlist_ = Lens.create (fun a -> a.IntList) (fun s a -> {a with IntList = s})
 let intlist2_ = Lens.create (fun a -> a.IntList2) (fun s a -> {a with IntList2 = s})
+
+[<StructuralEquality; StructuralComparison>]
 type TopMenu = | Closed | Project | Files
 
 //==========//
@@ -123,9 +132,11 @@ type TopMenu = | Closed | Project | Files
 
 
 // Messages that will be triggered on key combinations.
+[<StructuralEquality; StructuralComparison>]
 type KeyboardShortcutMsg =
     | CtrlS | AltC | AltV | AltZ | AltShiftZ | DEL
 
+[<StructuralEquality; StructuralComparison>]
 type UICommandType =
     | CloseProject
     | ChangeSheet
@@ -145,6 +156,7 @@ type UICommandType =
 /// Determines whether the user is able to see the wave viewer pane.
 /// Changes value depending on the state of the circuit and whether
 /// the wave simulator has been run.
+[<StructuralEquality; StructuralComparison>]
 type WaveSimState =
     /// If the Wave Sim has not been before
     | Empty
@@ -165,12 +177,14 @@ type WaveSimState =
 
 /// Identifies which Component and Port drives a waveform.
 /// Must be an Output port (Input ports cannot drive waveforms).
+[<StructuralEquality; StructuralComparison>]
 type DriverT = {
     DriverId: FComponentId
     Port: OutputPortNumber
 }
 
 /// Information required to display a waveform.
+[<StructuralEquality; StructuralComparison>]
 type Wave = {
     /// Uniquely identifies a waveform
     WaveId: WaveIndexT
@@ -206,6 +220,7 @@ type Wave = {
 
 /// Contains all information required by waveform simulator.
 /// One WaveSimModel per sheet.
+[<StructuralEquality; StructuralComparison>]
 type WaveSimModel = {
     /// Current state of WaveSimModel.
     State: WaveSimState
@@ -262,12 +277,16 @@ type WaveSimModel = {
 
 
 
+[<StructuralEquality; StructuralComparison>]
 type DiagEl = | Comp of Component | Conn of Connection
 
+[<StructuralEquality; StructuralComparison>]
 type DragMode = DragModeOn of int | DragModeOff
 
+[<StructuralEquality; StructuralComparison>]
 type IntMode = FirstInt | SecondInt
 
+[<StructuralEquality; StructuralComparison>]
 type MenuCommand =
     | MenuPrint
     | MenuSaveFile
@@ -278,6 +297,7 @@ type MenuCommand =
     | MenuVerilogOutput
     | MenuLostFocus
 
+[<StructuralEquality; StructuralComparison>]
 type SimulationProgress =
     {
         InitialClock: int
@@ -285,6 +305,7 @@ type SimulationProgress =
         ClocksPerChunk: int       
     }
 
+[<StructuralEquality; StructuralComparison>]
 type PopupProgress =
     {
         Value: int
@@ -292,7 +313,8 @@ type PopupProgress =
         Title: string
         Speed: float
     }
-
+    
+[<StructuralEquality; StructuralComparison>]
 type TTMsg =
     (*
     | GenerateTruthTable of option<Result<SimulationData,SimulationError> * CanvasState>
@@ -329,14 +351,16 @@ type TTMsg =
     | SetPopupAlgebraError of SimulationError option*)
 
 
-
 type Msg =
-    | ShowExitDialog
+    | DoNothing
+    | Sheet of DrawModelType.SheetT.Msg
+    | SynchroniseCanvas
+    | SetProject of Project
+    (*| ShowExitDialog
     | Sheet of DrawModelType.SheetT.Msg
     | UpdateUISheetTrail of (string list -> string list)
-    | SheetBackAction of (Msg -> unit)
-    | SynchroniseCanvas
-    | JSDiagramMsg of JSDiagramMsg
+    | SheetBackAction of (Msg -> unit)*)
+    (*| JSDiagramMsg of JSDiagramMsg
     | KeyboardShortcutMsg of KeyboardShortcutMsg
     | Benchmark
     (*
@@ -456,6 +480,7 @@ type Msg =
     | ContextMenuAction of e: Browser.Types.MouseEvent
     *)
     | ContextMenuItemClick of menuType:string * item:string * dispatch: (Msg -> unit)
+    *)
 
 
 //================================//
@@ -482,7 +507,7 @@ let fromMemoryEditor_ = Lens.create (fun n -> n.FromMemoryEditor) (fun s n -> {n
 let fromProperties_ = Lens.create (fun n -> n.FromProperties) (fun s n -> {n with FromProperties = s})
 *)
 
-
+[<StructuralEquality; StructuralComparison>]
 type UserData = {
     /// Where to save the persistent app data
     UserAppDir : string option
@@ -492,16 +517,17 @@ type UserData = {
     WireType: DrawModelType.BusWireT.WireType
     Theme: DrawModelType.SymbolT.ThemeType
     }
-
+[<StructuralEquality; StructuralComparison>]
 type SpinnerState =
    | WaveSimSpinner
 
-type SpinPayload = {
+[<StructuralEquality; StructuralComparison>]
+(*type SpinPayload = {
     Payload: Model -> Model
     Name: string
     ToDo: int
     Total: int
-    }
+    }*)
 
 (*type TTType = {
     /// bits associated with the maximum number of input rows allowed in a Truth Table
@@ -533,8 +559,6 @@ let sortType_ = Lens.create (fun a -> a.SortType) (fun s a -> {a with SortType =
 let algebraIns_ = Lens.create (fun a -> a.AlgebraIns) (fun s a -> {a with AlgebraIns = s})
 let gridCache_ = Lens.create (fun a -> a.GridCache) (fun s a -> {a with GridCache = s})
 *)
-
-
 type Model = {
     UserData: UserData
     /// Map of sheet name to WaveSimModel
@@ -547,7 +571,9 @@ type Model = {
     UISheetTrail: string list
 
     /// If the application has a modal spinner waiting for simulation
+    (*
     Spinner: (Model -> Model) option
+    *)
         
     /// Draw Canvas
     Sheet: DrawModelType.SheetT.Model
@@ -591,20 +617,16 @@ type Model = {
     SavedSheetIsOutOfDate : bool
     /// the project contains, as loadable components, the state of each of its sheets
     CurrentProj : Project option
-    /// function to create popup pane if present
-    (*
+    (*/// function to create popup pane if present
     PopupViewFunc : ((Msg -> Unit) -> Model -> Fable.React.ReactElement) option
-    *)
     /// function to create spinner popup pane if present (overrides otehr popups)
     SpinnerPayload : SpinPayload option
     /// data to populate popup (may not all be used)
     PopupDialogData : PopupDialogData
     /// record containing functions that create react elements of notifications
-    (*
     Notifications : Notifications
-    *)
     /// State of menus for sheets, projects etc
-    TopMenuOpenState : TopMenu
+    TopMenuOpenState : TopMenu*)
     /// used to determine whether mouse is currently dragging the divider, or used normally
     DividerDragMode: DragMode
     /// viewer width in pixels altered by dragging the divider
@@ -612,7 +634,9 @@ type Model = {
     /// if true highlight connections from wavesim editor
     ConnsOfSelectedWavesAreHighlighted: bool
     /// Contains a list of pending messages
+    (*
     Pending: Msg list
+    *)
     UIState: UICommandType Option
     /// if true the "build" tab appears on the RHS
     BuildVisible: bool
@@ -637,7 +661,9 @@ let sheet_ = Lens.create (fun a -> a.Sheet) (fun s a -> {a with Sheet = s})
 (*let tTType_ = Lens.create (fun a -> a.TTConfig) (fun s a -> {a with TTConfig = s})
 let currentStepSimulationStep_ = Lens.create (fun a -> a.CurrentStepSimulationStep) (fun s a -> {a with CurrentStepSimulationStep = s})
 let currentTruthTable_ = Lens.create (fun a -> a.CurrentTruthTable) (fun s a -> {a with CurrentTruthTable = s})*)
+(*
 let popupDialogData_ = Lens.create (fun a -> a.PopupDialogData) (fun p a -> {a with PopupDialogData = p})
+*)
 let selectedComponent_ = Lens.create (fun a -> a.SelectedComponent) (fun s a -> {a with SelectedComponent = s})
 let userData_ = Lens.create (fun a -> a.UserData) (fun s a -> {a with UserData = s})
 let uISheetTrail_ = Lens.create (fun a -> a.UISheetTrail) (fun s a -> {a with UISheetTrail = s})

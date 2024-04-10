@@ -7,6 +7,7 @@ open FilesIO
 open Extractor
 open DrawModelType
 open Sheet.SheetInterface
+open ModelHelpers
 open Optics
 open Optics.Operators
 open System
@@ -27,6 +28,86 @@ module Constants =
     // NB if numCharsHidePath > minNumPathChars than path is either full-size or hidden
     let numCharsHidePath = 10
     
+
+
+/// Send messages to change Diagram Canvas and specified sheet waveSim in model
+let private loadStateIntoModel (finishUI:bool) (compToSetup:LoadedComponent) _ ldComps (model:Model) dispatch =
+    // it seems still need this, however code has been deleted!
+    //Sheet.checkForTopMenu () // A bit hacky, but need to call this once after everything has loaded to compensate mouse coordinates.
+    let ldcs = tryGetLoadedComponents model
+    let name = compToSetup.Name
+    let components, connections = compToSetup.CanvasState
+    //printfn "Loading..."
+    let msgs = 
+        [
+            (*
+            SetHighlighted([], []) // Remove current highlights.
+            *)
+    
+            // Clear the canvas.
+            Sheet SheetT.ResetModel
+            Sheet (SheetT.Wire BusWireT.ResetModel)
+            Sheet (SheetT.Wire (BusWireT.Symbol (SymbolT.ResetModel ) ) )
+    
+            // Finally load the new state in the canvas.
+            (*
+            SetIsLoading true
+            *)
+            //printfn "Check 1..."
+    
+            //Load components
+            Sheet (SheetT.Wire (BusWireT.Symbol (SymbolT.LoadComponents (ldcs,components ))))
+    
+            Sheet (SheetT.Wire (BusWireT.LoadConnections connections))
+
+            Sheet SheetT.FlushCommandStack // Discard all undo/redo.
+            // Run the a connection widths inference.
+            //printfn "Check 4..."
+    
+            Sheet (SheetT.Wire (BusWireT.BusWidths))
+            // JSdispatch <| InferWidths()
+            //printfn "Check 5..."
+            // Set no unsaved changes.
+
+            Sheet SheetT.UpdateBoundingBoxes
+
+            // set waveSim data
+            (*
+            AddWSModel (name, waveSim)
+            *)
+
+            // this message actually changes the project in model
+            SetProject {
+                ProjectPath = dirName compToSetup.FilePath
+                OpenFileName =  compToSetup.Name
+                WorkingFileName = Some compToSetup.Name
+                LoadedComponents = ldComps
+            }
+
+            Sheet (SheetT.KeyPress  SheetT.KeyboardMsg.CtrlW)
+            SynchroniseCanvas
+            (*SetIsLoading false 
+            if finishUI then FinishUICmd else DoNothing*)
+
+            //printfn "Check 6..."
+        ]
+    //INFO - Currently the spinner will ALWAYS load after 'SetTopMenu x', probably it is the last command in a chain
+    //Ideally it should happen before this, but it is not currently doing this despite the async call
+    //This will set a spinner for both Open project and Change sheet which are the two most lengthly processes
+    dispatch <| (Sheet (SheetT.SetSpinner true))
+    (*
+    dispatch <| SendSeqMsgAsynch msgs
+    *)
+    // msgs is bundled together and as a result a scroll from the ctrl-W scroll change is inserted in the event queue
+    // after the ctrl-w. We need anotehr ctrl-w to make sure this scroll event does not reset scroll
+    // the order in which messages get processed is problematic here - and the solution ad hoc - a better
+    // solution would be to understand exactly what determines event order in the event queue
+    dispatch <| Sheet (SheetT.KeyPress  SheetT.KeyboardMsg.CtrlW)
+    dispatch SynchroniseCanvas
+    //dispatch <| Sheet (SheetT.KeyPress  SheetT.KeyboardMsg.CtrlW)
+    //dispatch SynchroniseCanvas    
+
+
 let setupProjectFromComponents (finishUI:bool) (sheetName: string) (ldComps: LoadedComponent list) (model: Model) (dispatch: Msg->Unit)=
     let compToSetup =
         match ldComps with
@@ -38,11 +119,34 @@ let setupProjectFromComponents (finishUI:bool) (sheetName: string) (ldComps: Loa
             | Some comp -> comp
     match model.CurrentProj with
     | None -> ()
-    | Some p ->
+    (*| Some p ->
         dispatch EndSimulation // Message ends any running simulation.
         dispatch <|TruthTableMsg CloseTruthTable // Message closes any open Truth Table.
         //dispatch EndWaveSim
-        // TODO: make each sheet wavesim remember the list of waveforms.
+        // TODO: make each sheet wavesim remember the list of waveforms.*)
+    
+    let savedWaveSim = None
+        (*compToSetup.WaveInfo
+        |> Option.map loadWSModelFromSavedWaveInfo 
+        |> Option.defaultValue initWSModel*)
+
+    let waveSim = None
+        (*model.WaveSimSheet
+        |> Option.map (fun sheet -> (Map.tryFind sheet  model.WaveSim))
+        |> Option.defaultValue None
+        |> Option.defaultValue savedWaveSim*)
+        
+    loadStateIntoModel finishUI compToSetup waveSim ldComps model dispatch
+    {
+        ProjectPath = dirName compToSetup.FilePath
+        OpenFileName =  compToSetup.Name
+        WorkingFileName = Some compToSetup.Name
+        LoadedComponents = ldComps
+    }
+    |> SetProject // this message actually changes the project in model
+    |> dispatch
+    dispatch SynchroniseCanvas
+
 
 let quantifyChanges (ldc1:LoadedComponent) (ldc2:LoadedComponent) =
     let comps1,conns1 = ldc1.CanvasState
@@ -73,7 +177,9 @@ let rec resolveComponentOpenPopup
     let chooseWhichToOpen comps =
         let onlyUserCreated = List.filter (fun comp -> match comp.Form with |Some User |None -> true |_ ->false) comps
         (List.maxBy (fun comp -> comp.TimeStamp) onlyUserCreated).Name
+    (*
     dispatch ClosePopup
+    *)
     match resolves with
     | [] -> setupProjectFromComponents false (chooseWhichToOpen components) components model dispatch
     | Resolve (ldComp,autoComp) :: rLst ->

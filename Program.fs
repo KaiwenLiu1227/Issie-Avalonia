@@ -1,4 +1,4 @@
-﻿namespace Issie_Avalonia
+﻿module Program
 
 open Elmish
 open Avalonia
@@ -7,6 +7,13 @@ open Avalonia.FuncUI.Hosts
 open Avalonia.FuncUI.Elmish
 open Avalonia.Controls.ApplicationLifetimes
 open Avalonia.Media
+open ModelType
+open Optics
+open Optics.Operators
+
+let init() = MainView.init(), Cmd.none
+let update (msg: Msg) (model: Model) : Model * Cmd<Msg>  = Update.update msg model
+let view model dispatch = MainView.view model dispatch
 
 type MainWindow() as this =
     inherit HostWindow()
@@ -15,7 +22,8 @@ type MainWindow() as this =
         base.Width <- 1200.0
         base.Title <- "Issie Avalonia"
         this.AttachDevTools();
-        Program.mkSimple MainView.init Update.update MainView.view 
+        Program.mkProgram init update view 
+        |> Program.withHost this
         |> Program.run    
 
 type App() =
@@ -31,12 +39,12 @@ type App() =
             desktopLifetime.MainWindow <- MainWindow()
         | _ -> ()
 
-module Program =
 
-    [<EntryPoint>]
-    let main(args: string[]) =
-        AppBuilder
-            .Configure<App>()
-            .UsePlatformDetect()
-            .UseSkia()
-            .StartWithClassicDesktopLifetime(args)
+    
+[<EntryPoint>]
+let main(args: string[]) =
+    AppBuilder
+        .Configure<App>()
+        .UsePlatformDetect()
+        .UseSkia()
+        .StartWithClassicDesktopLifetime(args)

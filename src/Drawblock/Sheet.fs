@@ -189,11 +189,11 @@ module SheetInterface =
             this.Wire.Notifications
 
         /// Get the current canvas state in the form of (Component list * Connection list)
-        (*member this.GetCanvasState () =
+        member this.GetCanvasState () =
             let compList = SymbolUpdate.extractComponents this.Wire.Symbol
             let connList = BusWire.extractConnections this.Wire
 
-            compList, connList*)
+            compList, connList
 
         /// Clears the Undo and Redo stack of Sheet
         member this.FlushCommandStack dispatch =
