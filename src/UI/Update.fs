@@ -68,17 +68,23 @@ let update (msg : Msg) oldModel =
     //------------------------------MAIN MESSAGE DISPATCH----------------------------//
     //-------------------------------------------------------------------------------//
     let doBatchOfMsgsAsynch (msgs: seq<Msg>) =
+        printfn $"batchMsg: '{msgs}'"
         msgs
         |> Seq.map Elmish.Cmd.ofMsg 
         |> Elmish.Cmd.batch
         |> ExecCmdAsynch
         |> Elmish.Cmd.ofMsg
-        
+    let asyncOperation (cmd: Cmd<Msg>) = 
+        async {
+                do! (Async.Sleep 300)
+                return (ExecCmd cmd)
+        }
     match testMsg with
     | DoNothing -> //Acts as a placeholder to propergrate the ExecutePendingMessages message in a Cmd
         model, cmd
     | SetProject project ->
-        printfn $"Setting project with component: '{project.OpenFileName}'"
+        printfn $"Setting project: '{project.OpenFileName}'"
+        // printfn $"component: '{project.LoadedComponents}'"
         model
         |> set currentProj_ (Some project) 
         |> withNoMsg    
@@ -88,7 +94,7 @@ let update (msg : Msg) oldModel =
         // in this case we do not want the save button to be active, because moving the circuit is not a "real" change
         // updating loaded component CanvasState to equal draw bloack canvasstate will ensure the button stays inactive.
         let canvas = model.Sheet.GetCanvasState ()
-        printfn "synchronising canvas..."
+        printfn $"synchronising canvas:'{canvas}'"
         // this should disable the saev button by making loadedcomponent and draw blokc canvas the same
         model
         |> map openLoadedComponentOfModel_ (fun ldc -> {ldc with CanvasState = canvas})
@@ -103,7 +109,14 @@ let update (msg : Msg) oldModel =
         | _ -> sheetMsg sMsg model
     | SendSeqMsgAsynch msgs ->
         model, doBatchOfMsgsAsynch msgs
+    | ExecCmd cmd ->
+        model, cmd    
+    | ExecCmdAsynch cmd ->
+        let cmd' = 
+            Elmish.Cmd.OfAsyncImmediate.perform asyncOperation  
+        model, cmd
     | _ -> model,Cmd.none
+
     (*    
     // special messages for mouse control of screen vertical dividing bar, active when Wavesim is selected as rightTab
     | SetDragMode mode ->

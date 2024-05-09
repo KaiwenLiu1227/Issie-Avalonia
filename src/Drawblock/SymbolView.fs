@@ -32,16 +32,9 @@ let drawComponent (symbol:Symbol) dispatch=
 
 // WITH COMPONENT KEY BIND FOR CACHING 
 let renderSymbol props dispatch :IView=
-    printf $"comp-{props.Id} rendered" 
+    printf $"{props.Id} rendered" 
 
     Component.create($"comp-{props.Id}", fun ctx ->
-        let xPosition = getCompPos props "X"
-        let yPosition = getCompPos props "Y"
-        ctx.attrs[
-            Component.renderTransform (
-                TranslateTransform(xPosition, yPosition)
-            )
-        ]
         drawComponent props dispatch
     )
 
@@ -61,7 +54,6 @@ let renderSymbol props dispatch :IView=
 
 
 let symbolView (model:Model) dispatch =
-        printf $"{model.Symbols}"
         Canvas.create [
             (*
             Canvas.renderTransform matrixTransform

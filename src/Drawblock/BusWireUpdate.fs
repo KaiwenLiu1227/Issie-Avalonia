@@ -478,7 +478,8 @@ let update (msg : Msg) (issieModel : ModelType.Model) : ModelType.Model*Cmd<Mode
         {issieModel with Sheet={ issieModel.Sheet with Wire={model with Wires = newWires}}} |> withNoMsg
     | ToggleSnapToNet ->
         {issieModel with Sheet={ issieModel.Sheet with Wire={model with SnapToNet = not model.SnapToNet}}} |> withNoMsg
-    
+    | _ ->
+        issieModel |> withNoMsg
 
 //---------------------------------------------------------------------------------//        
 //---------------------------Other interface functions-----------------------------//
