@@ -246,8 +246,11 @@ let makePathAttr (startingControlPoint: XYPos) (endingControlPoint: XYPos) (endi
 
 
 let makePathFromAttr (attr:string) (pathParameters: Path) =
+    printfn $"{attr}"
     Path.create [
         Path.data attr
+        Path.fill (SolidColorBrush(Color.FromArgb(255uy, 255uy, 235uy, 47uy), 1.0))
+        Path.strokeThickness (float pathParameters.StrokeWidth)
             (*D attr
             SVGAttr.Stroke pathParameters.Stroke
             SVGAttr.StrokeWidth pathParameters.StrokeWidth

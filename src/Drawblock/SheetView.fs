@@ -26,12 +26,10 @@ let view
         let wireSvg = BusWire.view model.Wire wDispatch
 
         Canvas.create [
-            (*Canvas.height 250
-            Canvas.width 250*)
             Canvas.background (SolidColorBrush(Color.FromArgb(25uy, 25uy, 0uy, 0uy)))
             Canvas.children (
                 wireSvg
-            )    
+            )  
         ] :> IView
           
         

@@ -488,7 +488,7 @@ let renderWireWidthText (props: WireRenderProps) =
     let textStyle = 
         { Constants.busWidthTextStyle with Fill = props.ColorP.Text();}
 
-    let text = if props.Wire.Width = 1 then "" else string props.Wire.Width //Only print width > 1
+    let text = if props.Wire.Width = 1 then "1" else string props.Wire.Width //Only print width > 1
     let outPos = props.OutputPortLocation
     let yOffset = TextOffset.yOffset
     let xOffset = TextOffset.xOffset
@@ -515,13 +515,13 @@ let renderRadialWireSVG
     let dist2 = euclideanDistance seg2Start seg2End
     let rad = System.Math.Floor(min Constants.cornerRadius (max 0.0 (min (dist1/2.) (dist2/2.))))
     let makeCommandString xStart yStart rad sweepflag xEnd yEnd : string =
-        $"L {xStart} {yStart} A {rad} {rad}, 45, 0, {sweepflag}, {xEnd} {yEnd}" 
+        $"L {xStart} {yStart} A {rad} {rad}, 45, 0, {sweepflag}, {xEnd} {yEnd} " 
 
     //Checking if horizontal followed by length 0 vertical
     if seg1Start.X = seg1End.X && 
        seg1Start.X = seg2Start.X &&
        seg1Start.X = seg2End.X then
-        let current = sprintf "L %f %f" seg1End.X seg1End.Y
+        let current = sprintf "L %f,%f " seg1End.X seg1End.Y
         if snd(state) = Horizontal then
             (fst(state)+current, Vertical)
         else 
@@ -530,7 +530,7 @@ let renderRadialWireSVG
     else if seg1Start.Y = seg1End.Y && 
             seg1Start.Y = seg2Start.Y && 
             seg1Start.Y = seg2End.Y then
-        let current = sprintf "L %f %f" (seg1End.X) (seg1End.Y)
+        let current = sprintf "L %f,%f " (seg1End.X) (seg1End.Y)
         if snd(state) = Horizontal then
             (fst(state)+current, Vertical)
         else 
@@ -577,7 +577,7 @@ let renderModernWire (props:WireRenderProps) =
 
     let lineAttr = 
         segments
-        |> List.map (fun seg -> $"L %.2f{seg.End.X} %.2f{seg.End.Y}")
+        |> List.map (fun seg -> $"L %.2f{seg.End.X} %.2f{seg.End.Y} ")
         |> String.concat " "
 
     let pathPars:Path =
@@ -669,7 +669,7 @@ let renderRadialWire props =
     let widthOpt = EEExtensions.String.tryParseWith System.Int32.TryParse width
 
     let pathParameters = { defaultPath with Stroke = props.ColorP.Text(); StrokeWidth = width;}
-    let initialMoveCommand = sprintf "M %f %f "  firstVertex.X firstVertex.Y
+    let initialMoveCommand = sprintf "M 0.0,0.0 " 
     let initialState = (initialMoveCommand, getSegmentOrientation firstVertex secondVertex )
     
     let radialPathCommands = fst(
@@ -677,7 +677,7 @@ let renderRadialWire props =
         |> List.pairwise
         |> List.map (fun x -> ( {| First = fst(x); Second = snd(x) |}))
         |> List.fold renderRadialWireSVG (initialState) )
-    let finalLineCommand = sprintf "L %f %f" lastVertex.X lastVertex.Y
+    let finalLineCommand = sprintf "L %f,%f" lastVertex.X (lastVertex.Y+10.0)
     let fullPathCommand = radialPathCommands + finalLineCommand
 
     let renderedSVGPath = makePathFromAttr fullPathCommand pathParameters
@@ -735,17 +735,20 @@ let view (model : Model) (dispatch : Dispatch<Msg>) =
                     match props.ArrowDisplay with
                     | true -> [makePolygon str polygon]
                     | false -> []
-                StackPanel.create [
-                    StackPanel.children (
+                DockPanel.create [
+                        DockPanel.renderTransform (
+                            TranslateTransform(x-1400.0, y-1400.0)
+                        )
+                        DockPanel.children (
                        arrows @ wireReact         
                     )
                 ] :> IView
        
-    let symbols = SymbolView.view model.Symbol (Symbol >> dispatch) :> IView
+    let symbols = SymbolView.view model.Symbol (Symbol >> dispatch)
     let wires =
         model.Wires
         |> Map.toList 
         |> List.map (fun (_,wire) -> renderWire (wireProps wire))
-    symbols :: wires
-    //|> TimeHelpers.instrumentInterval "WireView" start
+    symbols @ wires
+       //|> TimeHelpers.instrumentInterval "WireView" start
 

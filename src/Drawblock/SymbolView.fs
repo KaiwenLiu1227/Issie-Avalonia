@@ -612,7 +612,8 @@ let symbolView (model:Model) dispatch =
                     renderSymbol symbol model.Theme dispatch) // Ignore the key with '_'
                 |> Seq.toList // Convert back to a list if needed for Canvas.children
             )
-        ]    
+        ]
+        |>generalize  
         
 
 let view (model : Model) (dispatch) =    
@@ -629,17 +630,15 @@ let view (model : Model) (dispatch) =
         listNotMoving @ listMoving
 
     let start = TimeHelpers.getTimeMs()
-    Canvas.create [
-        Canvas.height 1080
-        Canvas.width 1960
-        Canvas.children (
-            model.Symbols
-            |> Map.toSeq // Convert the map to a sequence of key-value pairs
-            |> Seq.map (fun (idx, symbol) ->
-                renderSymbol symbol model.Theme dispatch) // Ignore the key with '_'
-            |> Seq.toList // Convert back to a list if needed for Canvas.children
-        )
-    ]  
+    let symbols =
+        model.Symbols
+        |> Map.toSeq // Convert the map to a sequence of key-value pairs
+        |> Seq.map (fun (idx, symbol) ->
+            renderSymbol symbol model.Theme dispatch) // Ignore the key with '_'
+        |> Seq.toList // Convert back to a list if needed for Canvas.children
+    symbols
+
+
 /// init function for initial Symbol Model
 
 let init () = 
