@@ -3,10 +3,18 @@
 *)
 
 module DrawHelpers
-(*open Browser.Types
-open Fable.Core.JsInterop
-open Fable.React
-open Fable.React.Props*)
+
+open Elmish
+open Avalonia
+open Avalonia.Controls
+open Avalonia.Controls.Shapes
+open Avalonia.FuncUI
+open Avalonia.FuncUI.DSL
+open Avalonia.Media
+open Avalonia.FuncUI.Types
+open System
+open System.Globalization
+
 open CommonTypes
 
 
@@ -93,22 +101,25 @@ type Text = {
     FontWeight: string
     FontFamily: string
     Fill: string
-    (*
-    UserSelect: UserSelectOptions
-    *)
+    //  UserSelect: UserSelectOptions
     /// auto/middle/hanging: vertical alignment vs (X,Y)
     DominantBaseline: string
 }
 
-(*
-let testCanvas = Browser.Dom.document.createElement("canvas") :?> HTMLCanvasElement
+(*let testCanvas = Browser.Dom.document.createElement("canvas") :?> HTMLCanvasElement
 let canvasWidthContext = testCanvas.getContext_2d()
-*)
 
 /// To get this to work, note the fonts in the playground.fs test which work well.
 /// Add fonts there to test if you like.
 let getTextWidthInPixels (font:Text) (txt:string) =
-   1.0
+   let askedFont = String.concat " " [font.FontWeight; font.FontSize;  font.FontFamily]; // e.g. "16px bold sans-serif";
+   canvasWidthContext.font <- askedFont
+   //printf "Measururing '%s' -> '%s' with txt '%s' - fontSize=%s, sizeInpx = %.2f" askedFont canvasWidthContext.font txt font.FontSize sizeInPx
+   let textMetrics = canvasWidthContext.measureText(txt)
+   let ms = textMetrics.width 
+   ms*)
+let getTextWidthInPixels (font:Text) (txt:string) =
+    2.0
 
 /// Default line, change this one to create new lines
 let defaultLine = {
@@ -150,9 +161,7 @@ let defaultText = {
     FontFamily = "verdana"
     FontWeight = "normal"
     Fill = "black"
-    (*
-    UserSelect = UserSelectOptions.None
-    *)
+    // UserSelect = UserSelectOptions.None
     DominantBaseline = "hanging"
 }
 
@@ -179,19 +188,38 @@ let uuid():string = import "v4" "uuid"
 let uuid():string = System.Guid.NewGuid.ToString()
 #endif
 
+let convertToPointArray (pointsStr: string) : Point[] =
+    let splitPoints = pointsStr.Split(' ')
+    let rec parsePoints acc i =
+        if i >= splitPoints.Length then acc
+        else
+            let splitPoint = splitPoints.[i].Split(',')
+            if splitPoint.Length = 2 then
+                try
+                    let x = System.Double.Parse(splitPoint.[0].Trim())
+                    let y = System.Double.Parse(splitPoint.[1].Trim())
+                    parsePoints (Point(x,y):: acc) (i + 1)
+                with
+                | :? System.FormatException ->
+                    printfn "Skipping invalid point: %s" splitPoints.[i]
+                    parsePoints acc (i + 1)  // Skip this point and continue with the next
+            else
+                printfn "Skipping malformed point: %s" splitPoints.[i]
+                parsePoints acc (i + 1)  // Skip this point and continue with the next
+    
+    parsePoints [] 0 |> List.toArray |> Array.rev
+
 // ----------------------------- SVG Helpers ----------------------------- //
 
-/// Makes a line ReactElement, wildcard inputs as position can be a number or a string 
-(*let makeLine (x1: 'a) (y1: 'b) (x2: 'c) (y2: 'd) (lineParameters: Line) =
-    line [
-            X1 x1
-            Y1 y1
-            X2 x2
-            Y2 y2
-            SVGAttr.Stroke lineParameters.Stroke
-            SVGAttr.StrokeWidth lineParameters.StrokeWidth
-            SVGAttr.StrokeDasharray lineParameters.StrokeDashArray
-    ] []*)
+/// Makes a line Element, wildcard inputs as position can be a number or a string 
+let makeLine (x1: float) (y1: float) (x2: float) (y2: float) (lineParameters: Line) =
+    Line.create [
+        Line.startPoint (Point(float x1, float y1))
+        Line.endPoint (Point(float x2, float y2))
+        Line.stroke lineParameters.Stroke
+        Line.strokeThickness (float lineParameters.StrokeWidth)
+        // Line.strokeDashArray lineParameters.StrokeDashArray
+    ] :> IView
 
 
 /// Makes path attributes for a horizontal upwards-pointing arc radius r
@@ -215,6 +243,96 @@ let makePathAttr (startingControlPoint: XYPos) (endingControlPoint: XYPos) (endi
     let dx1, dy1, dx2, dy2 = startingControlPoint.X, startingControlPoint.Y, endingControlPoint.X, endingControlPoint.Y
     let dAttrribute = sprintf "C %f %f, %f %f, %f %f" dx1 dy1 dx2 dy2 x2 y2
     dAttrribute
+
+
+let makePathFromAttr (attr:string) (pathParameters: Path) =
+    Path.create [
+        Path.data attr
+            (*D attr
+            SVGAttr.Stroke pathParameters.Stroke
+            SVGAttr.StrokeWidth pathParameters.StrokeWidth
+            SVGAttr.StrokeDasharray pathParameters.StrokeDashArray
+            SVGAttr.StrokeLinecap pathParameters.StrokeLinecap
+            SVGAttr.Fill pathParameters.Fill*)
+    ] :> IView
+
+/// Makes a path ReactElement, points are to be given as an XYPos record element.
+/// Please note that this function is designed to create ONLY "Move to - Bézier Curve"
+///paths (this is what the "M" and "C" attributes stand for) and NOT a generalized SVG path element.
+let makeAnyPath (startingPoint: XYPos) (pathAttr:string) (pathParameters: Path) =
+    let x1, y1 = startingPoint.X, startingPoint.Y
+    let dAttr = sprintf "M %f %f %s" x1 y1 pathAttr
+    makePathFromAttr dAttr pathParameters
+
+/// Makes a path ReactElement, points are to be given as an XYPos record element.
+/// Please note that this function is designed to create ONLY "Move to - Bézier Curve"
+///paths (this is what the "M" and "C" attributes stand for) and NOT a generalized SVG path element.
+let makePath (startingPoint: XYPos) (startingControlPoint: XYPos) (endingControlPoint: XYPos) (endingPoint: XYPos) (pathParameters: Path) =
+    let x1, y1, x2, y2 = startingPoint.X, startingPoint.Y, endingPoint.X, endingPoint.Y
+    let dx1, dy1, dx2, dy2 = startingControlPoint.X, startingControlPoint.Y, endingControlPoint.X, endingControlPoint.Y
+    let dAttrribute = sprintf "M %f %f C %f %f, %f %f, %f %f" x1 y1 dx1 dy1 dx2 dy2 x2 y2
+    Path.create [
+        Path.data dAttrribute
+        ] :> IView
+    (*path [
+            D dAttrribute
+            SVGAttr.Stroke pathParameters.Stroke
+            SVGAttr.StrokeWidth pathParameters.StrokeWidth
+            SVGAttr.StrokeDasharray pathParameters.StrokeDashArray
+            SVGAttr.StrokeLinecap pathParameters.StrokeLinecap
+            SVGAttr.Fill pathParameters.Fill
+    ] []*)
+    
+/// Makes a polygon ReactElement, points are to be given as a correctly formatted SVGAttr.Points string 
+let makePolygon (points: string) (polygonParameters: Polygon) =
+    Polygon.create [
+        Polygon.points (convertToPointArray points)
+        Polygon.stroke (SolidColorBrush(Color.FromArgb(255uy, 0uy, 0uy, 0uy)))
+        Polygon.strokeThickness 2.0
+        Polygon.fill (SolidColorBrush(Color.FromArgb(255uy, 255uy, 235uy, 47uy), polygonParameters.FillOpacity))
+        (*
+        Component.onPointerPressed (fun args -> dispatch (OnPress polygonParameter.Id))
+    *)
+    ] :> IView
+    
+
+/// Makes a circle ReactElement
+let makeCircle (centreX: float) (centreY: float) (circleParameters: Circle) =
+    Ellipse.create
+      [
+        Ellipse.width circleParameters.R
+        (*Cx centreX
+        Cy centreY
+        R circleParameters.R
+        SVGAttr.Fill circleParameters.Fill
+        SVGAttr.FillOpacity circleParameters.FillOpacity
+        SVGAttr.Stroke circleParameters.Stroke
+        SVGAttr.StrokeWidth circleParameters.StrokeWidth*)
+      ] :> IView
+      
+/// Makes a text ReactElement
+let makeText (posX: float) (posY: float) (displayedText: string) (textParameters: Text) =
+    TextBlock.create [
+            TextBlock.text displayedText
+            // TextBlock.textAnchor textParameters.TextAnchor
+            // TextBlock.dominantBaseline textParameters.DominantBaseline
+            // TextBlock.fontWeight textParameters.FontWeight
+            // TextBlock.fontSize (float textParameters.FontSize)
+            TextBlock.fontFamily textParameters.FontFamily
+            // TextBlock.fill textParameters.Fill
+            // TextBlock.userSelect textParameters.UserSelect
+        ] :> IView
+
+/// makes a two-line text ReactElement
+/// Dy parameter determines line spacing
+let makeTwoLinesOfText (posX: float) (posY: float) (line1: string) (line2: string) (textParameters: Text) =
+    StackPanel.create[
+        StackPanel.children[
+            makeText posX posY line1 textParameters
+            makeText posX posY line2 textParameters
+        ]
+    ] :> IView
+    
 
 /// deliver string suitable for HTML color from a HighlightColor type value
 let getColorString (col: CommonTypes.HighLightColor) =
