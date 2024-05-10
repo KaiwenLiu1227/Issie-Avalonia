@@ -37,7 +37,6 @@ let private loadStateIntoModel (finishUI:bool) (compToSetup:LoadedComponent) _ l
     let ldcs = tryGetLoadedComponents model
     let name = compToSetup.Name
     let components, connections = compToSetup.CanvasState
-    printfn "Loading..."
     let msgs = 
         [
             (*

@@ -16,7 +16,9 @@ open DrawModelType.SymbolT
 open SymbolHelper
 
 let drawComponent (symbol:Symbol) dispatch=
-        let points = genPoints symbol.Component 20 20
+        let H = symbol.Component.H
+        let W = symbol.Component.W
+        let points = genPoints symbol.Component H W
         let pointList = points |> Array.toList |> List.map (fun p -> Point(p.X, p.Y))
         let appear = symbol.Appearance
 
@@ -32,9 +34,13 @@ let drawComponent (symbol:Symbol) dispatch=
 
 // WITH COMPONENT KEY BIND FOR CACHING 
 let renderSymbol props dispatch :IView=
-    printf $"{props.Id} rendered" 
-
+    // printf $"{props.Id} rendered" 
     Component.create($"comp-{props.Id}", fun ctx ->
+        ctx.attrs[
+            Component.renderTransform (
+                TranslateTransform(props.Pos.X-1200.0, props.Pos.Y-600.0)
+            )
+        ]
         drawComponent props dispatch
     )
 
@@ -58,8 +64,8 @@ let symbolView (model:Model) dispatch =
             (*
             Canvas.renderTransform matrixTransform
             *)
-            Canvas.height 250
-            Canvas.width 250
+            Canvas.height 1920
+            Canvas.width 1080
             (*Canvas.onPointerWheelChanged (fun args -> dispatch (Rotate args))
             Canvas.onPointerMoved (fun args -> handlePointerMoved args)
             Canvas.onPointerReleased (fun args -> dispatch OnRelease) *)
@@ -67,7 +73,6 @@ let symbolView (model:Model) dispatch =
                 model.Symbols
                 |> Map.toSeq // Convert the map to a sequence of key-value pairs
                 |> Seq.map (fun (idx, symbol) ->
-                    printf $"{idx}"
                     renderSymbol symbol dispatch) // Ignore the key with '_'
                 |> Seq.toList // Convert back to a list if needed for Canvas.children
             )

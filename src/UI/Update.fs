@@ -94,7 +94,7 @@ let update (msg : Msg) oldModel =
         // in this case we do not want the save button to be active, because moving the circuit is not a "real" change
         // updating loaded component CanvasState to equal draw bloack canvasstate will ensure the button stays inactive.
         let canvas = model.Sheet.GetCanvasState ()
-        printfn $"synchronising canvas:'{canvas}'"
+        // printfn $"synchronising canvas:'{canvas}'"
         // this should disable the saev button by making loadedcomponent and draw blokc canvas the same
         model
         |> map openLoadedComponentOfModel_ (fun ldc -> {ldc with CanvasState = canvas})
