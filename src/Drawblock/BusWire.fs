@@ -7,16 +7,20 @@ Wires are read and written from Issie as lists of wire vertices, whatever teh in
 
 module BusWire
 
-open CommonTypes
-(*open Fable.React
-open Fable.React.Props*)
 open Elmish
+open Avalonia
+open Avalonia.Controls
+open Avalonia.Controls.Shapes
+open Avalonia.FuncUI
+open Avalonia.FuncUI.DSL
+open Avalonia.Media
+open Avalonia.FuncUI.Types
+
+open CommonTypes
 open DrawHelpers
 open BlockHelpers
-
 open DrawModelType.SymbolT
 open DrawModelType.BusWireT
-
 
 
 
@@ -480,8 +484,7 @@ type WireRenderProps =
         InputPortLocation: XYPos
     }
 
-(*
-let renderWireWidthText (props: WireRenderProps): ReactElement =
+let renderWireWidthText (props: WireRenderProps) =
     let textStyle = 
         { Constants.busWidthTextStyle with Fill = props.ColorP.Text();}
 
@@ -495,7 +498,6 @@ let renderWireWidthText (props: WireRenderProps): ReactElement =
     | CommonTypes.Bottom -> makeText (outPos.X + xOffset) (outPos.Y + yOffset) text textStyle
     | CommonTypes.Right -> makeText (outPos.X + xOffset) (outPos.Y - yOffset) text textStyle
     | CommonTypes.Left -> makeText (outPos.X - xLeftOffset) (outPos.Y - yOffset) text textStyle
-    *)
 
 /// Creates the SVG command string required to render the wire
 /// (apart from the final "nub") with a radial display type 
@@ -568,7 +570,6 @@ let renderRadialWireSVG
 
 
  
-(*
 let renderModernWire (props:WireRenderProps) =
     let colour = props.ColorP.Text()
 
@@ -594,8 +595,7 @@ let renderModernWire (props:WireRenderProps) =
             seg.IntersectOrJumpList 
             |> List.map (fun x -> makeCircle x aseg.Start.Y circleParameters))
 
-    g [] (makeAnyPath segments[0].Start lineAttr pathPars :: circles segments)
-    *)
+    makeAnyPath segments[0].Start lineAttr pathPars :: circles segments
 
         
 
@@ -639,14 +639,13 @@ let renderJumpSegment (a:ASegment) : string list=
         makeJumpPathAttr jLst sPos.X
        
 ///Function used to render a single wire if the display type is jump
-(*
 let renderJumpWire props = 
     let absSegments = getAbsSegments props.Wire
     let firstVertex = absSegments.Head.Start
     let colour = props.ColorP.Text()
 
     
-    let renderedSegmentList : ReactElement List = 
+    let renderedSegmentList : IView List = 
         let pathPars:Path =
             { defaultPath with
                 Stroke = colour
@@ -657,7 +656,7 @@ let renderJumpWire props =
         |> String.concat " "
         |> (fun attr -> [makeAnyPath firstVertex attr pathPars])
 
-    g [] ([ renderWireWidthText props] @ renderedSegmentList)
+    [ renderWireWidthText props] @ renderedSegmentList
 
 ///Function used to render a single wire if the display type is radial
 let renderRadialWire props =
@@ -683,7 +682,7 @@ let renderRadialWire props =
 
     let renderedSVGPath = makePathFromAttr fullPathCommand pathParameters
 
-    g [] ([ renderWireWidthText props] @ [renderedSVGPath])
+    [ renderWireWidthText props] @ [renderedSVGPath]
 
 /// Function that will render all of the wires within the model, with the display type being set in Model.Type
 let view (model : Model) (dispatch : Dispatch<Msg>) =
@@ -714,9 +713,7 @@ let view (model : Model) (dispatch : Dispatch<Msg>) =
             InputPortLocation = inputPortLocation
         }
         
-    let renderWire = 
-        FunctionComponent.Of(
-            fun (props : WireRenderProps) ->
+    let renderWire props = 
                 let wireReact =
                     match props.DisplayType with    
                     | Radial -> renderRadialWire props
@@ -734,21 +731,21 @@ let view (model : Model) (dispatch : Dispatch<Msg>) =
                     | CommonTypes.Bottom -> $"{x},{y},{x+ws},{y+2.*ws},{x-ws},{y+2.*ws}"
                     | CommonTypes.Right -> $"{x},{y},{x+2.*ws},{y+ws},{x+2.*ws},{y-ws}"
                     | CommonTypes.Left -> $"{x},{y},{x-2.*ws},{y+ws},{x-2.*ws},{y-ws}"
-                let arrows: ReactElement list =
+                let arrows: IView list =
                     match props.ArrowDisplay with
                     | true -> [makePolygon str polygon]
                     | false -> []
-                g [] (arrows @ [wireReact ])          
-            , "Wire"
-            , equalsButFunctions
-        )
-    
-    let symbols = SymbolView.view model.Symbol (Symbol >> dispatch)
+                StackPanel.create [
+                    StackPanel.children (
+                       arrows @ wireReact         
+                    )
+                ] :> IView
+       
+    let symbols = SymbolView.view model.Symbol (Symbol >> dispatch) :> IView
     let wires =
         model.Wires
         |> Map.toList 
         |> List.map (fun (_,wire) -> renderWire (wireProps wire))
-    g [] (symbols :: wires)
+    symbols :: wires
     //|> TimeHelpers.instrumentInterval "WireView" start
-    *)
 

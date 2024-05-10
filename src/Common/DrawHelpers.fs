@@ -201,10 +201,10 @@ let convertToPointArray (pointsStr: string) : Point[] =
                     parsePoints (Point(x,y):: acc) (i + 1)
                 with
                 | :? System.FormatException ->
-                    printfn "Skipping invalid point: %s" splitPoints.[i]
+                    // printfn "Skipping invalid point: %s" splitPoints.[i]
                     parsePoints acc (i + 1)  // Skip this point and continue with the next
             else
-                printfn "Skipping malformed point: %s" splitPoints.[i]
+                // printfn "Skipping malformed point: %s" splitPoints.[i]
                 parsePoints acc (i + 1)  // Skip this point and continue with the next
     
     parsePoints [] 0 |> List.toArray |> Array.rev
@@ -298,9 +298,11 @@ let makePolygon (points: string) (polygonParameters: Polygon) =
 
 /// Makes a circle ReactElement
 let makeCircle (centreX: float) (centreY: float) (circleParameters: Circle) =
+    printfn $"{circleParameters}"
     Ellipse.create
       [
-        Ellipse.width circleParameters.R
+        Ellipse.width (circleParameters.R*2.0)
+        Ellipse.height (circleParameters.R*2.0)
         (*Cx centreX
         Cy centreY
         R circleParameters.R

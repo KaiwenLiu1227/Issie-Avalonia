@@ -11,24 +11,28 @@ open Avalonia.Layout
 open Avalonia.FuncUI.Helpers
 open Avalonia.FuncUI.Types
 open ModelType
-open SymbolHelper
-open SymbolView
+open DrawHelpers
+open DrawModelType
 open DrawModelType.SheetT
-   
-    
-    let sheetView model dispatch =
-            (*
-            printfn $"{model}"
-            *)
+open Optics
+open Operators  
+open Sheet
 
-            Canvas.create [
-                (*Canvas.height 250
-                Canvas.width 250*)
-                Canvas.background (SolidColorBrush(Color.FromArgb(25uy, 25uy, 0uy, 0uy)))
-                Canvas.children [
-                    symbolView model.Wire.Symbol dispatch
-                ]    
-            ]
+let view 
+    (model:Model) 
+    (dispatch : Msg -> unit)  =
+        let wDispatch wMsg = dispatch (Wire wMsg)
+
+        let wireSvg = BusWire.view model.Wire wDispatch
+
+        Canvas.create [
+            (*Canvas.height 250
+            Canvas.width 250*)
+            Canvas.background (SolidColorBrush(Color.FromArgb(25uy, 25uy, 0uy, 0uy)))
+            Canvas.children (
+                wireSvg
+            )    
+        ] :> IView
           
         
     

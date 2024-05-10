@@ -108,7 +108,8 @@ let drawPortsText (portList: list<Port>) (listOfNames: list<string>) (symb: Symb
         |> List.collect id
 
 /// Function to draw ports using getPortPos. The ports are equidistant     
-let drawPorts (portType: PortType) (portList: Port List) (showPorts:ShowPorts) (symb: Symbol)= 
+let drawPorts (portType: PortType) (portList: Port List) (showPorts:ShowPorts) (symb: Symbol)=
+    // printf $"{showPorts} {portType}"
     if not (portList.Length < 1) then       
         match (showPorts,portType) with
         | (ShowBoth,_)
@@ -220,7 +221,7 @@ let rotatePoints (points) (centre:XYPos) (transform:STransform) =
 
 /// Draw symbol (and its label) using theme for colors, returning a list of React components 
 /// implementing all of the text and shapes needed.
-let drawComponent (symbol:Symbol)=
+let drawComponent (symbol:Symbol) (theme:ThemeType) =
     let appear = symbol.Appearance
     let colour = appear.Colour
     let showPorts = appear.ShowPorts
@@ -358,8 +359,6 @@ let drawComponent (symbol:Symbol)=
         rotatePoints originalPoints {X=W/2.;Y=H/2.} transform
         |> toString
         
-    printfn $"points: {points}"
-
 
     let additions =       // Helper function to add certain characteristics on specific symbols (inverter, enables, clocks)
         let mergeWiresTextPos =
@@ -588,7 +587,7 @@ let drawComponent (symbol:Symbol)=
 
 
 // WITH COMPONENT KEY BIND FOR CACHING 
-let renderSymbol (props:Symbol) dispatch :IView=
+let renderSymbol (props:Symbol) (theme:ThemeType)  dispatch :IView=
     Component.create($"comp-{props.Id}", fun ctx ->
         ctx.attrs[
             Component.renderTransform (
@@ -597,45 +596,51 @@ let renderSymbol (props:Symbol) dispatch :IView=
         ]
         DockPanel.create [
             DockPanel.children (
-                drawComponent props 
+                drawComponent props theme
             )
         ]
     )
 
- (*// STANDARD IMPLEMENTATION WITHOUT COMPONENT KEY BIND FOR CACHING 
-let renderSymbol props dispatch :IView=
-    printfn "polygon %d render called" props.Id
-    let xPosition = getCompPos props "X"
-    let yPosition = getCompPos props "Y"
-    Viewbox.create[
-        Viewbox.renderTransform (
-            TranslateTransform(xPosition, yPosition)
-        )
-        Viewbox.child (
-           drawComponent props dispatch 
-        )
-    ]   *) 
-
-
 let symbolView (model:Model) dispatch =
         Canvas.create [
-            (*
-            Canvas.renderTransform matrixTransform
-            *)
             Canvas.height 1080
             Canvas.width 1960
-            (*Canvas.onPointerWheelChanged (fun args -> dispatch (Rotate args))
-            Canvas.onPointerMoved (fun args -> handlePointerMoved args)
-            Canvas.onPointerReleased (fun args -> dispatch OnRelease) *)
             Canvas.children (
                 model.Symbols
                 |> Map.toSeq // Convert the map to a sequence of key-value pairs
                 |> Seq.map (fun (idx, symbol) ->
-                    renderSymbol symbol dispatch) // Ignore the key with '_'
+                    renderSymbol symbol model.Theme dispatch) // Ignore the key with '_'
                 |> Seq.toList // Convert back to a list if needed for Canvas.children
             )
         ]    
         
+
+let view (model : Model) (dispatch) =    
+    /// View function for symbol layer of SVG
+    let toListOfNotMovingAndMoving map =
+        let listNotMoving = 
+            Map.filter (fun _ sym -> not sym.Moving && sym.Annotation = None) map
+            |> Map.toList
+            |> List.map snd
+        let listMoving =
+            Map.filter (fun _ sym -> sym.Moving && sym.Annotation = None) map
+            |> Map.toList
+            |> List.map snd
+        listNotMoving @ listMoving
+
+    let start = TimeHelpers.getTimeMs()
+    Canvas.create [
+        Canvas.height 1080
+        Canvas.width 1960
+        Canvas.children (
+            model.Symbols
+            |> Map.toSeq // Convert the map to a sequence of key-value pairs
+            |> Seq.map (fun (idx, symbol) ->
+                renderSymbol symbol model.Theme dispatch) // Ignore the key with '_'
+            |> Seq.toList // Convert back to a list if needed for Canvas.children
+        )
+    ]  
+/// init function for initial Symbol Model
 
 let init () = 
     { 

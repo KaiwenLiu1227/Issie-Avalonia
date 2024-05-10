@@ -94,7 +94,8 @@ open UIPopups
         BuildVisible = false
     }
 
-    let view model dispatch =
+        let view model dispatch =
+            let sheetDispatch sMsg = dispatch (Sheet sMsg)
             Grid.create [
                 Grid.children [
                     // Your main content here
@@ -103,8 +104,9 @@ open UIPopups
                               [
                                 catalogueView model dispatch
                                 topMenuView model dispatch
-                                sheetView model.Sheet dispatch ] ]
+                                SheetView.view model.Sheet sheetDispatch ] ]
                     // Overlay
                     overlayView model dispatch 
                 ]
-            ]         |> generalize
+            ]
+            |> generalize
