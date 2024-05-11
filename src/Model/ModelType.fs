@@ -359,6 +359,8 @@ type Msg =
     | SendSeqMsgAsynch of seq<Msg>
     | ExecCmdAsynch of Elmish.Cmd<Msg>
     | ExecCmd of Elmish.Cmd<Msg>
+    | StartUICmd of UICommandType
+    | ExecFuncInMessage of (Model -> (Msg->Unit) -> Unit) * (Msg -> Unit)
 
     (*| ShowExitDialog
     | Sheet of DrawModelType.SheetT.Msg

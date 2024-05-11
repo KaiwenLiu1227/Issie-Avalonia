@@ -1,10 +1,6 @@
-﻿module UIPopups 
+﻿module UIPopups
 
-open Avalonia.Controls
 open Avalonia.FuncUI.DSL
-open Avalonia.Media
-open Avalonia.Layout
-open ModelType
 
 
 let overlayView model dispatch =
@@ -34,4 +30,4 @@ let overlayView model dispatch =
                 )
         ]
     else*)
-        Border.create [] // Return an empty control when not visible
+    Border.create [] // Return an empty control when not visible

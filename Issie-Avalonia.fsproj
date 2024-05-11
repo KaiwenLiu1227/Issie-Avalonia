@@ -46,11 +46,13 @@
         <Compile Include="src\UI\ModelHelpers.fs" />
         <Compile Include="src\UI\UIPopups.fs" />
         <Compile Include="src\UI\MenuHelpers.fs" />
+        <Compile Include="src\UI\MiscMenuView.fs" />
         <Compile Include="src\UI\TopMenuView.fs"/>
         <Compile Include="src\UI\CatalogueView.fs"/>
         <Compile Include="src\UI\MainView.fs"/>
         <Compile Include="src\UI\UpdateHelpers.fs" />
         <Compile Include="src\UI\Update.fs"/>
+        
 
 
         <Compile Include="Program.fs"/>
@@ -76,6 +78,10 @@
         <None Include="demos\**">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="demos\1fulladder\" />
     </ItemGroup>
 
 

@@ -6,26 +6,20 @@ open Fable.React
 open Fable.React.Props
 open ElectronAPI*)
 open FilesIO
-open SimulatorTypes
 open ModelType
 open ModelHelpers
 open CommonTypes
 open Extractor
-open MenuHelpers
-open TopMenuView
 open Sheet.SheetInterface
 (*
 open BusWireUpdateHelpers
 *)
 open DrawModelType
 open Fable.SimpleJson
-open NumberHelpers
 (*open DiagramStyle
 open Browser
 open PopupHelpers*)
 open Optics.Optic
-open Optics.Operators
-open EEExtensions
 
 module Constants =
     let memoryUpdateCheckTime = 300.
@@ -44,13 +38,13 @@ let shortDSheetMsg msg = Some "Sheet message"
 /// used when message tracing (see Sheet menu to which on or off).
 /// Parameters that might be very large (like fastsimulation, or Model, or Symbols) should not be
 /// displayed using printf "%A".
-let shortDisplayMsg (msg:Msg) =
+let shortDisplayMsg (msg: Msg) =
     match msg with
     | SynchroniseCanvas -> None
     | Sheet sheetMsg -> shortDSheetMsg sheetMsg
     | DoNothing -> None
     | SetProject _ -> None
-    
+
 
 
 
@@ -60,7 +54,7 @@ let shortDisplayMsg (msg:Msg) =
 /// optimise for very quick return in the case that debugLevel = 0 (production version)
 /// optimise for quick return if nothing is printed.
 let getMessageTraceString (msg: Msg) =
-    let noDisplayMouseOp (mMsg:DrawHelpers.MouseT) = 
+    let noDisplayMouseOp (mMsg: DrawHelpers.MouseT) =
         mMsg.Op = DrawHelpers.Drag || mMsg.Op = DrawHelpers.Move
     (*
     let noDisplayMessage = function
@@ -76,12 +70,11 @@ let getMessageTraceString (msg: Msg) =
     else *)
     match shortDisplayMsg msg with
     | Some shortName -> shortName
-    | None ->
-        Helpers.sprintInitial 70 $"{msg}"
+    | None -> Helpers.sprintInitial 70 $"{msg}"
 
 let mutable updateTimeTotal = 0.
 
-let traceMessage startOfUpdateTime (msg:Msg) ((model,cmdL): Model*Cmd<Msg>) =
+let traceMessage startOfUpdateTime (msg: Msg) ((model, cmdL): Model * Cmd<Msg>) =
     (*
     if JSHelpers.debugLevel > 0 then
         let str = getMessageTraceString msg
@@ -98,18 +91,18 @@ let traceMessage startOfUpdateTime (msg:Msg) ((model,cmdL): Model*Cmd<Msg>) =
             TimeHelpers.instrumentInterval logMsg (startOfUpdateTime)  msg|> ignore
             *)
 
-    model,cmdL
+    model, cmdL
 
 let mutable lastMemoryUpdateCheck = 0.
 
-let updateAllMemoryCompsIfNeeded (model:Model) =
+let updateAllMemoryCompsIfNeeded (model: Model) =
     (*let time = TimeHelpers.getTimeMs()
     if time - lastMemoryUpdateCheck > Constants.memoryUpdateCheckTime && (getWSModel model).State = Success then
         printfn "checking update of memories"
         lastMemoryUpdateCheck <- time
         MemoryEditorView.updateAllMemoryComps model
     else*)
-        model
+    model
 
 //-------------------------------------------------------------------------------------------------//
 //-------------------------------------CONTEXT MENUS-----------------------------------------------//
@@ -141,7 +134,7 @@ type RightClickElement =
     *)
     | WaveSimHelp
     | NoMenu
-    
+
 
 let mutable rightClickElement: RightClickElement = NoMenu
 
@@ -247,7 +240,7 @@ let mutable rightClickElement: RightClickElement = NoMenu
     | _ ->
         printfn $"Clicked on '{drawOn.ToString()}'"
         "" // default is no menu*)
-            
+
 
 
 /// Function that implement action based on context menu item click.
@@ -447,7 +440,7 @@ let filterByOKSheets (model: Model) (sheet: string) =
     match model.CurrentProj with
     | Some p when p.OpenFileName = sheet -> false
     | Some p when p.LoadedComponents |> List.forall (fun ldc -> ldc.Name <> sheet) -> false
-    | _ -> true   
+    | _ -> true
 
 //-------------------------------------------------------------------------------------------------//
 //-------------------------------------UPDATE FUNCTIONS--------------------------------------------//
@@ -466,62 +459,72 @@ let filterByOKSheets (model: Model) (sheet: string) =
 
 /// Adapter function to pipeline adding a default "Cmd.none" command to a model as returned
 /// in update function.
-let withNoMsg (model: Model) : Model * Cmd<Msg> =
-    model, Cmd.none
+let withNoMsg (model: Model) : Model * Cmd<Msg> = model, Cmd.none
 
 /// Implement action of top bar 'Back' button using the UISheetTrail
-let processSheetBackAction (dispatch: Msg -> unit) (model: Model)  =
+let processSheetBackAction (dispatch: Msg -> unit) (model: Model) =
     let goodSheets = // filter trail to remove no-longer-valid sheets
-        model.UISheetTrail
-        |> List.filter (filterByOKSheets model) // make sure trail still exists!
+        model.UISheetTrail |> List.filter (filterByOKSheets model) // make sure trail still exists!
+
     let trail =
         match goodSheets with
-        | [] ->
-            []
+        | [] -> []
         | (sheet :: others) ->
             let p = Option.get model.CurrentProj
             (*
             openFileInProject sheet p model dispatch
             *)
             others
-    model
-    |> set uISheetTrail_ trail
+
+    model |> set uISheetTrail_ trail
 
 
 /// Read persistent user data from file in userAppDir.
 /// Store in Model UserData.
 let readUserData (userAppDir: string) (model: Model) : Model * Cmd<Msg> =
-    let addAppDirToUserData model = 
-        {model with UserData = {model.UserData with UserAppDir = Some userAppDir}}
+    let addAppDirToUserData model =
+        { model with
+            UserData =
+                { model.UserData with
+                    UserAppDir = Some userAppDir } }
 
     let modelOpt =
         try
-            let jsonRes = tryReadFileSync <| pathJoin [|userAppDir;"IssieSettings.json"|]
+            let jsonRes = tryReadFileSync <| pathJoin [| userAppDir; "IssieSettings.json" |]
+
             jsonRes
             |> Result.bind (fun json -> Json.tryParseAs<UserData> json)
-            |> Result.bind (fun (data: UserData) -> Ok {model with UserData = data})
-            |> (function | Ok model -> model | Error _ -> printfn "Error reading user data" ; model)
-            |> addAppDirToUserData 
+            |> Result.bind (fun (data: UserData) -> Ok { model with UserData = data })
+            |> (function
+            | Ok model -> model
+            | Error _ ->
+                printfn "Error reading user data"
+                model)
+            |> addAppDirToUserData
             |> userDataToDrawBlockModel
             |> Some
-        with
-        | e -> None
+        with e ->
+            None
+
     match modelOpt with
     | Some model -> model, Cmd.none
     | None -> addAppDirToUserData model, Cmd.none
 
-let writeUserData (model:Model) =
+let writeUserData (model: Model) =
     model.UserData.UserAppDir
     |> Option.map (fun userAppDir ->
         try
             let data = drawBlockModelToUserData model model.UserData
             Json.serialize<UserData> data |> Ok
-        with
-        | e -> Error "Can't write settings on this PC because userAppDir does not exist"
-        |> Result.bind (fun json -> writeFile (pathJoin [|userAppDir;"IssieSettings.json"|]) json)
+        with e ->
+            Error "Can't write settings on this PC because userAppDir does not exist"
+        |> Result.bind (fun json -> writeFile (pathJoin [| userAppDir; "IssieSettings.json" |]) json)
         |> Result.mapError (fun mess -> $"Write error on directory {userAppDir}: %s{mess}")
-        |> function | Error mess -> printfn "%s" mess | _ -> ())
+        |> function
+            | Error mess -> printfn "%s" mess
+            | _ -> ())
     |> ignore
+
     model
 
 
@@ -614,20 +617,29 @@ let getCurrentTimeStamp model =
     | Some p ->
         p.LoadedComponents
         |> List.tryFind (fun lc -> lc.Name = p.OpenFileName)
-        |> function | Some lc -> lc.TimeStamp
-                    | None -> failwithf "Project inconsistency: can't find component %s in %A"
-                                p.OpenFileName ( p.LoadedComponents |> List.map (fun lc -> lc.Name))
+        |> function
+            | Some lc -> lc.TimeStamp
+            | None ->
+                failwithf
+                    "Project inconsistency: can't find component %s in %A"
+                    p.OpenFileName
+                    (p.LoadedComponents |> List.map (fun lc -> lc.Name))
 
 /// Replace timestamp of current loaded component in model project by current time
 /// Used in update function
 let updateTimeStamp model =
-    let setTimeStamp (lc:LoadedComponent) = {lc with TimeStamp = System.DateTime.Now}
+    let setTimeStamp (lc: LoadedComponent) =
+        { lc with
+            TimeStamp = System.DateTime.Now }
+
     match model.CurrentProj with
     | None -> model
     | Some p ->
         p.LoadedComponents
         |> List.map (fun lc -> if lc.Name = p.OpenFileName then setTimeStamp lc else lc)
-        |> fun lcs -> { model with CurrentProj=Some {p with LoadedComponents = lcs}}
+        |> fun lcs ->
+            { model with
+                CurrentProj = Some { p with LoadedComponents = lcs } }
 
 //Finds if the current canvas is different from the saved canvas
 // waits 50ms from last check
@@ -662,13 +674,13 @@ let resetDialogIfSelectionHasChanged newModel oldModel : Model =
     else newModel
     *)
 
-let updateComponentMemory (addr:int64) (data:int64) (compOpt: Component option) =
+let updateComponentMemory (addr: int64) (data: int64) (compOpt: Component option) =
     match compOpt with
     | None -> None
-    | Some ({Type= (AsyncROM1 mem as ct)} as comp)
-    | Some ({Type = (ROM1 mem as ct)} as comp)
-    | Some ({Type= (AsyncRAM1 mem as ct)} as comp)
-    | Some ({Type= (RAM1 mem as ct)} as comp) -> 
+    | Some({ Type = (AsyncROM1 mem as ct) } as comp)
+    | Some({ Type = (ROM1 mem as ct) } as comp)
+    | Some({ Type = (AsyncRAM1 mem as ct) } as comp)
+    | Some({ Type = (RAM1 mem as ct) } as comp) ->
         let update mem ct =
             match ct with
             | AsyncROM1 _ -> AsyncROM1 mem
@@ -676,10 +688,14 @@ let updateComponentMemory (addr:int64) (data:int64) (compOpt: Component option) 
             | RAM1 _ -> RAM1 mem
             | AsyncRAM1 _ -> AsyncRAM1 mem
             | _ -> ct
-        let mem' = {mem with Data = mem.Data |> Map.add addr data}
-        Some {comp with Type= update mem' ct}
+
+        let mem' =
+            { mem with
+                Data = mem.Data |> Map.add addr data }
+
+        Some { comp with Type = update mem' ct }
     | _ -> compOpt
-   
+
 (*
 let exitApp (model:Model) =
     // send message to main process to initiate window close and app shutdown
@@ -691,9 +707,9 @@ let exitApp (model:Model) =
 /// Used because Msg type does not support structural equality.
 /// **DANGER** will only work for messages which are physically the the same.
 /// In this use case that is fine.
-let isSameMsg = LanguagePrimitives.PhysicalEquality 
+let isSameMsg = LanguagePrimitives.PhysicalEquality
 
-let findChange (model : Model) : bool = 
+let findChange (model: Model) : bool =
     let last = model.LastChangeCheckTime // NB no check to reduce total findChange time implemented yet - TODO if needed
     (*
     let start = TimeHelpers.getTimeMs()
@@ -703,19 +719,22 @@ let findChange (model : Model) : bool =
     | None -> false
     | Some prj ->
         //For better efficiency just check if the save button
-        let savedComponent = 
-            prj.LoadedComponents
-            |> List.find (fun lc -> lc.Name = prj.OpenFileName)
+        let savedComponent =
+            prj.LoadedComponents |> List.find (fun lc -> lc.Name = prj.OpenFileName)
+
         let canv = savedComponent.CanvasState
-        let canv' = model.Sheet.GetCanvasState ()
+        let canv' = model.Sheet.GetCanvasState()
         (canv <> canv') && not (compareCanvas 100. canv canv')
-        (*
+(*
         |> TimeHelpers.instrumentInterval "findChange" start
         *)
 
-let sheetMsg sMsg model = 
+let sheetMsg sMsg model =
     let sModel, sCmd = SheetUpdate.update sMsg model
-    {sModel with SavedSheetIsOutOfDate = findChange sModel}, sCmd
+
+    { sModel with
+        SavedSheetIsOutOfDate = findChange sModel },
+    sCmd
 
 ///Returns None if no mouse drag message found, returns Some (lastMouseMsg, msgQueueWithoutMouseMsgs) if a drag message was found
 (*
@@ -743,6 +762,3 @@ let executePendingMessagesF n model =
     else 
         model, Cmd.none
         *)
-
-
-    
