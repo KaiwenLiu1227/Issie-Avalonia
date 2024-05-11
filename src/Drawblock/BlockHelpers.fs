@@ -105,8 +105,8 @@ let overlap2DBox (bb1: BoundingBox) (bb2: BoundingBox) : bool =
 /// Returns an XYPos shifted by length in an X or Y direction defined by orientation.
 let inline addLengthToPos (position: XYPos) orientation length =
     match orientation with
-    | Horizontal -> { position with X = position.X + length }
-    | Vertical -> { position with Y = position.Y + length }
+    | Horizontal -> { position with X = position.X - length }
+    | Vertical -> { position with Y = position.Y - length }
 
 /// Returns the opposite orientation of the input orientation. (i.e. Horizontal becomes Vertical and vice-versa)
 let inline switchOrientation orientation =
@@ -160,7 +160,11 @@ let inline foldOverNonZeroSegs folder state wire =
 let getAbsSegments (wire: Wire) : ASegment list =
     let convertToAbs ((start,dir): XYPos*Orientation) (seg: Segment) =
         {Start=start; End = addLengthToPos start dir seg.Length; Segment = seg}
-    (((wire.StartPos,wire.InitialOrientation),[]), wire.Segments)
+    let startPos = {
+                        X=0.0
+                        Y=0.0
+                    }    
+    (((startPos,wire.InitialOrientation),[]), wire.Segments)
     ||> List.fold (fun (posDir, aSegL) seg -> 
             let nextASeg = convertToAbs posDir seg
             let posDir' = nextASeg.End, switchOrientation (snd posDir)

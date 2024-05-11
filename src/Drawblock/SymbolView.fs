@@ -594,8 +594,8 @@ let renderSymbol (props:Symbol) (theme:ThemeType)  dispatch :IView=
                 TranslateTransform(props.Pos.X-1400.0, props.Pos.Y-1400.0)
             )
         ]
-        DockPanel.create [
-            DockPanel.children (
+        Canvas.create [
+            Canvas.children (
                 drawComponent props theme
             )
         ]

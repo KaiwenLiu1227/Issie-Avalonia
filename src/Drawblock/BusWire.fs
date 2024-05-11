@@ -669,7 +669,7 @@ let renderRadialWire props =
     let widthOpt = EEExtensions.String.tryParseWith System.Int32.TryParse width
 
     let pathParameters = { defaultPath with Stroke = props.ColorP.Text(); StrokeWidth = width;}
-    let initialMoveCommand = sprintf "M 0.0,0.0 " 
+    let initialMoveCommand = sprintf "M %f %f "  firstVertex.X firstVertex.Y
     let initialState = (initialMoveCommand, getSegmentOrientation firstVertex secondVertex )
     
     let radialPathCommands = fst(
@@ -677,7 +677,7 @@ let renderRadialWire props =
         |> List.pairwise
         |> List.map (fun x -> ( {| First = fst(x); Second = snd(x) |}))
         |> List.fold renderRadialWireSVG (initialState) )
-    let finalLineCommand = sprintf "L %f,%f" lastVertex.X (lastVertex.Y+10.0)
+    let finalLineCommand = sprintf "L %f %f" lastVertex.X lastVertex.Y
     let fullPathCommand = radialPathCommands + finalLineCommand
 
     let renderedSVGPath = makePathFromAttr fullPathCommand pathParameters
@@ -723,23 +723,23 @@ let view (model : Model) (dispatch : Dispatch<Msg>) =
                     defaultPolygon with
                         Fill = "black"
                         }
-                let x,y = props.InputPortLocation.X, props.InputPortLocation.Y
+                let x,y = 0.0, 0.0
                 let ws = min 2.5 props.StrokeWidthP
                 let str:string = 
                     match props.TriangleEdge with
-                    | CommonTypes.Top -> $"{x},{y},{x+ws},{y-2.*ws},{x-ws},{y-2.*ws}"
-                    | CommonTypes.Bottom -> $"{x},{y},{x+ws},{y+2.*ws},{x-ws},{y+2.*ws}"
-                    | CommonTypes.Right -> $"{x},{y},{x+2.*ws},{y+ws},{x+2.*ws},{y-ws}"
-                    | CommonTypes.Left -> $"{x},{y},{x-2.*ws},{y+ws},{x-2.*ws},{y-ws}"
+                    | CommonTypes.Top -> $"{x},{y} {x+ws},{y-2.*ws} {x-ws},{y-2.*ws}"
+                    | CommonTypes.Bottom -> $"{x},{y} {x+ws},{y+2.*ws} {x-ws},{y+2.*ws}"
+                    | CommonTypes.Right -> $"{x},{y} {x+2.*ws},{y+ws} {x+2.*ws},{y-ws}"
+                    | CommonTypes.Left -> $"{x},{y} {x-2.*ws},{y+ws} {x-2.*ws},{y-ws}"
                 let arrows: IView list =
                     match props.ArrowDisplay with
                     | true -> [makePolygon str polygon]
                     | false -> []
-                DockPanel.create [
-                        DockPanel.renderTransform (
-                            TranslateTransform(x-1400.0, y-1400.0)
+                Canvas.create [
+                        Canvas.renderTransform (
+                            TranslateTransform(props.InputPortLocation.X-1400.0, props.InputPortLocation.Y-1400.0)
                         )
-                        DockPanel.children (
+                        Canvas.children (
                        arrows @ wireReact         
                     )
                 ] :> IView
