@@ -13,7 +13,8 @@ open System.Text.RegularExpressions
 open DrawModelType
 open DrawModelType.SymbolT
 open Symbol
-(*open SymbolPortHelpers
+open SymbolPortHelpers
+(*
 open SymbolResizeHelpers // HLP23 AUTHOR: BRYAN TAN
 open SymbolReplaceHelpers*)
 open Optics
@@ -695,7 +696,7 @@ let update (msg : Msg) (model : Model): Model*Cmd<'a>  =
         let (newModel, _) = addSymbol ldcs model pos compType lbl
         newModel, Cmd.none
 
-    (*| CopySymbols compIds ->
+    | CopySymbols compIds ->
         (copySymbols model compIds), Cmd.none
 
     | ShowAllInputPorts ->
@@ -712,8 +713,9 @@ let update (msg : Msg) (model : Model): Model*Cmd<'a>  =
 
     | ShowCustomOnlyPorts compList ->
         (showCustomPorts model compList), Cmd.none
+        
     | MoveSymbols (compList, move) -> 
-        (moveSymbols model compList move), Cmd.none*)
+        (moveSymbols model compList move), Cmd.none
 
     | MoveLabel (compId, move) ->
          Optic.map (symbolOf_ compId) (moveLabel move) model, Cmd.none
@@ -728,9 +730,7 @@ let update (msg : Msg) (model : Model): Model*Cmd<'a>  =
     | ErrorSymbols (errorCompList,selectCompList,isDragAndDrop) -> 
         (errorSymbols model (errorCompList,selectCompList,isDragAndDrop)), Cmd.none 
         
-    (*
     | MouseMsg _ -> model, Cmd.none // allow unused mouse messages
-    *)
 
     | ChangeLabel (sId, newLabel) ->
         (changeLabel model sId newLabel), Cmd.none

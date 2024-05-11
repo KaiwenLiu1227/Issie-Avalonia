@@ -11,36 +11,41 @@
 
 
     <ItemGroup>
-
-        
-        <Compile Include="src\Common\Optics.fs" />
-        <Compile Include="src\Common\CommonTypes.fs" />
-        <Compile Include="src\Model\DrawModelType.fs" />
-        <Compile Include="src\Model\ModelType.fs"/>
-        <Compile Include="src\Common\Helpers.fs" />
+        <!-- Common definitions -->
         <Compile Include="src\Common\EEExtensions.fs" />
+        <Compile Include="src\Common\Optics.fs" />
+        <!--<Compile Include="Common\ElectronAPI.fs" />-->
+        <!--<Compile Include="Common\HashMap.fs" />-->
+        <Compile Include="src\Common\CommonTypes.fs" />
         <Compile Include="src\Common\DrawHelpers.fs" />
+        <Compile Include="src\Common\Helpers.fs" />
         <Compile Include="src\Common\TimeHelpers.fs" />
-
+        <!--<Compile Include="src\Common\WidthInferer.fs" />-->
+        
         <Compile Include="src\Simulator\SimulatorTypes.fs" />
         <Compile Include="src\Simulator\Extractor.fs" />
         <Compile Include="src\Simulator\NumberHelpers.fs" />
 
-
         <Compile Include="src\Interface\FileIO.fs"/>
-
+        
+        <Compile Include="src\Model\DrawModelType.fs" />
+        <Compile Include="src\Model\ModelType.fs" />
+        
         <Compile Include="src\Drawblock\SymbolHelpers.fs" />
         <Compile Include="src\Drawblock\SymbolHelper.fs"/>
         <Compile Include="src\Drawblock\BlockHelpers.fs" />
         <Compile Include="src\Drawblock\Symbol.fs" />
+        <Compile Include="src\Drawblock\SymbolPortHelpers.fs" />
         <Compile Include="src\Drawblock\SymbolView.fs"/>
         <Compile Include="src\Drawblock\SymbolUpdate.fs" />
         <Compile Include="src\Drawblock\BusWire.fs" />
         <Compile Include="src\Drawblock\Sheet.fs" />
         <Compile Include="src\Drawblock\BusWireUpdateHelpers.fs" />
         <Compile Include="src\Drawblock\BusWireUpdate.fs" />
+        <Compile Include="src\Drawblock\SheetUpdateHelpers.fs" />
         <Compile Include="src\Drawblock\SheetUpdate.fs" />
         <Compile Include="src\Drawblock\SheetView.fs"/>
+        
 
 
         <Compile Include="src\UI\ModelHelpers.fs" />

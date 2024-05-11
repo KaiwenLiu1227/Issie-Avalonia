@@ -400,7 +400,7 @@ let symbolBBUnion (centresOnly: bool) (symbols: SymbolT.Symbol list) :BoundingBo
 
 /// Returns the smallest BB that contains all symbols, labels, and wire segments.
 /// For empty circuit a BB is returned in middle of viewable screen.
-(*let symbolWireBBUnion (model:Model) =
+let symbolWireBBUnion (model:Model) =
     let symbols =
         model.Wire.Symbol.Symbols
         |> Helpers.mapValues
@@ -448,7 +448,7 @@ let getWindowParasToFitBox model (box: BoundingBox)  =
     let xScroll = xMiddle - (rh-lh)/2.
     let yMiddle = (box.TopLeft.Y + (box.H)/2.)*magToUse
     let yScroll = yMiddle - (bottom-top)/2.
-    {|Scroll={X=xScroll; Y=yScroll}; MagToUse=magToUse|}*)
+    {|Scroll={X=xScroll; Y=yScroll}; MagToUse=magToUse|}
 
 let addBoxMargin (fractionalMargin:float) (absoluteMargin:float) (box: BoundingBox) =
     let boxMargin = 
@@ -461,7 +461,7 @@ let addBoxMargin (fractionalMargin:float) (absoluteMargin:float) (box: BoundingB
         H = box.H + boxMargin*2.
      }
 
-(*/// Check that canvas is large enough to have space all round the visible area.
+/// Check that canvas is large enough to have space all round the visible area.
 /// If not, then change model by moving circuit on canvas and/or extending canvas.
 /// Keep components in same visible position during this process.
 /// returns new model with all positions updated if need be.
@@ -554,7 +554,7 @@ let isBBoxAllVisible model (bb: BoundingBox) =
     lh < bb.TopLeft.Y && 
     top < bb.TopLeft.X && 
     bb.TopLeft.Y+bb.H < bottom && 
-    bb.TopLeft.X+bb.W < rh*)
+    bb.TopLeft.X+bb.W < rh
 
 /// could be made more efficient, since segments contain redundant info
 let getWireBBox (wire: BusWireT.Wire) =
@@ -567,7 +567,6 @@ let getWireBBox (wire: BusWireT.Wire) =
     BlockHelpers.foldOverSegs updateBoundingBox {TopLeft = wire.StartPos; W=0; H=0;} wire
     
 
-(*
 let isAllVisible (model: Model)(conns: ConnectionId list) (comps: ComponentId list) =
     let wVisible =
         conns
@@ -586,7 +585,6 @@ let isAllVisible (model: Model)(conns: ConnectionId list) (comps: ComponentId li
         |> List.map (isBBoxAllVisible model)
         |> List.fold (&&) true
     wVisible && cVisible
-    *)
 
 
     

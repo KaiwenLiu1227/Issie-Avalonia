@@ -1,17 +1,13 @@
 ﻿module DrawModelType
 
 open System.Drawing
+open Avalonia.FuncUI.Types
 open Avalonia.Media
 open Fable.Core
 open CommonTypes
-(*
 open DrawHelpers
-open Fable.React
-*)
 open Optics
-(*
-open Node.ChildProcess
-*)
+
 
 //--------------------------COMMON TYPES------------------------------//
 
@@ -234,18 +230,14 @@ module SymbolT =
 
         Theme: ThemeType
 
-        (*
-        HintPane: ReactElement option
-        *)
+        HintPane: IView option
         }
 
     //----------------------------Message Type-----------------------------------//
 
     /// The different messages coming from sheet, normally represent events
     type Msg =
-        (*
         | MouseMsg of MouseT
-        *)
         | AddSymbol of (LoadedComponent list) * pos:XYPos * compType:ComponentType * lbl: string
         | CopySymbols of ComponentId list
         | DeleteSymbols of sIds:ComponentId list
@@ -556,9 +548,7 @@ module SheetT =
         | KeyPress of KeyboardMsg
         | ToggleGrid
         | KeepZoomCentered of XYPos
-        (*
         | MouseMsg of MouseT
-        *)
         | UpdateBoundingBoxes
         | UpdateSingleBoundingBox of ComponentId
         | UpdateScrollPos of XYPos

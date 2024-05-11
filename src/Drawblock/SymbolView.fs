@@ -645,7 +645,5 @@ let init () =
         Symbols = Map.empty; CopiedSymbols = Map.empty
         Ports = Map.empty ; InputPortsConnected= Set.empty
         OutputPortsConnected = Map.empty; Theme = Colourful
-        (*
         HintPane = None
-    *)
     }, Cmd.none

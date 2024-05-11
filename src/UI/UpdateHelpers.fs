@@ -56,11 +56,9 @@ let shortDisplayMsg (msg: Msg) =
 let getMessageTraceString (msg: Msg) =
     let noDisplayMouseOp (mMsg: DrawHelpers.MouseT) =
         mMsg.Op = DrawHelpers.Drag || mMsg.Op = DrawHelpers.Move
-    (*
     let noDisplayMessage = function
         | Sheet (SheetT.Msg.Wire(BusWireT.Msg.Symbol(SymbolT.MouseMsg _ | SymbolT.ShowPorts _ ))) -> true
         | _ -> false
-        *)
 
     (*if JSHelpers.debugLevel = 0 ||
        not (Set.contains "update" JSHelpers.debugTraceUI) ||

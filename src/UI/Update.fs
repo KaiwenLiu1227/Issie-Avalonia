@@ -39,9 +39,7 @@ let update (msg: Msg) oldModel =
     let withMsgs (msgs: Msg list) (model: Model) =
         model, Cmd.batch (List.map Cmd.ofMsg msgs)
 
-    (*
     let startOfUpdateTime = TimeHelpers.getTimeMs()   
-    *)
 
     //Add the message to the pending queue if it is a mouse drag message
     let model =

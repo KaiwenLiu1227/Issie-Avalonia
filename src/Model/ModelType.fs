@@ -26,7 +26,6 @@ module Constants =
 /// NB: There are fields which are commented out: these can be added back in
 /// later on if we want to group those components together by type rather than
 /// separately by name.
-[<StructuralEquality; StructuralComparison>]
 type ComponentGroup =
     | WireLabel
     | InputOutput
@@ -42,7 +41,6 @@ type ComponentGroup =
 
 
 /// control checkboxes in waveform simulator wave selection
-[<StructuralEquality; StructuralComparison>]
 type CheckBoxStyle =
     | PortItem of Wave * string
     (*
@@ -51,7 +49,6 @@ type CheckBoxStyle =
     | GroupItem of ComponentGroup * string list
     | SheetItem of string list
 
-[<StructuralEquality; StructuralComparison>]
 type RightTab =
     | Properties
     | Catalogue
@@ -59,13 +56,11 @@ type RightTab =
     | Build
     | Transition // hack to make a transition from Simulation to Catalog without a scrollbar artifact
 
-[<StructuralEquality; StructuralComparison>]
 type SimSubTab =
     | StepSim
     | TruthTable
     | WaveSim
 
-[<StructuralEquality; StructuralComparison>]
 type MemoryEditorData = {
     OnlyDiff : bool // Only show diffs in Memory Diff Viewer.
     Address : int64 option // Only show the specified memory address.
@@ -73,13 +68,11 @@ type MemoryEditorData = {
     NumberBase : NumberBase
 }
 
-[<StructuralEquality; StructuralComparison>]
 type ImportDecision =
     | Overwrite
     | Rename
 
 /// Possible fields that may (or may not) be used in a dialog popup.
-[<StructuralEquality; StructuralComparison>]
 type PopupDialogData = {
     Text : string option;
     Int : int option;
@@ -122,7 +115,6 @@ let badLabel_ = Lens.create (fun a -> a.BadLabel) (fun s a -> {a with BadLabel =
 let intlist_ = Lens.create (fun a -> a.IntList) (fun s a -> {a with IntList = s})
 let intlist2_ = Lens.create (fun a -> a.IntList2) (fun s a -> {a with IntList2 = s})
 
-[<StructuralEquality; StructuralComparison>]
 type TopMenu = | Closed | Project | Files
 
 //==========//
@@ -132,11 +124,9 @@ type TopMenu = | Closed | Project | Files
 
 
 // Messages that will be triggered on key combinations.
-[<StructuralEquality; StructuralComparison>]
 type KeyboardShortcutMsg =
     | CtrlS | AltC | AltV | AltZ | AltShiftZ | DEL
 
-[<StructuralEquality; StructuralComparison>]
 type UICommandType =
     | CloseProject
     | ChangeSheet
@@ -156,7 +146,6 @@ type UICommandType =
 /// Determines whether the user is able to see the wave viewer pane.
 /// Changes value depending on the state of the circuit and whether
 /// the wave simulator has been run.
-[<StructuralEquality; StructuralComparison>]
 type WaveSimState =
     /// If the Wave Sim has not been before
     | Empty
@@ -177,14 +166,12 @@ type WaveSimState =
 
 /// Identifies which Component and Port drives a waveform.
 /// Must be an Output port (Input ports cannot drive waveforms).
-[<StructuralEquality; StructuralComparison>]
 type DriverT = {
     DriverId: FComponentId
     Port: OutputPortNumber
 }
 
 /// Information required to display a waveform.
-[<StructuralEquality; StructuralComparison>]
 type Wave = {
     /// Uniquely identifies a waveform
     WaveId: WaveIndexT
@@ -220,7 +207,6 @@ type Wave = {
 
 /// Contains all information required by waveform simulator.
 /// One WaveSimModel per sheet.
-[<StructuralEquality; StructuralComparison>]
 type WaveSimModel = {
     /// Current state of WaveSimModel.
     State: WaveSimState
@@ -277,16 +263,12 @@ type WaveSimModel = {
 
 
 
-[<StructuralEquality; StructuralComparison>]
 type DiagEl = | Comp of Component | Conn of Connection
 
-[<StructuralEquality; StructuralComparison>]
 type DragMode = DragModeOn of int | DragModeOff
 
-[<StructuralEquality; StructuralComparison>]
 type IntMode = FirstInt | SecondInt
 
-[<StructuralEquality; StructuralComparison>]
 type MenuCommand =
     | MenuPrint
     | MenuSaveFile
@@ -297,7 +279,6 @@ type MenuCommand =
     | MenuVerilogOutput
     | MenuLostFocus
 
-[<StructuralEquality; StructuralComparison>]
 type SimulationProgress =
     {
         InitialClock: int
@@ -305,7 +286,6 @@ type SimulationProgress =
         ClocksPerChunk: int       
     }
 
-[<StructuralEquality; StructuralComparison>]
 type PopupProgress =
     {
         Value: int
@@ -314,7 +294,6 @@ type PopupProgress =
         Speed: float
     }
     
-[<StructuralEquality; StructuralComparison>]
 type TTMsg =
     (*
     | GenerateTruthTable of option<Result<SimulationData,SimulationError> * CanvasState>
@@ -513,7 +492,6 @@ let fromMemoryEditor_ = Lens.create (fun n -> n.FromMemoryEditor) (fun s n -> {n
 let fromProperties_ = Lens.create (fun n -> n.FromProperties) (fun s n -> {n with FromProperties = s})
 *)
 
-[<StructuralEquality; StructuralComparison>]
 type UserData = {
     /// Where to save the persistent app data
     UserAppDir : string option
@@ -523,11 +501,9 @@ type UserData = {
     WireType: DrawModelType.BusWireT.WireType
     Theme: DrawModelType.SymbolT.ThemeType
     }
-[<StructuralEquality; StructuralComparison>]
 type SpinnerState =
    | WaveSimSpinner
 
-[<StructuralEquality; StructuralComparison>]
 (*type SpinPayload = {
     Payload: Model -> Model
     Name: string

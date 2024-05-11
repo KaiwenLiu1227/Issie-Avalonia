@@ -9,9 +9,7 @@ open DrawModelType
 open DrawModelType.SymbolT
 open DrawModelType.BusWireT
 open DrawModelType.SheetT
-(*
 open SheetUpdateHelpers
-*)
 open Sheet
 (*open SheetSnap
 open SheetDisplay*)
@@ -78,6 +76,16 @@ let update (msg : Msg) (issieModel : ModelType.Model): ModelType.Model*Cmd<Model
         { model with Wire = wModel.Sheet.Wire }, wCmd
     | ToggleGrid ->
         {model with ShowGrid = not model.ShowGrid}, Cmd.none
+    | MouseMsg mMsg -> // Mouse Update Functions can be found above, update function got very messy otherwise
+        let mouseAlreadyDown = match model.Action with | MovingPort _ | ConnectingInput _ | ConnectingOutput _ -> true |_ -> false
+        match mMsg.Op with
+        | Down when mouseAlreadyDown = true -> model, Cmd.none
+        | Down -> mDownUpdate model mMsg
+        | Drag -> 
+            //printfn "running sheet.update"
+            mDragUpdate model mMsg
+        | Up -> mUpUpdate model mMsg
+        | Move -> mMoveUpdate model mMsg    
     (*| KeyPress DEL ->
         let wiresConnectedToComponents = BusWireUpdateHelpers.getConnectedWireIds model.Wire model.SelectedComponents
         // Ensure there are no duplicate deletions by using a Set
