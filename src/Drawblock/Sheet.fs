@@ -642,13 +642,13 @@ let mouseOn (model: Model) (pos: XYPos) : MouseOn =
             | None ->
                 match tryInsideLabelBox model pos with
                 | Some sym -> Label sym.Id
-                | None -> Canvas
-                    (*match BusWireUpdate.getClickedWire model.Wire pos (Constants.wireBoundingBoxSize/model.Zoom) with
+                | None -> 
+                    match BusWireUpdate.getClickedWire model.Wire pos (Constants.wireBoundingBoxSize/model.Zoom) with
                     | Some connId -> Connection connId
                     | None ->
                         match insideBoxMap model.BoundingBoxes pos with
                         | Some compId -> Component compId
-                        | None -> Canvas*)
+                        | None -> Canvas
 
 
 let notIntersectingComponents (model: Model) (box1: BoundingBox) (inputId: CommonTypes.ComponentId) =

@@ -101,17 +101,28 @@ module Extractor
         && List.forall2 connsAreEqual conns1 conns2
 
     /// Are two lists of vertices are very similar.
-    let verticesAreSame (fixedOffset:XYPos) tolerance (conns1: (float * float * bool) list) (conns2: (float * float * bool) list) =
-        let diff m1 m2 = if m1 <> m2 then tolerance else 0.
+    let verticesAreSame (fixedOffset: XYPos) tolerance (conns1: (float * float * bool) list) (conns2: (float * float * bool) list) =
+        // Define a helper function to calculate the squared distance
         let sq x = x * x
-        let mutable errSum = 0.
 
-        (conns1, conns2)
-        ||> List.iter2 (fun (x1, y1, m1) (x2, y2, m2) ->
-            errSum <- errSum + sq (x1 - x2 - fixedOffset.X) + sq (y1 - y2 - fixedOffset.Y) + diff m1 m2)
+        // Define a helper function to handle tolerance checking
+        let diff m1 m2 = if m1 <> m2 then tolerance else 0.
 
-        errSum < tolerance
-        && conns1.Length = conns2.Length // REVIEW - check if the formatted code is the same as the original F# source code as shown below
+        // Check if the lengths of the lists are equal
+        if List.length conns1 <> List.length conns2 then
+            false
+        else
+            // Initialize a mutable variable to accumulate errors
+            let mutable errSum = 0.0
+
+            // Calculate the error sum using iter2 (safe to use after length check)
+            (conns1, conns2)
+            ||> List.iter2 (fun (x1, y1, m1) (x2, y2, m2) ->
+                errSum <- errSum + sq (x1 - x2 - fixedOffset.X) + sq (y1 - y2 - fixedOffset.Y) + diff m1 m2
+            )
+
+            // Return true if the total error is less than the given tolerance
+            errSum < tolerance // REVIEW - check if the formatted code is the same as the original F# source code as shown below
 
     // let verticesAreSame tolerance (conns1:(float*float*bool) list) (conns2: (float*float*bool) list) =
     //     let diff m1 m2 = if m1 <> m2 then tolerance else 0.

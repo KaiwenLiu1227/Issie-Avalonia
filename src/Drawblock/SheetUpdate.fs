@@ -11,8 +11,8 @@ open DrawModelType.BusWireT
 open DrawModelType.SheetT
 open SheetUpdateHelpers
 open Sheet
-(*open SheetSnap
-open SheetDisplay*)
+open SheetSnap
+open SheetDisplay
 open Optics
 open FilesIO
 open FSharp.Core

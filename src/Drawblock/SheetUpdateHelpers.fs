@@ -287,6 +287,7 @@ let mDownUpdate
                                     wireCmd (BusWireT.SelectWires model.SelectedWires)
                                     wireCmd (BusWireT.ResetJumps [])])
     | _ ->
+        // printfn $"{mouseOn model mMsg.Pos} {mMsg.Pos}"
         match (mouseOn model mMsg.Pos) with
         | Canvas when mMsg.ShiftKeyDown ->
             // Start Panning with drag, setting up offset to calculate scroll poistion during drag.
@@ -369,6 +370,7 @@ let mDownUpdate
                             | [compId] -> 
                                 getNewSymbolSnapInfo model model.Wire.Symbol.Symbols[compId]
                             | _ -> emptySnap
+                        printfn $"{newComponents}"    
                         {model with 
                                 SelectedComponents = newComponents; 
                                 SnapSymbols = snapXY;
