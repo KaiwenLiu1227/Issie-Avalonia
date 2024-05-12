@@ -587,7 +587,7 @@ let drawComponent (symbol:Symbol) (theme:ThemeType) =
 
 // WITH COMPONENT KEY BIND FOR CACHING 
 let renderSymbol (props:Symbol) (theme:ThemeType)  dispatch :IView=
-    Component.create($"comp-{props.Id}", fun ctx ->
+    Component.create($"{props.Id}-{props.Pos.X}-{props.Pos.Y}", fun ctx ->
         ctx.attrs[
             Component.renderTransform (
                 TranslateTransform(props.Pos.X-1400.0, props.Pos.Y-1400.0)
