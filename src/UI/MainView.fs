@@ -97,7 +97,7 @@ let view model dispatch =
                     [ DockPanel.children
                           [ catalogueView model dispatch
                             topMenuView model dispatch
-                            SheetView.view model.Sheet sheetDispatch ] ]
+                            SheetDisplay.view model.Sheet sheetDispatch ] ]
                 // Overlay
                 overlayView model dispatch ] ]
     |> generalize

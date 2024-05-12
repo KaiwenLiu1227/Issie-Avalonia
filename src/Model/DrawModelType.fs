@@ -397,9 +397,7 @@ module BusWireT =
         | SelectWires of list<ConnectionId>
         | UpdateWires of list<ComponentId> * XYPos
         | UpdateSymbolWires of ComponentId
-        (*
         | DragSegment of SegmentId list * MouseT
-        *)
         | CoalesceWire of ConnectionId
         | ColorWires of list<ConnectionId> * HighLightColor
         | ErrorWires of list<ConnectionId>

@@ -3,9 +3,9 @@
 *)
 
 module Sheet
+open Avalonia.FuncUI.Types
 open CommonTypes
-(*open Fable.React
-open Browser*)
+
 open Elmish
 open DrawHelpers
 open DrawModelType
@@ -16,15 +16,12 @@ open Operators
 
 // HLP 23 AUTHOR: BRYAN TAN
 open SymbolHelpers
-(*
 open BusWireRoutingHelpers
-*)
+
 
 /// Keep track of HTML "Canvas" element used by Draw Blcok to read and write HTML scroll info.
 /// Set in view function from react hook.
-(*
-let mutable canvasDiv:Types.Element option = None
-*)
+let mutable canvasDiv: IView option = None
 
 (*
 
@@ -258,8 +255,8 @@ let symDiff lst1 lst2 =
     |> Set.toList
 
 /// return screen edge coords
-(*let getScreenEdgeCoords (model:Model) =
-    let canvas = document.getElementById "Canvas"
+let getScreenEdgeCoords (model:Model) =
+    (*let canvas = document.getElementById "Canvas"
     let wholeApp = document.getElementById "WholeApp"
     let rightSelection = document.getElementById "RightSelection"
     let topMenu = document.getElementById "TopMenu"
@@ -267,7 +264,11 @@ let symDiff lst1 lst2 =
     let leftScreenEdge = canvas.scrollLeft
     let rightScreenEdge = leftScreenEdge + wholeApp.clientWidth - rightSelection.offsetWidth
     let topScreenEdge = canvas.scrollTop
-    let bottomScreenEdge = topScreenEdge + rightSelection.offsetHeight - topMenu.clientHeight
+    let bottomScreenEdge = topScreenEdge + rightSelection.offsetHeight - topMenu.clientHeight*)
+    let leftScreenEdge = 0.0
+    let rightScreenEdge = 0.0
+    let topScreenEdge = 0.0
+    let bottomScreenEdge = 0.0
     {|Left=leftScreenEdge;Right=rightScreenEdge;Top=topScreenEdge;Bottom=bottomScreenEdge|}
 
 let centreOfScreen model : XYPos =
@@ -275,7 +276,7 @@ let centreOfScreen model : XYPos =
     {
         X = (edge.Left + edge.Right)/(2. * model.Zoom)
         Y = (edge.Top + edge.Bottom)/(2. * model.Zoom)
-    }*)
+    }
 
 
 /// helper used inside Map.tryFind hence the unused parameter
@@ -495,9 +496,9 @@ let ensureCanvasExtendsBeyondScreen model : Model =
         scrollSequence <- scrollSequence + 1
         match canvasDiv, model.ScreenScrollPos + circuitMove*model.Zoom with
         | Some el, pos ->
-            el.scrollLeft <- pos.X
-            el.scrollTop <- pos.Y
-
+            (*el.scrollLeft <- pos.X
+            el.scrollTop <- pos.Y*)
+            ()
         | None,_-> ()
         let posDelta :(XYPos -> XYPos) = ((+) circuitMove)
         let posScreenDelta :(XYPos -> XYPos) = ((+) (circuitMove*model.Zoom))

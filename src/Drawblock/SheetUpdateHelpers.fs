@@ -8,9 +8,9 @@ open DrawModelType.BusWireT
 open DrawModelType.SheetT
 open Optics
 open Sheet
-// open SheetSnap
+open SheetSnap
 open DrawHelpers
-// open BusWireRoutingHelpers
+open BusWireRoutingHelpers
 open BlockHelpers
 open Optics
 open Operators
@@ -846,10 +846,14 @@ let mMoveUpdate
             newModel, symbolCmd (SymbolT.ShowPorts nearbyComponents) // Show Ports of nearbyComponents
 
 let getVisibleScreenCentre (model : Model) : XYPos =
-    let canvas = document.getElementById "Canvas"
+    (*let canvas = document.getElementById "Canvas"
     {
         X = (canvas.scrollLeft + canvas.clientWidth / 2.0) / model.Zoom
         Y = (canvas.scrollTop + canvas.clientHeight / 2.0) / model.Zoom
+    }*)
+    {
+     X=0.0
+     Y=0.0
     }
 
 let validateTwoSelectedSymbols (model:Model) =

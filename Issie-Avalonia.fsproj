@@ -20,6 +20,7 @@
         <Compile Include="src\Common\DrawHelpers.fs" />
         <Compile Include="src\Common\Helpers.fs" />
         <Compile Include="src\Common\TimeHelpers.fs" />
+        <Compile Include="src\Common\WidthInferer.fs" />
         <!--<Compile Include="src\Common\WidthInferer.fs" />-->
         
         <Compile Include="src\Simulator\SimulatorTypes.fs" />
@@ -30,23 +31,29 @@
         
         <Compile Include="src\Model\DrawModelType.fs" />
         <Compile Include="src\Model\ModelType.fs" />
-        
-        <Compile Include="src\Drawblock\SymbolHelpers.fs" />
-        <Compile Include="src\Drawblock\SymbolHelper.fs"/>
-        <Compile Include="src\Drawblock\BlockHelpers.fs" />
-        <Compile Include="src\Drawblock\Symbol.fs" />
-        <Compile Include="src\Drawblock\SymbolPortHelpers.fs" />
-        <Compile Include="src\Drawblock\SymbolView.fs"/>
-        <Compile Include="src\Drawblock\SymbolUpdate.fs" />
-        <Compile Include="src\Drawblock\BusWire.fs" />
-        <Compile Include="src\Drawblock\Sheet.fs" />
-        <Compile Include="src\Drawblock\BusWireUpdateHelpers.fs" />
-        <Compile Include="src\Drawblock\BusWireUpdate.fs" />
-        <Compile Include="src\Drawblock\SheetUpdateHelpers.fs" />
-        <Compile Include="src\Drawblock\SheetUpdate.fs" />
-        <Compile Include="src\Drawblock\SheetView.fs"/>
-        
 
+        <!-- Draw Block -->
+        <Compile Include="src\DrawBlock\BlockHelpers.fs" />
+        <Compile Include="src\DrawBlock\SymbolHelpers.fs" />
+        <!--<Compile Include="src\DrawBlock\PopupHelpers.fs" />-->
+        <Compile Include="src\DrawBlock\Symbol.fs" />
+        <Compile Include="src\DrawBlock\SymbolView.fs" />
+        <Compile Include="src\DrawBlock\SymbolPortHelpers.fs" />
+        <Compile Include="src\DrawBlock\SymbolResizeHelpers.fs" />
+        <Compile Include="src\DrawBlock\SymbolReplaceHelpers.fs" />
+        <Compile Include="src\DrawBlock\SymbolUpdate.fs" />
+        <Compile Include="src\DrawBlock\BusWire.fs" />
+        <Compile Include="src\DrawBlock\BusWireUpdateHelpers.fs" />
+        <Compile Include="src\DrawBlock\BusWireRoutingHelpers.fs" />
+        <Compile Include="src\DrawBlock\BusWireRoute.fs" />
+        <Compile Include="src\DrawBlock\BusWireSeparate.fs" />
+        <Compile Include="src\DrawBlock\BusWireUpdate.fs" />
+        <Compile Include="src\DrawBlock\RotateScale.fs" />
+        <Compile Include="src\DrawBlock\Sheet.fs" />
+        <Compile Include="src\DrawBlock\SheetSnap.fs" />
+        <Compile Include="src\DrawBlock\SheetDisplay.fs" />
+        <Compile Include="src\DrawBlock\SheetUpdateHelpers.fs" />
+        <Compile Include="src\DrawBlock\SheetUpdate.fs" />
 
         <Compile Include="src\UI\ModelHelpers.fs" />
         <Compile Include="src\UI\UIPopups.fs" />

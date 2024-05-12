@@ -11,15 +11,14 @@ open ModelHelpers
 open CommonTypes
 open Extractor
 open Sheet.SheetInterface
-(*
 open BusWireUpdateHelpers
-*)
 open DrawModelType
-open Fable.SimpleJson
-(*open DiagramStyle
+(*open Fable.SimpleJson
+open DiagramStyle
 open Browser
 open PopupHelpers*)
 open Optics.Optic
+open Thoth.Json.Net
 
 module Constants =
     let memoryUpdateCheckTime = 300.
@@ -491,7 +490,11 @@ let readUserData (userAppDir: string) (model: Model) : Model * Cmd<Msg> =
             let jsonRes = tryReadFileSync <| pathJoin [| userAppDir; "IssieSettings.json" |]
 
             jsonRes
+            #if FABLE_COMPILER
             |> Result.bind (fun json -> Json.tryParseAs<UserData> json)
+            #else
+            |> Result.bind (fun json -> Decode.Auto.fromString<UserData>(json))
+            #endif
             |> Result.bind (fun (data: UserData) -> Ok { model with UserData = data })
             |> (function
             | Ok model -> model
@@ -513,7 +516,11 @@ let writeUserData (model: Model) =
     |> Option.map (fun userAppDir ->
         try
             let data = drawBlockModelToUserData model model.UserData
+            #if FABLE_COMPILER
             Json.serialize<UserData> data |> Ok
+            #else
+            Encode.Auto.toString(data) |> Ok
+            #endif
         with e ->
             Error "Can't write settings on this PC because userAppDir does not exist"
         |> Result.bind (fun json -> writeFile (pathJoin [| userAppDir; "IssieSettings.json" |]) json)

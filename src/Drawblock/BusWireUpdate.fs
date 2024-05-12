@@ -8,9 +8,7 @@ open DrawModelType.BusWireT
 open BusWire
 open BusWireUpdateHelpers
 open BlockHelpers
-(*
 open BusWireRoute
-*)
 open Optics
 open Operators
 open BlockHelpers
@@ -72,9 +70,7 @@ let newWire inputId outputId model =
             StartPos = { X = 0; Y = 0 }
             InitialOrientation = Horizontal
         }
-        (*
         |> smartAutoroute model
-        *)
 
     if Map.exists (fun wid wire -> wire.InputPort=nWire.InputPort && wire.OutputPort = nWire.OutputPort) model.Wires then
             // wire already exists
@@ -84,9 +80,7 @@ let newWire inputId outputId model =
             let newModel = 
                 model
                 |> Optic.set (wireOf_ nWire.WId) nWire
-                (*
                 |> BusWireSeparate.updateWireSegmentJumpsAndSeparations [nWire.WId]
-            *)
             newModel, Some BusWidths
 
 /// Handles messages
@@ -119,7 +113,6 @@ let update (msg : Msg) (issieModel : ModelType.Model) : ModelType.Model*Cmd<Mode
         {issieModel with Sheet={issieModel.Sheet with Wire={model with Symbol=sm}}}, (Cmd.map (fun msg -> ModelType.Msg.Sheet (DrawModelType.SheetT.Msg.Wire msg)) sCmd)
 
 
-    (*
     | UpdateWires (componentIdList, diff) ->
         // update wires after moving components in componentIdList by diff
         // wires between components are translated not routed as optimisation
@@ -130,7 +123,6 @@ let update (msg : Msg) (issieModel : ModelType.Model) : ModelType.Model*Cmd<Mode
         // useful if the symbol has been flipped or ports have been moved
         // partial routing will be done if this makes sense
         {issieModel with Sheet={issieModel.Sheet with Wire=BusWireSeparate.routeAndSeparateSymbolWires model compId}} |> withNoMsg
-        *)
 
     | AddWire ( (inputId, outputId) : (InputPortId * OutputPortId) ) ->
         // add a newly created wire to the model
@@ -140,7 +132,6 @@ let update (msg : Msg) (issieModel : ModelType.Model) : ModelType.Model*Cmd<Mode
         let newModel, msgOpt = newWire inputId outputId model
         {issieModel with Sheet={issieModel.Sheet with Wire=newModel}} |> (if msgOpt.IsSome then withMsg (Option.get msgOpt) else withNoMsg)
     
-    (*
     | BusWidths ->
         //printfn "BusWidths Message"
         // (1) Call Issie bus inference
@@ -221,7 +212,6 @@ let update (msg : Msg) (issieModel : ModelType.Model) : ModelType.Model*Cmd<Mode
             processConWidths connWidths
         | Error e ->
                 { issieModel with Sheet={ issieModel.Sheet with Wire={ model with Notifications = Some e.Msg }}} |> withMsg (ErrorWires e.ConnectionsAffected)
-                *)
 
     | CopyWires (connIds : list<ConnectionId>) ->
         // add given wires to Copiedwires state (NB, this contains wires at time of copy)
@@ -296,7 +286,7 @@ let update (msg : Msg) (issieModel : ModelType.Model) : ModelType.Model*Cmd<Mode
                 )
             issieModel |> withMsg (DeleteWires connIds)
 
-    (*| DragSegment (segIdL : SegmentId list, mMsg: MouseT) ->
+    | DragSegment (segIdL : SegmentId list, mMsg: MouseT) ->
         let checkSegmentOK segId =
             let index, connId = segId
             let wire = model.Wires[connId]
@@ -317,7 +307,7 @@ let update (msg : Msg) (issieModel : ModelType.Model) : ModelType.Model*Cmd<Mode
                             dragSegment wire index mMsg model)
                     |> fun model -> {issieModel with Sheet={ issieModel.Sheet with Wire=model}}
                     |> withNoMsg
-                | _ -> issieModel |> withNoMsg*)
+                | _ -> issieModel |> withNoMsg
 
     | CoalesceWire wId ->
         coalesceInWire wId model
@@ -346,9 +336,9 @@ let update (msg : Msg) (issieModel : ModelType.Model) : ModelType.Model*Cmd<Mode
     | MakeJumps (separate, connIds) ->
         // recalculates (slowly) wire jumps after a drag operation
         let newModel =
-            (*if separate then
+            if separate then
                 BusWireSeparate.updateWireSegmentJumpsAndSeparations connIds model
-            else*)
+            else
                 updateWireSegmentJumps connIds model
         {issieModel with Sheet={ issieModel.Sheet with Wire=newModel}} |> withNoMsg
 
@@ -396,8 +386,7 @@ let update (msg : Msg) (issieModel : ModelType.Model) : ModelType.Model*Cmd<Mode
                         if b then
                             wire
                         else
-                                                           wire
-                            (*updateWire model wire inOut*))
+                            updateWire model wire inOut)
                 connId,
                 { 
                     WId = ConnectionId conn.Id
@@ -427,9 +416,7 @@ let update (msg : Msg) (issieModel : ModelType.Model) : ModelType.Model*Cmd<Mode
     | UpdateWireDisplayType (style: WireType) ->
         printfn "Updating wire display type (=> reseparation of wires)"
         {model with Type = style }
-        (*
         |> BusWireSeparate.updateWireSegmentJumpsAndSeparations []
-        *)
         |> fun model -> {issieModel with Sheet={ issieModel.Sheet with Wire=model}}
         |> withNoMsg
 
@@ -470,16 +457,13 @@ let update (msg : Msg) (issieModel : ModelType.Model) : ModelType.Model*Cmd<Mode
         let newWires =
             (model.Wires, wiresToReroute)
             ||> List.fold (fun wires (wid, wire) ->
-                (*
                 let wire' = updateWire model wire (rerouteInputEnd wire)
-                *)
-                Map.add wid wire wires)
+                Map.add wid wire' wires)
 
         {issieModel with Sheet={ issieModel.Sheet with Wire={model with Wires = newWires}}} |> withNoMsg
     | ToggleSnapToNet ->
         {issieModel with Sheet={ issieModel.Sheet with Wire={model with SnapToNet = not model.SnapToNet}}} |> withNoMsg
-    | _ ->
-        issieModel |> withNoMsg
+    
 
 //---------------------------------------------------------------------------------//        
 //---------------------------Other interface functions-----------------------------//
@@ -538,9 +522,7 @@ let pasteWires (wModel : Model) (newCompIds : list<ComponentId>) : (Model * list
                             Segments = segmentList;
                             StartPos = portOnePos;
                     }
-                    (*
                     |> smartAutoroute wModel
-                *)
                 ]
             | None -> []
 
