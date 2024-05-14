@@ -586,7 +586,7 @@ let drawComponent (symbol:Symbol) (theme:ThemeType) =
 
 
 // WITH COMPONENT KEY BIND FOR CACHING 
-let renderSymbol (props:Symbol) (theme:ThemeType)  dispatch :IView=
+(*let renderSymbol (props:Symbol) (theme:ThemeType)  dispatch :IView=
     Component.create($"{props.Id}-{props.Pos.X}-{props.Pos.Y}", fun ctx ->
         ctx.attrs[
             Component.renderTransform (
@@ -598,22 +598,17 @@ let renderSymbol (props:Symbol) (theme:ThemeType)  dispatch :IView=
                 drawComponent props theme
             )
         ]
-    )
-
-let symbolView (model:Model) dispatch =
-        Canvas.create [
-            Canvas.height 1080
-            Canvas.width 1960
-            Canvas.children (
-                model.Symbols
-                |> Map.toSeq // Convert the map to a sequence of key-value pairs
-                |> Seq.map (fun (idx, symbol) ->
-                    renderSymbol symbol model.Theme dispatch) // Ignore the key with '_'
-                |> Seq.toList // Convert back to a list if needed for Canvas.children
+    )*)
+let renderSymbol (props:Symbol) (theme:ThemeType)  dispatch :IView=
+    Canvas.create [
+        Canvas.renderTransform (
+                TranslateTransform(props.Pos.X-1400.0, props.Pos.Y-1400.0)
             )
-        ]
-        |>generalize  
-        
+        Canvas.children (
+            drawComponent props theme
+        )
+    ]
+
 
 let view (model : Model) (dispatch) =    
     /// View function for symbol layer of SVG

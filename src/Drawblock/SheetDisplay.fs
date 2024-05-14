@@ -34,9 +34,14 @@ let getActivePressedKeys model =
     List.filter (fun (_,time) -> timeNow - time < Constants.KeyPressPersistTimeMs) model.CurrentKeyPresses
 
 let getDrawBlockPos (ev:Input.PointerEventArgs) (headerHeight: float) (sheetModel:Model) =
+    let newPos = ev.GetPosition(null) 
+    let roundUp n = Math.Ceiling(n / 2.0) * 2.0
+    // Apply the function to both X and Y coordinates
+    let roundedX = roundUp newPos.X
+    let roundedY = roundUp newPos.Y
     {
-        X = (ev.GetPosition(null).X + sheetModel.ScreenScrollPos.X) / sheetModel.Zoom + 1400.0;
-        Y = (ev.GetPosition(null).Y - headerHeight + sheetModel.ScreenScrollPos.Y) / sheetModel.Zoom + 1400.0
+        X = (roundedX + sheetModel.ScreenScrollPos.X) / sheetModel.Zoom + 1400.0;
+        Y = (roundedY - headerHeight + sheetModel.ScreenScrollPos.Y) / sheetModel.Zoom + 1400.0
     }
     
 (*/// This actually writes to the DOM a new scroll position.
@@ -156,12 +161,17 @@ let displaySvgWithZoom
     let mouseOp op (ev:Input.PointerEventArgs) =
         // right button oprations are only used for context menus
         //if int ev.button = 0 then // button = 0 => left, button = 2 => right
+            let newPos = ev.GetPosition(null) 
+            let roundUp n = Math.Ceiling(n / 2.0) * 2.0
+            // Apply the function to both X and Y coordinates
+            let roundedX = roundUp newPos.X
+            let roundedY = roundUp newPos.Y
             dispatch <| MouseMsg {
                 Op = op ;
                 // ShiftKeyDown = ev.shiftKey
                 ShiftKeyDown = false
-                ScreenMovement = {X= ev.GetPosition(null).X;Y=ev.GetPosition(null).Y}
-                ScreenPage = {X=ev.GetPosition(null).X; Y=ev.GetPosition(null).Y}
+                ScreenMovement = {X= roundedX;Y=roundedY}
+                ScreenPage = {X=roundedX; Y=roundedY}
                 Pos = getDrawBlockPos ev headerHeight model
                 }
             
