@@ -287,15 +287,16 @@ let makePath (startingPoint: XYPos) (startingControlPoint: XYPos) (endingControl
     
 /// Makes a polygon ReactElement, points are to be given as a correctly formatted SVGAttr.Points string 
 let makePolygon (points: string) (polygonParameters: Polygon) =
-    Polygon.create [
+    let stroke = Color.Parse(polygonParameters.Stroke)
+    let fill = Color.Parse(polygonParameters.Fill)
+    let width = float (polygonParameters.StrokeWidth.TrimEnd('p', 'x'))
+    Polygon.create
+        [
         Polygon.points (convertToPointArray points)
-        Polygon.stroke (SolidColorBrush(Color.FromArgb(255uy, 0uy, 0uy, 0uy)))
-        Polygon.strokeThickness 2.0
-        Polygon.fill (SolidColorBrush(Color.FromArgb(255uy, 255uy, 235uy, 47uy), polygonParameters.FillOpacity))
-        (*
-        Component.onPointerPressed (fun args -> dispatch (OnPress polygonParameter.Id))
-    *)
-    ] :> IView
+        Polygon.stroke (SolidColorBrush(stroke, 1.0))
+        Polygon.strokeThickness width
+        Polygon.fill (SolidColorBrush(fill, polygonParameters.FillOpacity))
+        ] |> generalize
     
 
 /// Makes a circle ReactElement
@@ -312,12 +313,15 @@ let makeCircle (centreX: float) (centreY: float) (circleParameters: Circle) =
         SVGAttr.FillOpacity circleParameters.FillOpacity
         SVGAttr.Stroke circleParameters.Stroke
         SVGAttr.StrokeWidth circleParameters.StrokeWidth*)
-      ] :> IView
+      ] |> generalize
       
 /// Makes a text ReactElement
 let makeText (posX: float) (posY: float) (displayedText: string) (textParameters: Text) =
     TextBlock.create [
             TextBlock.text displayedText
+            TextBlock.renderTransform (
+                TranslateTransform(posX, posY)
+            )
             // TextBlock.textAnchor textParameters.TextAnchor
             // TextBlock.dominantBaseline textParameters.DominantBaseline
             // TextBlock.fontWeight textParameters.FontWeight

@@ -86,7 +86,7 @@ let update (msg : Msg) (issieModel : ModelType.Model): ModelType.Model*Cmd<Model
             mDragUpdate model mMsg
         | Up -> mUpUpdate model mMsg
         | Move -> mMoveUpdate model mMsg    
-    (*| KeyPress DEL ->
+    | KeyPress DEL ->
         let wiresConnectedToComponents = BusWireUpdateHelpers.getConnectedWireIds model.Wire model.SelectedComponents
         // Ensure there are no duplicate deletions by using a Set
         let wireUnion =
@@ -239,6 +239,7 @@ let update (msg : Msg) (issieModel : ModelType.Model): ModelType.Model*Cmd<Model
         model, Cmd.none
 
  
+    (*
     | UpdateScrollPos scrollPos ->
         //printfn "%s" $"{scrollSequence}: Model -> canvas {scrollPos.X},{scrollPos.Y}"
         let scrollDif = scrollPos - model.ScreenScrollPos * (1. / model.Zoom)
@@ -261,6 +262,7 @@ let update (msg : Msg) (issieModel : ModelType.Model): ModelType.Model*Cmd<Model
             ScreenScrollPos = scrollPos
             ScrollingLastMousePos = newLastScrollingPos }, 
             cmd
+            *)
 
     | AddNotConnected (ldcs, port, pos, rotation) ->
         let (newSymModel, ncID) = SymbolUpdate.addSymbol ldcs model.Wire.Symbol pos NotConnected ""
@@ -297,7 +299,7 @@ let update (msg : Msg) (issieModel : ModelType.Model): ModelType.Model*Cmd<Model
         { model with Zoom = newZoom }, 
         sheetCmd (KeepZoomCentered oldScreenCentre)
 
-    | KeepZoomCentered oldScreenCentre ->
+    (*| KeepZoomCentered oldScreenCentre ->
         let canvas = document.getElementById "Canvas"
         let newScreenCentre = getVisibleScreenCentre model
         let requiredOffset = oldScreenCentre - newScreenCentre
@@ -306,7 +308,7 @@ let update (msg : Msg) (issieModel : ModelType.Model): ModelType.Model*Cmd<Model
         printf "KeepZoomCentred"
         canvas.scrollLeft <- canvas.scrollLeft + requiredOffset.X * model.Zoom
         canvas.scrollTop <- canvas.scrollTop + requiredOffset.Y * model.Zoom
-        model, Cmd.none
+        model, Cmd.none*)
 
     | ManualKeyDown key -> // Needed for e.g. Ctrl + C and Ctrl + V as they are not picked up by Electron
         let containsKey key  = List.exists (fun (key',time) -> key'=key)
@@ -335,7 +337,7 @@ let update (msg : Msg) (issieModel : ModelType.Model): ModelType.Model*Cmd<Model
             List.filter (fun (k,t) -> k <> key)
         { model with CurrentKeyPresses = removeAllKeys (key.ToUpper()) model.CurrentKeyPresses}, Cmd.none
 
-    | CheckAutomaticScrolling ->
+    (*| CheckAutomaticScrolling ->
         let canvas = document.getElementById "Canvas"
         let wholeApp = document.getElementById "WholeApp"
         let rightSelection = document.getElementById "RightSelection"
@@ -390,6 +392,7 @@ let update (msg : Msg) (issieModel : ModelType.Model): ModelType.Model*Cmd<Model
             outputModel, filteredOutputCmd
         else
             { model with AutomaticScrolling = false}, Cmd.none
+            *)
 
     | Arrangement arrange ->
         arrangeSymbols arrange model
@@ -495,10 +498,12 @@ let update (msg : Msg) (issieModel : ModelType.Model): ModelType.Model*Cmd<Model
                 Action = (InitialisedCreateComponent (ldcs, compType, lbl));
                 UndoList = appendUndoList model.UndoList model;
                 TmpModel = Some model;
-                Wire = {model.Wire with Symbol = {model.Wire.Symbol with HintPane = (Some (div [] [
+                Wire = model.Wire
+            }, Cmd.none
+                (*Wire = {model.Wire with Symbol = {model.Wire.Symbol with HintPane = (Some (div [] [
                                                                         str "You can change the number of inputs"
                                                                         br []
-                                                                        str "in the component properties menu"]))}}}, Cmd.none
+                                                                        str "in the component properties menu"]))}}}, Cmd.none*)
         | NoGate ->
             { model with Action = (InitialisedCreateComponent (ldcs, compType, lbl)) ; TmpModel = Some model; UndoList = appendUndoList model.UndoList model}, Cmd.none
     | FlushCommandStack -> { model with UndoList = []; RedoList = []; TmpModel = None }, Cmd.none
@@ -566,7 +571,7 @@ let update (msg : Msg) (issieModel : ModelType.Model): ModelType.Model*Cmd<Model
         if isOn then {model with CursorType = Spinner}, Cmd.none
         else {model with CursorType = Default}, Cmd.none
 
-    | StartCompiling (path, name, profile) ->
+    (*| StartCompiling (path, name, profile) ->
         printfn "starting compiling %s :: %s" path name
         {model with
             Compiling = true
@@ -855,7 +860,7 @@ let update (msg : Msg) (issieModel : ModelType.Model): ModelType.Model*Cmd<Model
             | _ ->  (Array.length model.DebugMappings) / 8 + 1
         
         
-        {model with DebugState = Paused}, sheetCmd (DebugStepAndRead viewerNo)
+        {model with DebugState = Paused}, sheetCmd (DebugStepAndRead viewerNo)*)
     | SetDebugDevice device ->
         {model with DebugDevice = Some device}, Cmd.none
     
@@ -863,7 +868,7 @@ let update (msg : Msg) (issieModel : ModelType.Model): ModelType.Model*Cmd<Model
         model, (wireCmd BusWireT.ToggleSnapToNet)
         
     | ToggleNet _ | DoNothing | _ -> model, Cmd.none
-    *)
+    
     | _ -> model, Cmd.none
     |> postUpdateChecks
     // |> Optic.map fst_ postUpdateChecks

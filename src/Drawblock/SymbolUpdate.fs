@@ -1,22 +1,15 @@
 ﻿module SymbolUpdate
 
 open Elmish
-(*
-open Fable.React.Props
-*)
 open DrawHelpers
 open CommonTypes
-(*
-open Fable.React
-*)
 open System.Text.RegularExpressions
 open DrawModelType
 open DrawModelType.SymbolT
 open Symbol
 open SymbolPortHelpers
-(*
 open SymbolResizeHelpers // HLP23 AUTHOR: BRYAN TAN
-open SymbolReplaceHelpers*)
+open SymbolReplaceHelpers
 open Optics
 open Optic
 open Operators
@@ -745,11 +738,9 @@ let update (msg : Msg) (model : Model): Model*Cmd<'a>  =
     | ColorSymbols (compList, colour) -> 
         (colorSymbols model compList colour), Cmd.none 
     
-    (*
     | ChangeNumberOfBits (compId, newBits) ->
         let newsymbol = changeNumberOfBitsf model compId newBits
         (replaceSymbol model newsymbol compId), Cmd.none
-        *)
     
     | ChangeScale (compId,newScale,whichScale) ->
         let symbol = Map.find compId model.Symbols
@@ -759,7 +750,7 @@ let update (msg : Msg) (model : Model): Model*Cmd<'a>  =
             |Vertical -> {symbol with VScale=Some newScale}
         (replaceSymbol model newSymbol compId), Cmd.none
 
-    (*| ChangeLsb (compId, newLsb) -> 
+    | ChangeLsb (compId, newLsb) -> 
         let newsymbol = changeLsbf model compId newLsb
         (replaceSymbol model newsymbol compId), Cmd.none
 
@@ -805,7 +796,6 @@ let update (msg : Msg) (model : Model): Model*Cmd<'a>  =
         let newPorts = addToPortModel model newSymbol
         let newModel = {model with Ports = newPorts}  
         (replaceSymbol newModel newSymbol compId), Cmd.none
-        *)
 
     | ResetModel -> 
         { model with Symbols = Map.empty; Ports = Map.empty; }, Cmd.none
@@ -822,7 +812,7 @@ let update (msg : Msg) (model : Model): Model*Cmd<'a>  =
     | UpdateMemory (compId, updateFn) ->  
         (updateMemory model compId updateFn), Cmd.none
 
-    (*| RotateLeft(compList, rotation) ->
+    | RotateLeft(compList, rotation) ->
         (transformSymbols (rotateSymbol rotation) model compList), Cmd.none
     
     | RotateAntiClockAng (compList, rotationDeg) ->
@@ -852,7 +842,7 @@ let update (msg : Msg) (model : Model): Model*Cmd<'a>  =
         hideCompCorners model, Cmd.none
 
     | ResizeSymbol (compId, fixedCornerLoc, pos) ->
-        manualSymbolResize (hideCompCorners model) compId fixedCornerLoc pos*)
+        manualSymbolResize (hideCompCorners model) compId fixedCornerLoc pos
 
     | ResizeSymbolDone (compId, resetSymbol, fixedCornerLoc, pos) ->
         match resetSymbol with

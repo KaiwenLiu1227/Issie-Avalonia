@@ -34,8 +34,8 @@ let getActivePressedKeys model =
     List.filter (fun (_,time) -> timeNow - time < Constants.KeyPressPersistTimeMs) model.CurrentKeyPresses
 
 let getDrawBlockPos (ev:Input.PointerEventArgs) (headerHeight: float) (sheetModel:Model) =
-    let newPos = ev.GetPosition(null) 
-    let roundUp n = Math.Ceiling(n / 2.0) * 2.0
+    let newPos = ev.GetPosition(null)
+    let roundUp n = Math.Ceiling(n / 5.0) * 5.0
     // Apply the function to both X and Y coordinates
     let roundedX = roundUp newPos.X
     let roundedY = roundUp newPos.Y
@@ -162,7 +162,7 @@ let displaySvgWithZoom
         // right button oprations are only used for context menus
         //if int ev.button = 0 then // button = 0 => left, button = 2 => right
             let newPos = ev.GetPosition(null) 
-            let roundUp n = Math.Ceiling(n / 2.0) * 2.0
+            let roundUp n = Math.Ceiling(n / 5.0) * 5.0
             // Apply the function to both X and Y coordinates
             let roundedX = roundUp newPos.X
             let roundedY = roundUp newPos.Y
@@ -172,8 +172,7 @@ let displaySvgWithZoom
                 ShiftKeyDown = false
                 ScreenMovement = {X= roundedX;Y=roundedY}
                 ScreenPage = {X=roundedX; Y=roundedY}
-                Pos = getDrawBlockPos ev headerHeight model
-                }
+                Pos = getDrawBlockPos ev headerHeight model                }
             
     Canvas.create [
         Canvas.background (SolidColorBrush(Color.FromArgb(25uy, 25uy, 0uy, 0uy)))

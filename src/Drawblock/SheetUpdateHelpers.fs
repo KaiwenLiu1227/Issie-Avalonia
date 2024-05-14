@@ -370,7 +370,6 @@ let mDownUpdate
                             | [compId] -> 
                                 getNewSymbolSnapInfo model model.Wire.Symbol.Symbols[compId]
                             | _ -> emptySnap
-                        printfn $"{newComponents}"    
                         {model with 
                                 SelectedComponents = newComponents; 
                                 SnapSymbols = snapXY;
