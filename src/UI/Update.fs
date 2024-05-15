@@ -98,9 +98,13 @@ let update (msg: Msg) oldModel =
     | DoNothing -> //Acts as a placeholder to propergrate the ExecutePendingMessages message in a Cmd
         model, cmd
     | SetProject project ->
-        printfn $"Setting project: '{project.OpenFileName}'"
-        // printfn $"component: '{project.LoadedComponents}'"
-        model |> set currentProj_ (Some project) |> withNoMsg
+        // printf $"Setting project with component: '{project.OpenFileName}'"
+        model
+        |> set currentProj_ (Some project) 
+        // |> set (popupDialogData_ >-> projectPath_) project.ProjectPath
+        |> withNoMsg
+    | UpdateModel( updateFn: Model -> Model) ->
+        updateFn model, Cmd.none    
     | SynchroniseCanvas ->
         // used after drawblock components are centred on load to enusre that Issie CanvasState is updated
         // This may be needed if Ctrl/w on load moves the whole draw block sheet circuit to centre it.

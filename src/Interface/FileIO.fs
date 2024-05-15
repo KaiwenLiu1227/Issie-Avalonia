@@ -529,7 +529,7 @@ let formatSavedState (canvas,wave) =
 /// Save state to normal file. Automatically add the .dgm suffix.
 let saveStateToFile folderPath baseName state = // TODO: catch error?
     let path = pathJoin [| folderPath; baseName + ".dgm" |]
-    let data = stateToJsonString state
+    let data = stateToJsonStringNew state
     writeFile path data
 
 let saveStateToFileNew folderPath baseName state = // TODO: catch error?

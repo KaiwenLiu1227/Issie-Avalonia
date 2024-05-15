@@ -103,7 +103,24 @@ let topMenuView model dispatch =
                    MenuItem.create [ MenuItem.header "Sheet with Design Hierarchy" ]
                 ] @ breadcrumbs)
           ]
-      
+    let saveBtn model =
+        match model.CurrentProj with
+        | None ->
+            Button.create
+              [
+                  Button.content "Save"
+              ]
+        | Some project ->
+        Button.create
+          [
+              Button.content "Save"
+              Button.background "LightGreen"
+              Button.onClick (fun _ -> 
+                    dispatch (StartUICmd SaveSheet)
+                    saveOpenFileActionWithModelUpdate model dispatch |> ignore
+                    dispatch <| Sheet(SheetT.DoNothing) //To update the savedsheetisoutofdate send a sheet message
+                    ) 
+          ]
     Border.create
         [ Border.borderThickness 2.0
           Border.borderBrush (SolidColorBrush(Color.FromArgb(75uy, 0uy, 0uy, 0uy))) // 描边颜色
@@ -127,15 +144,10 @@ let topMenuView model dispatch =
                                             MenuItem.onClick (fun _ -> loadDemoProject "test" model dispatch) ] ] ]
 
                           TextBlock.create [ TextBlock.text "Path/this_project/this_sheet" ]
+                          saveBtn model
                           Button.create
                               [
-                                  Button.content "Save"
-                                  Button.background "LightGreen"
-                                  Button.onClick (fun _ -> 
-                                        dispatch (StartUICmd SaveSheet)
-                                        saveOpenFileActionWithModelUpdate model dispatch |> ignore
-                                        dispatch <| Sheet(SheetT.DoNothing) //To update the savedsheetisoutofdate send a sheet message
-                                        ) 
-                              ]
-                          Button.create [ Button.content "Info" ] ] ]
+                                  Button.content "Info"
+                                  Button.background "LightBlue"
+                              ] ] ]
           ) ]

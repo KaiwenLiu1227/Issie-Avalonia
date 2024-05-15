@@ -335,6 +335,8 @@ type Msg =
     | Sheet of DrawModelType.SheetT.Msg
     | SynchroniseCanvas
     | SetProject of Project
+    | UpdateProject of (Project -> Project)
+    | UpdateModel of (Model -> Model)
     | SendSeqMsgAsynch of seq<Msg>
     | ExecCmdAsynch of Elmish.Cmd<Msg>
     | ExecCmd of Elmish.Cmd<Msg>

@@ -85,8 +85,10 @@ open System.Text.RegularExpressions
 
         let stateToJsonStringNew (cState: CanvasState, waveInfo: SavedWaveInfo option, sheetInfo: SheetInfo option) : string =
             let time = System.DateTime.Now
+            let JSONCanvasState = convStateToJC cState
+            let newCanvasWithFileWaveSheetInfoAndNewConns = NewCanvasWithFileWaveSheetInfoAndNewConns (JSONCanvasState, waveInfo, sheetInfo, time)
             try
-                Encode.Auto.toString(space = 0, value = (NewCanvasWithFileWaveSheetInfoAndNewConns (convStateToJC cState, waveInfo, sheetInfo, time)), extra = extraCoder)
+                Encode.Auto.toString(space = 0, value = newCanvasWithFileWaveSheetInfoAndNewConns,  extra = extraCoder)
             with
             | e -> 
                 printfn "HELP: exception in Thoth.Json.Encode.Auto.toString %A" e

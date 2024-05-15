@@ -643,7 +643,18 @@ module CommonTypes
             | BusCompare (w, v) -> JSONComponent.ComponentType.BusCompare (w, v)
             | Input w -> JSONComponent.ComponentType.Input w
             | Constant (w, v) -> JSONComponent.ComponentType.Constant (w, v)
-        {unbox comp with Type = newType}
+        {
+            Id = comp.Id
+            Type = newType // Assuming direct compatibility or define a mapping function for ComponentType
+            Label = comp.Label
+            InputPorts = comp.InputPorts  // Directly assignable if Port types are compatible
+            OutputPorts = comp.OutputPorts
+            X = comp.X
+            Y = comp.Y
+            H = comp.H
+            W = comp.W
+            SymbolInfo = comp.SymbolInfo  // Directly assignable if SymbolInfo types are compatible or None
+        }
 
     //---------------------------------------------------------------------------------------------------------------//
     //--------------------------END OF ComponentType CONVERSION - used when upgarding Component definitions----------//

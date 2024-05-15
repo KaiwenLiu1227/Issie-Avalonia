@@ -738,7 +738,7 @@ let getLastMouseMsg msgQueue =
 
 
 let executePendingMessagesF n model =
-    if n = (List.length model.Pending)
+    (*if n = (List.length model.Pending)
     then 
         getLastMouseMsg model.Pending
         |> function
@@ -749,5 +749,5 @@ let executePendingMessagesF n model =
             | _ -> failwithf "shouldn't happen "
         
     //ignore the exectue message
-    else 
+    else *)
         model, Cmd.none

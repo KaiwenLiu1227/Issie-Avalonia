@@ -432,7 +432,7 @@ let quantifyChanges (ldc1: LoadedComponent) (ldc2: LoadedComponent) =
 
 let writeComponentToFile comp =
     let data =
-        stateToJsonString (
+        stateToJsonStringNew (
             comp.CanvasState,
             comp.WaveInfo,
             Some
@@ -959,6 +959,7 @@ let saveOpenFileActionWithModelUpdate (model: Model) (dispatch: Msg -> Unit) =
     let opt = saveOpenFileAction false model dispatch
     let ldcOpt = Option.map fst opt
     let state = Option.map snd opt |> Option.defaultValue ([], [])
+    
     match model.CurrentProj with
     | None -> failwithf "What? Should never be able to save sheet when project=None"
     | Some p ->
