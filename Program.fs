@@ -6,7 +6,7 @@ open Avalonia.Themes.Fluent
 open Avalonia.FuncUI.Hosts
 open Avalonia.FuncUI.Elmish
 open Avalonia.Controls.ApplicationLifetimes
-open Avalonia.Media
+open Avalonia.Input
 open ModelType
 open Optics
 open Optics.Operators
@@ -21,9 +21,19 @@ type MainWindow() as this =
         base.Height <- 700.0
         base.Width <- 1200.0
         base.Title <- "Issie Avalonia"
+        
+        (*let subscriptions (model) =
+            let keyDownSub (dispatch : Msg -> unit) =
+                this.KeyDown.Subscribe(fun eventArgs ->
+                    dispatch <| (ManualKeyDown (ev.Key.ToString()))
+                    )
+
+            [[ nameof keyDownSub ], keyDownSub ]*)
+            
         this.AttachDevTools();
         Program.mkProgram init update view 
         |> Program.withHost this
+        // |> Program.withSubscription subscriptions
         |> Program.run    
 
 type App() =

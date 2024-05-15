@@ -27,7 +27,15 @@ module Constants =
 //-------------------------------------MESSAGE TRACING---------------------------------------------//
 //-------------------------------------------------------------------------------------------------//
 
-
+///Used to filter specific mouse messages based on mouse data.
+let matchMouseMsg (msgSelect: DrawHelpers.MouseT -> bool) (msg : Msg) : bool =
+    match msg with
+    | Sheet sMsg ->
+        match sMsg with
+        | SheetT.MouseMsg mMsg ->
+            msgSelect mMsg
+        | _ -> false
+    | _ -> false
 
 /// short summary used where Sheet messages are too complex to print
 let shortDSheetMsg msg = Some "Sheet message"
@@ -649,7 +657,6 @@ let updateTimeStamp model =
 //Finds if the current canvas is different from the saved canvas
 // waits 50ms from last check
 
-(*
 let findChange (model : Model) : bool = 
     let last = model.LastChangeCheckTime // NB no check to reduce total findChange time implemented yet - TODO if needed
     let start = TimeHelpers.getTimeMs()
@@ -668,7 +675,7 @@ let findChange (model : Model) : bool =
 
 /// Needed so that constant properties selection will work
 /// Maybe good idea for other things too?
-let resetDialogIfSelectionHasChanged newModel oldModel : Model =
+(*let resetDialogIfSelectionHasChanged newModel oldModel : Model =
     let newSelected = newModel.Sheet.SelectedComponents
     if newSelected.Length = 1 && newSelected <> oldModel.Sheet.SelectedComponents then
         newModel
@@ -676,8 +683,7 @@ let resetDialogIfSelectionHasChanged newModel oldModel : Model =
             set text_ None >>
             set int_ None
         )
-    else newModel
-    *)
+    else newModel*)
 
 let updateComponentMemory (addr: int64) (data: int64) (compOpt: Component option) =
     match compOpt with
@@ -714,26 +720,6 @@ let exitApp (model:Model) =
 /// In this use case that is fine.
 let isSameMsg = LanguagePrimitives.PhysicalEquality
 
-let findChange (model: Model) : bool =
-    let last = model.LastChangeCheckTime // NB no check to reduce total findChange time implemented yet - TODO if needed
-    (*
-    let start = TimeHelpers.getTimeMs()
-    *)
-
-    match model.CurrentProj with
-    | None -> false
-    | Some prj ->
-        //For better efficiency just check if the save button
-        let savedComponent =
-            prj.LoadedComponents |> List.find (fun lc -> lc.Name = prj.OpenFileName)
-
-        let canv = savedComponent.CanvasState
-        let canv' = model.Sheet.GetCanvasState()
-        (canv <> canv') && not (compareCanvas 100. canv canv')
-(*
-        |> TimeHelpers.instrumentInterval "findChange" start
-        *)
-
 let sheetMsg sMsg model =
     let sModel, sCmd = SheetUpdate.update sMsg model
 
@@ -742,7 +728,6 @@ let sheetMsg sMsg model =
     sCmd
 
 ///Returns None if no mouse drag message found, returns Some (lastMouseMsg, msgQueueWithoutMouseMsgs) if a drag message was found
-(*
 let getLastMouseMsg msgQueue =
     msgQueue
     |> List.filter (matchMouseMsg (fun mMsg -> mMsg.Op = DrawHelpers.Drag))
@@ -766,4 +751,3 @@ let executePendingMessagesF n model =
     //ignore the exectue message
     else 
         model, Cmd.none
-        *)

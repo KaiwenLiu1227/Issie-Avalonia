@@ -776,17 +776,17 @@ let openDemoProjectFromPath (path: string) model dispatch =
 
     warnAppWidth dispatch (fun _ ->
 
-        (*traceIf "project" (fun () -> "loading files")
+        // traceIf "project" (fun () -> "loading files")
         match loadAllComponentFiles path with
         | Error err ->
-            log err
-            displayFileErrorNotification err dispatch
-
+            // log err
+            // displayFileErrorNotification err dispatch
+            ()
         | Ok (componentsToResolve: LoadStatus list) ->
-            traceIf "project" (fun () -> "resolving popups...")
+            // traceIf "project" (fun () -> "resolving popups...")
             
             resolveComponentOpenPopup path [] componentsToResolve model dispatch
-            traceIf "project" (fun () ->  "project successfully opened.")*)
+            // traceIf "project" (fun () ->  "project successfully opened.")
         ())
 
 /// open an existing project from its path
@@ -959,7 +959,6 @@ let saveOpenFileActionWithModelUpdate (model: Model) (dispatch: Msg -> Unit) =
     let opt = saveOpenFileAction false model dispatch
     let ldcOpt = Option.map fst opt
     let state = Option.map snd opt |> Option.defaultValue ([], [])
-
     match model.CurrentProj with
     | None -> failwithf "What? Should never be able to save sheet when project=None"
     | Some p ->

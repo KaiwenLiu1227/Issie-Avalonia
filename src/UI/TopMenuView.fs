@@ -23,13 +23,36 @@ open MenuHelpers
 let loadDemoProject basename model dispatch =
     let newDir = ".\\demos\\" + basename
 
-    match loadAllComponentFiles newDir with
-    | Ok(componentsToResolve: LoadStatus list) ->
-        (*
-                printf $"{componentsToResolve}"
-                *)
-        resolveComponentOpenPopup newDir [] componentsToResolve model dispatch
-    | Error(_) -> () // Explicitly return unit
+    let sourceDir = FilesIO.staticDir() + "/demos/" + basename
+    printf "%s" $"loading demo {sourceDir} into {newDir}"
+
+    ensureDirectory "./demos/"
+    ensureDirectory newDir
+
+    readFilesFromDirectory newDir
+    |> List.iter (fun path -> unlink <| pathJoin[|newDir; path|])
+
+    (*dispatch EndSimulation // End any running simulation.
+    dispatch <| TruthTableMsg CloseTruthTable // Close any open Truth Table.
+    dispatch EndWaveSim*)
+
+    //let projectFile = baseName newDir + ".dprj"
+    //writeFile (pathJoin [| newDir; projectFile |]) ""
+    //|> displayAlertOnError dispatch
+
+    let files = readFilesFromDirectory sourceDir
+
+    let isNotDir path =
+        hasExtn ".dgm" path || hasExtn ".txt" path || hasExtn ".ram" path
+
+    // copy over files from source path to new path
+    files
+    |> List.filter isNotDir
+    |> List.iter (fun basename ->
+        let newPath = pathJoin [|newDir; basename|]
+        copyFile (pathJoin [|sourceDir; basename|]) newPath)
+
+    openDemoProjectFromPath newDir model dispatch
           
 let topMenuView model dispatch =
     let fileTab model =
@@ -103,7 +126,16 @@ let topMenuView model dispatch =
                                           [ MenuItem.header "Demo"
                                             MenuItem.onClick (fun _ -> loadDemoProject "test" model dispatch) ] ] ]
 
-                          MenuItem.create [ MenuItem.header "Path/this_project/this_sheet" ]
-                          Button.create [ Button.content "Save" ]
+                          TextBlock.create [ TextBlock.text "Path/this_project/this_sheet" ]
+                          Button.create
+                              [
+                                  Button.content "Save"
+                                  Button.background "LightGreen"
+                                  Button.onClick (fun _ -> 
+                                        dispatch (StartUICmd SaveSheet)
+                                        saveOpenFileActionWithModelUpdate model dispatch |> ignore
+                                        dispatch <| Sheet(SheetT.DoNothing) //To update the savedsheetisoutofdate send a sheet message
+                                        ) 
+                              ]
                           Button.create [ Button.content "Info" ] ] ]
           ) ]

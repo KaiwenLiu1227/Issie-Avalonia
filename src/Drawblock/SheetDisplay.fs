@@ -156,6 +156,17 @@ let displaySvgWithZoom
 
     let zoom = model.Zoom
     let mDown (ev:Input.PointerEventArgs) = true
+    
+    let onkeydown (ev: Input.KeyEventArgs) =
+        printfn $"{ev.Key}"
+        if ev.Key = Input.Key.Space then// Check for spacebar
+            // key.preventDefault() // Disable scrolling with spacebar
+            dispatch <| (ManualKeyDown (ev.Key.ToString()))
+        else
+            dispatch <| (ManualKeyDown (ev.Key.ToString())) 
+    let onkeyup (ev: Input.KeyEventArgs) =
+        //printf "%s" $"Up {key.key} ({model.CurrentKeyPresses})"
+        dispatch <| (ManualKeyUp (ev.Key.ToString()))
 
     /// Dispatch a MouseMsg (compensated for zoom)
     let mouseOp op (ev:Input.PointerEventArgs) =
@@ -174,15 +185,21 @@ let displaySvgWithZoom
                 ScreenPage = {X=roundedX; Y=roundedY}
                 Pos = getDrawBlockPos ev headerHeight model                }
             
-    Canvas.create [
-        Canvas.background (SolidColorBrush(Color.FromArgb(25uy, 25uy, 0uy, 0uy)))
-        Canvas.onPointerPressed (fun ev -> mouseOp Down ev)
-        Canvas.onPointerReleased (fun ev -> mouseOp Up ev) 
-        Canvas.onPointerMoved (fun ev ->  mouseOp (if mDown ev then Drag else Move) ev)
-        Canvas.children (
-           svgReact
-        )  
-    ] :> IView
+    DockPanel.create [
+        DockPanel.onKeyDown (fun ev -> onkeydown ev)
+        DockPanel.onKeyUp (fun ev -> onkeyup ev)
+        DockPanel.children [
+            Canvas.create [
+                Canvas.background (SolidColorBrush(Color.FromArgb(25uy, 25uy, 0uy, 0uy)))
+                Canvas.onPointerPressed (fun ev -> mouseOp Down ev)
+                Canvas.onPointerReleased (fun ev -> mouseOp Up ev)
+                Canvas.onPointerMoved (fun ev ->  mouseOp (if mDown ev then Drag else Move) ev)
+                Canvas.children (
+                   svgReact
+                )  
+            ]
+        ]        
+    ] |> generalize
 
 /// View function, displays symbols / wires and possibly also a grid / drag-to-select box / connecting ports line / snap-to-grid visualisation
 let view 
