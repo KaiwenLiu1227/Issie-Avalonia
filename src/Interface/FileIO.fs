@@ -179,15 +179,17 @@ let writeFileBase64 path data =
 /// Create file if it does not exist.
 let writeFile path data =
     try
-        let options = createObj ["encoding" ==> "utf8"] |> Some
         #if FABLE_COMPILER
+        let options = createObj ["encoding" ==> "utf8"] |> Some
         fs.writeFileSync(path, data, options)
         #else
         File.WriteAllText(path, data, System.Text.ASCIIEncoding.UTF8)
         #endif
         Ok ()
     with
-        | e -> Result.Error $"Error '{e.Message}' writing file '{path}'"
+        | e ->
+            printfn $"{e}"
+            Result.Error $"Error '{e.Message}' writing file '{path}'"
 
 /// read file names from directory: returning [] on any error.
 let readFilesFromDirectory (path:string) : string list =

@@ -158,7 +158,6 @@ let displaySvgWithZoom
     let mDown (ev:Input.PointerEventArgs) = true
     
     let onkeydown (ev: Input.KeyEventArgs) =
-        printfn $"{ev.Key}"
         if ev.Key = Input.Key.Space then// Check for spacebar
             // key.preventDefault() // Disable scrolling with spacebar
             dispatch <| (ManualKeyDown (ev.Key.ToString()))
@@ -185,6 +184,17 @@ let displaySvgWithZoom
                 ScreenPage = {X=roundedX; Y=roundedY}
                 Pos = getDrawBlockPos ev headerHeight model                }
             
+    let wheelUpdate (ev: Input.PointerWheelEventArgs) =
+        // if List.exists (fun (k,_) -> k = "CONTROL") (getActivePressedKeys model) then
+            // ev.preventDefault()
+            if ev.Delta.Y  > 0.0 then // Wheel Down
+                dispatch <| KeyPress ZoomOut
+            else
+                dispatch <| KeyPress ZoomIn
+       //  else () // Scroll normally if Ctrl is not held down
+    let cursorText = model.CursorType.Text()
+    let firstView = viewIsAfterUpdateScroll
+    viewIsAfterUpdateScroll <- false        
     DockPanel.create [
         DockPanel.onKeyDown (fun ev -> onkeydown ev)
         DockPanel.onKeyUp (fun ev -> onkeyup ev)
@@ -194,6 +204,7 @@ let displaySvgWithZoom
                 Canvas.onPointerPressed (fun ev -> mouseOp Down ev)
                 Canvas.onPointerReleased (fun ev -> mouseOp Up ev)
                 Canvas.onPointerMoved (fun ev ->  mouseOp (if mDown ev then Drag else Move) ev)
+                Canvas.onPointerWheelChanged (fun ev -> wheelUpdate ev)
                 Canvas.children (
                    svgReact
                 )  
@@ -207,29 +218,11 @@ let view
     (headerHeight: float) 
     (style: string list) 
     (dispatch : Msg -> unit)  =
-        let wDispatch wMsg = dispatch (Wire wMsg)
-
-        let wireSvg = BusWire.view model.Wire wDispatch
-        let grid = ()
-        let displayElements =
-            if model.ShowGrid
-            then  grid; wireSvg 
-            else  wireSvg 
-        
-        displaySvgWithZoom model headerHeight style displayElements dispatch
-          
-(*
-let view 
-        (model:Model) 
-        (headerHeight: float) 
-        (style: CSSProp list) 
-        (dispatch : Msg -> unit) 
-            : ReactElement =
     let start = TimeHelpers.getTimeMs()
     let wDispatch wMsg = dispatch (Wire wMsg)
     let wireSvg = BusWire.view model.Wire wDispatch
 
-    let wholeCanvas = $"{max 100.0 (100.0 / model.Zoom)}" + "%"
+    let wholeCanvas = max 1.0 (1.0 / model.Zoom)
     let snapIndicatorLineX = snapIndicatorLineX model wholeCanvas
     let snapIndicatorLineY = snapIndicatorLineY model wholeCanvas
     /// show all the snap lines (used primarily for debugging snap)
@@ -243,7 +236,7 @@ let view
 
 
     let gridSize = Constants.gridSize
-    let grid =
+    (*let grid =
         svg [ SVGAttr.Width wholeCanvas; SVGAttr.Height wholeCanvas; SVGAttr.XmlSpace "http://www.w3.org/2000/svg" ] [
             defs [] [
                 pattern [
@@ -261,10 +254,12 @@ let view
                 ]
             ]
             rect [SVGAttr.Width wholeCanvas; SVGAttr.Height wholeCanvas; SVGAttr.Fill "url(#Grid)"] []
-        ]
+        ]*)
 
     let dragToSelectBox =
         let {BoundingBox.TopLeft = {X=fX; Y=fY}; H=fH; W=fW} = model.DragToSelectBox
+        let fX = fX - 1400.0
+        let fY = fY - 1400.0
         let polygonPoints = $"{fX},{fY} {fX+fW},{fY} {fX+fW},{fY+fH} {fX},{fY+fH}"
         let selectionBox = { defaultPolygon with Stroke = "Black"; StrokeWidth = "0.1px"; Fill = "Blue"; FillOpacity = 0.05 }
 
@@ -362,18 +357,20 @@ let view
         [ makeLine x1 y1 x2 y2 connectPortsLine
           makeCircle x2 y2 { portCircle with Fill = "Green" }
         ]
-
+    
+    let grid = ()
+    
     let displayElements =
         if model.ShowGrid
-        then [ grid; wireSvg ]
-        else [ wireSvg ]
+        then  grid; wireSvg 
+        else  wireSvg 
 
     // uncomment the display model react for visbility of all snaps
     let snaps = snapIndicatorLineX @ snapIndicatorLineY // snapDisplay model
 
     match model.Action, model.ScalingBox with // Display differently depending on what state Sheet is in
     | Selecting, _ ->
-        // printfn "displaying selectingBox"
+       //  printfn "displaying selectingBox"
         displaySvgWithZoom model headerHeight style ( displayElements @ [ dragToSelectBox ] ) dispatch
     | ConnectingInput _, None | ConnectingOutput _, None ->
         displaySvgWithZoom model headerHeight style ( displayElements @ connectingPortsWire ) dispatch
@@ -395,8 +392,5 @@ let view
         displaySvgWithZoom model headerHeight style ( displayElements @  scalingBox ) dispatch
 
     | _ ->
-        displaySvgWithZoom model headerHeight style displayElements dispatch
+        displaySvgWithZoom model headerHeight style ( displayElements @ [ dragToSelectBox ] ) dispatch
     //|> TimeHelpers.instrumentInterval "SheetView" start
-    *)
-
-

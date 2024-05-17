@@ -217,7 +217,7 @@ let makeLine (x1: float) (y1: float) (x2: float) (y2: float) (lineParameters: Li
         Line.startPoint (Point(float x1, float y1))
         Line.endPoint (Point(float x2, float y2))
         Line.stroke lineParameters.Stroke
-        Line.strokeThickness (float lineParameters.StrokeWidth)
+        Line.strokeThickness (float (lineParameters.StrokeWidth.TrimEnd('p', 'x')))
         // Line.strokeDashArray lineParameters.StrokeDashArray
     ] :> IView
 
@@ -249,7 +249,7 @@ let makePathFromAttr (attr:string) (pathParameters: Path) =
     Path.create [
         Path.data attr
         Path.stroke "DarkBlue"
-        Path.strokeThickness (float pathParameters.StrokeWidth)
+        Path.strokeThickness (float (pathParameters.StrokeWidth.TrimEnd('p', 'x')))
             (*D attr
             SVGAttr.Stroke pathParameters.Stroke
             SVGAttr.StrokeWidth pathParameters.StrokeWidth
@@ -285,14 +285,15 @@ let makePath (startingPoint: XYPos) (startingControlPoint: XYPos) (endingControl
             SVGAttr.Fill pathParameters.Fill
     ] []*)
     
-/// Makes a polygon ReactElement, points are to be given as a correctly formatted SVGAttr.Points string 
+/// Makes a polygon IView Element, points are to be given as a correctly formatted SVGAttr.Points string 
 let makePolygon (points: string) (polygonParameters: Polygon) =
     let stroke = Color.Parse(polygonParameters.Stroke)
     let fill = Color.Parse(polygonParameters.Fill)
     let width = float (polygonParameters.StrokeWidth.TrimEnd('p', 'x'))
+    let points = convertToPointArray points
     Polygon.create
         [
-        Polygon.points (convertToPointArray points)
+        Polygon.points points
         Polygon.stroke (SolidColorBrush(stroke, 1.0))
         Polygon.strokeThickness width
         Polygon.fill (SolidColorBrush(fill, polygonParameters.FillOpacity))
