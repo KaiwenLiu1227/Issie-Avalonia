@@ -3,6 +3,7 @@ module MainView
 open Avalonia.Controls
 open Avalonia.FuncUI
 open Avalonia.FuncUI.DSL
+open Avalonia.Media
 
 open ModelType
 open DrawModelType
@@ -86,16 +87,43 @@ let init () =
       UIState = None
       BuildVisible = false }
 
+let viewRightTabs canvasState model dispatch =
+    DockPanel.create
+        [ DockPanel.dock Dock.Right
+          DockPanel.lastChildFill true
+          DockPanel.children
+              [
+                Border.create
+                    [ Border.borderThickness 2.0
+                      Border.borderBrush (SolidColorBrush(Color.FromArgb(75uy, 0uy, 0uy, 0uy)))
+                      Border.padding 10.0
+                      Border.width 350
+                      Border.child (
+                          StackPanel.create
+                              [ StackPanel.children
+                                    [
+                                    Menu.create
+                                          [Menu.viewItems
+                                                [ MenuItem.create [ MenuItem.header "Catalogue" ]
+                                                  MenuItem.create [ MenuItem.header "Properties" ]
+                                                  MenuItem.create [ MenuItem.header "Simulation" ] ] ]
+                                    CatalogueView.viewCatalogue model dispatch
+                                    ]
+                                ]
+                      ) ] ] ]
+
 let view model dispatch =
     let sheetDispatch sMsg = dispatch (Sheet sMsg)
-
+    let conns = BusWire.extractConnections model.Sheet.Wire
+    let comps = SymbolUpdate.extractComponents model.Sheet.Wire.Symbol
+    let canvasState = comps,conns  
     Grid.create
         [ Grid.children
               [
                 // Your main content here
                 DockPanel.create
                     [ DockPanel.children
-                          [ catalogueView model dispatch
+                          [ viewRightTabs canvasState model dispatch 
                             topMenuView model dispatch
                             SheetDisplay.view model.Sheet 50.0 [] sheetDispatch ] ]
                 // Overlay
