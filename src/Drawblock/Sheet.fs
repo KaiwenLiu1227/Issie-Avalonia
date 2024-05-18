@@ -103,14 +103,12 @@ let sheetCmd (msg: SheetT.Msg) = Cmd.ofMsg (ModelType.Msg.Sheet msg)
 module SheetInterface =
     type Model with
         /// Given a compType, return a label
-        (*
         member this.GenerateLabel (compType: ComponentType) : string =
             SymbolUpdate.generateLabel this.Wire.Symbol compType
 
         /// Given a compId, return the corresponding component
         member this.GetComponentById (compId: ComponentId) =
             SymbolUpdate.extractComponent this.Wire.Symbol compId
-            *)
 
         /// Change the label of Component specified by compId to lbl
         member this.ChangeLabel (dispatch: Dispatch<Msg>) (compId: ComponentId) (lbl: string) =
@@ -130,7 +128,7 @@ module SheetInterface =
             dispatch <| (Wire (BusWireT.Symbol (SymbolT.ChangeScale (compId, newScale, whichScale) ) ) )
             dispatch <| (Wire (BusWireT.UpdateSymbolWires compId))
 
-        (*member this.ChangeAdderComp (dispatch: Dispatch<Msg>) (compId: ComponentId) (newComp:ComponentType) =
+        member this.ChangeAdderComp (dispatch: Dispatch<Msg>) (compId: ComponentId) (newComp:ComponentType) =
             dispatch <| (Wire (BusWireT.Symbol (SymbolT.ChangeAdderComponent (compId,(this.GetComponentById compId), newComp) ) ) )
             let delPorts = SymbolPortHelpers.findDeletedPorts this.Wire.Symbol compId (this.GetComponentById compId) newComp
             dispatch <| (Wire (BusWireT.DeleteWiresOnPort delPorts))
@@ -171,7 +169,6 @@ module SheetInterface =
             dispatch <| (Wire (BusWireT.DeleteWiresOnPort delPorts))
             dispatch <| (Wire (BusWireT.UpdateSymbolWires compId))
             this.DoBusWidthInference dispatch
-            *)
 
         /// Given a compId and a LSB, update the LSB of the Component specified by compId
         member this.ChangeLSB (dispatch: Dispatch<Msg>) (compId: ComponentId) (lsb: int64) =

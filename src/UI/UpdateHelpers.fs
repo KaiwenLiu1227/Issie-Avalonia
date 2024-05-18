@@ -542,14 +542,14 @@ let writeUserData (model: Model) =
 
 
 /// subfunction used in model update function
-(*let getSimulationDataOrFail model msg =
+let getSimulationDataOrFail model msg =
     match model.CurrentStepSimulationStep with
     | None -> failwithf "what? Getting simulation data when no simulation is running: %s" msg
     | Some sim ->
         match sim with
         | Error _ -> failwithf "what? Getting simulation data when could not start because of error: %s" msg
         | Ok simData -> simData
-
+(*
 let verilogOutputPage sheet fPath  =
     div [] [
         str $"You can write sheet '{sheet}' (and its subsheets) in either simulation or synthesis format. The output will be written to:"

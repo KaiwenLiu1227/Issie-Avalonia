@@ -1,18 +1,18 @@
 ﻿module Update
 
 open Elmish
-(*open Fable.React
-open Fable.React.Props*)
 open ModelType
-(*
-open ElectronAPI
-*)
+open FilesIO
+open SimulatorTypes
+open ModelHelpers
 open CommonTypes
+open CatalogueView
 open Sheet.SheetInterface
 open DrawModelType
 open UpdateHelpers
 open Optics
 open Optics.Optic
+open Optics.Operators
 
 //---------------------------------------------------------------------------------------------//
 //---------------------------------------------------------------------------------------------//
@@ -30,24 +30,29 @@ let mutable uiStartTime: float = 0.
 //----------------------------------------------------------------------------------------------------------------//
 
 /// Main MVU model update function
-let update (msg: Msg) oldModel =
+let update (msg : Msg) oldModel =
 
     let withNoMsg (model: Model) = model, Cmd.none
 
-    let withMsg (msg: Msg) (model: Model) = model, Cmd.ofMsg msg
+    let withMsg (msg: Msg) (model : Model)  = model,Cmd.ofMsg msg
 
-    let withMsgs (msgs: Msg list) (model: Model) =
-        model, Cmd.batch (List.map Cmd.ofMsg msgs)
+    let withMsgs (msgs: Msg list) (model : Model) = model, Cmd.batch (List.map Cmd.ofMsg msgs)
 
     let startOfUpdateTime = TimeHelpers.getTimeMs()   
 
+    let asyncOperation (cmd: Cmd<Msg>) =
+        async {
+            do! (Async.Sleep 300)
+            return (ExecCmd cmd)
+        }
+        
     //Add the message to the pending queue if it is a mouse drag message
     let model =
         (*if matchMouseMsg (fun mMsg -> mMsg.Op = DrawHelpers.Drag) msg then
             {oldModel with Pending = msg :: oldModel.Pending}
         else*)
-        oldModel
-
+            oldModel
+    
     //Check if the current message is stored as pending, if so execute all pending messages currently in the queue
     let testMsg, cmd =
         (*List.tryFind (fun x -> isSameMsg x msg) model.Pending
@@ -56,27 +61,8 @@ let update (msg: Msg) oldModel =
             //Add any message recieved to the pending message queue
             DoNothing, Cmd.ofMsg (ExecutePendingMessages (List.length model.Pending))
         | None ->*)
-        msg, Cmd.none
-
+            msg, Cmd.none
     let model = updateAllMemoryCompsIfNeeded model
-    //-------------------------------------------------------------------------------//
-    //------------------------------MAIN MESSAGE DISPATCH----------------------------//
-    //-------------------------------------------------------------------------------//
-    let doBatchOfMsgsAsynch (msgs: seq<Msg>) =
-        printfn $"batchMsg: '{msgs}'"
-
-        msgs
-        |> Seq.map Elmish.Cmd.ofMsg
-        |> Elmish.Cmd.batch
-        |> ExecCmdAsynch
-        |> Elmish.Cmd.ofMsg
-
-    let asyncOperation (cmd: Cmd<Msg>) =
-        async {
-            do! (Async.Sleep 300)
-            return (ExecCmd cmd)
-        }
-
     //-------------------------------------------------------------------------------//
     //------------------------------MAIN MESSAGE DISPATCH----------------------------//
     //-------------------------------------------------------------------------------//
@@ -95,45 +81,41 @@ let update (msg: Msg) oldModel =
                 {model with UIState = Some uiCmd}
                 |> withMsg (Sheet (SheetT.SetSpinner true))
         | _ -> model, Cmd.none //otherwise discard the message
-    | DoNothing -> //Acts as a placeholder to propergrate the ExecutePendingMessages message in a Cmd
-        model, cmd
-    | SetProject project ->
-        // printf $"Setting project with component: '{project.OpenFileName}'"
-        model
-        |> set currentProj_ (Some project) 
-        // |> set (popupDialogData_ >-> projectPath_) project.ProjectPath
-        |> withNoMsg
-    | UpdateModel( updateFn: Model -> Model) ->
-        updateFn model, Cmd.none    
+    (*
+    | FinishUICmd _->
+        //printfn $"ending UI command '{model.UIState}"
+        //printf $"***UI Command: %.2f{TimeHelpers.getTimeMs() - uiStartTime} ***"
+        let popup = CustomCompPorts.optCurrentSheetDependentsPopup model
+        {model with UIState = None; PopupViewFunc = popup}
+        |> withMsg (Sheet (SheetT.SetSpinner false))
+
+    | CloseApp ->
+        exitApp model
+        model, Cmd.none
+        *)
+
+    | Sheet sMsg ->
+        (*match sMsg, model.PopupViewFunc with
+        | SheetT.ToggleNet canvas, _ ->
+            model, Cmd.none
+        | SheetT.KeyPress _, Some _ -> 
+            // do not allow keys to affect Sheet when popup is on.
+            model, Cmd.none
+        | _ -> sheetMsg sMsg model*)
+        sheetMsg sMsg model
+
     | SynchroniseCanvas ->
         // used after drawblock components are centred on load to enusre that Issie CanvasState is updated
         // This may be needed if Ctrl/w on load moves the whole draw block sheet circuit to centre it.
         // in this case we do not want the save button to be active, because moving the circuit is not a "real" change
         // updating loaded component CanvasState to equal draw bloack canvasstate will ensure the button stays inactive.
-        let canvas = model.Sheet.GetCanvasState()
-        // printfn $"synchronising canvas:'{canvas}'"
+        let canvas = model.Sheet.GetCanvasState ()
+        //printf "synchronising canvas..."
         // this should disable the saev button by making loadedcomponent and draw blokc canvas the same
         model
-        |> map openLoadedComponentOfModel_ (fun ldc -> { ldc with CanvasState = canvas })
+        |> map openLoadedComponentOfModel_ (fun ldc -> {ldc with CanvasState = canvas})
         |> withNoMsg
-    | Sheet sMsg ->
-        match sMsg with
-        | SheetT.ToggleNet _ -> model, Cmd.none
-        | SheetT.KeyPress _ ->
-            // do not allow keys to affect Sheet when popup is on.
-            model, Cmd.none
-        | _ -> sheetMsg sMsg model
-    | SendSeqMsgAsynch msgs -> model, doBatchOfMsgsAsynch msgs
-    | ExecCmd cmd -> model, cmd
-    | ExecCmdAsynch cmd ->
-        let cmd' = Elmish.Cmd.OfAsyncImmediate.perform asyncOperation
-        model, cmd
-    | ExecFuncInMessage (f,dispatch)->
-        (f model dispatch; model)
-        |> withNoMsg    
-    | _ -> model, Cmd.none
-
-    (*    
+        
     // special messages for mouse control of screen vertical dividing bar, active when Wavesim is selected as rightTab
     | SetDragMode mode ->
         {model with DividerDragMode= mode}
@@ -155,8 +137,8 @@ let update (msg: Msg) oldModel =
     | ReloadSelectedComponent width ->
         {model with LastUsedDialogWidth=width}
         |> withNoMsg
-        
-      | Benchmark ->
+
+    | Benchmark ->
         let step = 2000
         let warmup = 5
         let simulationRound = 10
@@ -223,6 +205,7 @@ let update (msg: Msg) oldModel =
     | UpdateModel( updateFn: Model -> Model) ->
         updateFn model, Cmd.none
 
+    (*
     | UpdateImportDecisions importDecisions' ->
         let updatedModel = 
             model
@@ -233,13 +216,14 @@ let update (msg: Msg) oldModel =
     | RefreshWaveSim ws ->
         // restart the wave simulator after design change etc that invalidates all waves
         WaveSim.refreshWaveSim true ws model
+        *)
 
     | AddWSModel (sheet, wsModel) ->
         model
         |> map waveSim_ (Map.add sheet wsModel)
         |> withNoMsg
 
-    | GenerateWaveforms ws ->
+    (*| GenerateWaveforms ws ->
         // Update the wave simulator with new waveforms
         // Is called whenever any waveform might need to be changed
         WaveSim.refreshWaveSim false ws model
@@ -263,7 +247,7 @@ let update (msg: Msg) oldModel =
     | SetWaveSheetSelectionOpen (fIdL, show) ->       
         model
         |> updateWSModel (fun ws -> WaveSimHelpers.setWaveSheetSelectionOpen ws fIdL show)
-        |> withNoMsg    
+        |> withNoMsg    *)
 
     | TryStartSimulationAfterErrorFix simType ->
         SimulationView.tryStartSimulationAfterErrorFix simType model
@@ -298,7 +282,7 @@ let update (msg: Msg) oldModel =
         |> set currentStepSimulationStep_ None
         |> withNoMsg
 
-    | EndWaveSim -> 
+    (*| EndWaveSim -> 
         let model =
             let model = removeAllSimulationsFromModel model
             match model.WaveSimSheet with
@@ -311,7 +295,7 @@ let update (msg: Msg) oldModel =
                     WaveSim = Map.change sheet (Option.map (fun ws -> 
                         {ws with State = Ended ; WaveModalActive = false})) model.WaveSim
                 }
-        model, Cmd.none
+        model, Cmd.none*)
 
     | ChangeRightTab newTab -> 
         let inferMsg = JSDiagramMsg <| InferWidths()
@@ -359,10 +343,10 @@ let update (msg: Msg) oldModel =
         printf $"Setting project with component: '{project.OpenFileName}'"
         model
         |> set currentProj_ (Some project) 
-        |> set (popupDialogData_ >-> projectPath_) project.ProjectPath
+        //|> set (popupDialogData_ >-> projectPath_) project.ProjectPath
         |> withNoMsg
 
-    | UpdateProject update ->
+    (*| UpdateProject update ->
         CustomCompPorts.updateProjectFiles true update model
         |> withNoMsg
 
@@ -460,6 +444,7 @@ let update (msg: Msg) oldModel =
         model
         |> map (popupDialogData_ >-> progress_) (Option.map updateFn)
         |> withNoMsg
+        *)
 
     | SimulateWithProgressBar simPars ->
         SimulationView.simulateWithProgressBar simPars model
@@ -469,7 +454,7 @@ let update (msg: Msg) oldModel =
         |> map selectedComponent_ (updateComponentMemory addr data)
         |> withNoMsg
 
-    | CloseDiagramNotification ->
+    (*| CloseDiagramNotification ->
         model
         |> set (notifications_ >-> fromDiagram_) None
         |> withNoMsg
@@ -521,6 +506,7 @@ let update (msg: Msg) oldModel =
     | SetTopMenu t ->
         { model with TopMenuOpenState = t}
         |> withNoMsg
+        *)
 
     | ExecFuncInMessage (f,dispatch)->
         (f model dispatch; model)
@@ -529,30 +515,14 @@ let update (msg: Msg) oldModel =
     | ExecCmd cmd ->
         model, cmd
 
-    | ExecFuncAsynch func ->
-             let cmd' = 
-                Elmish.Cmd.OfAsyncImmediate.result (async { 
-                //wavesim - 0 sleep will never update cursor in time, 100 will SOMETIMES be enough, 300 always works
-                //this number only seems to affect the wavesim spinner cursor, it does not help with open project/change sheet spinner cursor
-                    do! (Async.Sleep 100) 
-                    if Set.contains "update" JSHelpers.debugTraceUI then
-                        printfn "Starting ExecFuncAsynch payload"
-                    let cmd = func ()                    
-                    return (ExecCmd cmd)})
-             model, cmd'
-
     | ExecCmdAsynch cmd ->
-        let cmd' = 
-            Elmish.Cmd.OfAsyncImmediate.result (async { 
-            //wavesim - 0 sleep will never update cursor in time, 100 will SOMETIMES be enough, 300 always works
-            //this number only seems to affect the wavesim spinner cursor.
-                do! (Async.Sleep 300)
-                return (ExecCmd cmd)})
-        model, cmd'
-
+        let cmd' = Elmish.Cmd.OfAsyncImmediate.perform asyncOperation
+        model, cmd
+        
     | SendSeqMsgAsynch msgs ->
         model, SimulationView.doBatchOfMsgsAsynch msgs
 
+    (*
     | MenuAction(act,dispatch) ->
         match act with 
         | MenuSaveFile -> getMenuView act model dispatch, Cmd.ofMsg (Sheet SheetT.SaveSymbols)
@@ -566,6 +536,7 @@ let update (msg: Msg) oldModel =
 
     | ContextMenuItemClick(menuType, item, dispatch) ->
         processContextMenuClick menuType item dispatch model
+        *)
 
 
     | DiagramMouseEvent ->
@@ -600,8 +571,10 @@ let update (msg: Msg) oldModel =
     | ExecutePendingMessages n ->
         executePendingMessagesF n model
 
+    (*
     | TruthTableMsg ttMsg ->
         TruthTableUpdate.truthTableUpdate model ttMsg
+        *)
 
     // Various messages here that are not implemented as yet, or are no longer used
     // should be sorted out
@@ -615,6 +588,8 @@ let update (msg: Msg) oldModel =
         model, Cmd.none
 
     // post-processing of update function (Model * Cmd<Msg>)
-    |> map fst_ (fun model' -> resetDialogIfSelectionHasChanged model' oldModel)
-    |> UpdateHelpers.traceMessage startOfUpdateTime msg*)
+    // |> map fst_ (fun model' -> resetDialogIfSelectionHasChanged model' oldModel)
+    | _ ->
+        model, Cmd.none
+    |> UpdateHelpers.traceMessage startOfUpdateTime msg
     |> ModelHelpers.execOneAsyncJobIfPossible

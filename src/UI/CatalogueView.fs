@@ -51,6 +51,7 @@ let menuItem styles (label: string) onClick =
         [ str label ]*)
     TextBlock.create[
         TextBlock.text label
+        TextBlock.onTapped onClick
     ] |> generalize
 
 let private createComponent compType label model dispatch =
@@ -862,6 +863,8 @@ let private makeMenuGroupWithTip styles  title tip menuList =
         summary [menuLabelStyle] [ str title ]
         Menu.list [] menuList
     ]*)
+let mutable firstTip = true
+
 let private makeMenuGroup (title: string) (menuList: IView List) =
 
     (*Expander.create[

@@ -7,12 +7,11 @@
 *)
 
 module rec ModelType
-
+open Avalonia.FuncUI.Types
 open CommonTypes
-(*open SimulatorTypes
+open SimulatorTypes
 open TruthTableTypes
-open Fable.React
-open VerilogTypes*)
+open VerilogTypes
 open Optics
 open Optics.Operators
 
@@ -82,14 +81,14 @@ type PopupDialogData = {
     MemorySetup : (int * int * InitMemData * string option) option // AddressWidth, WordWidth. 
     MemoryEditorData : MemoryEditorData option // For memory editor and viewer.
     Progress: PopupProgress option
-    (*ConstraintTypeSel: ConstraintType option
+    ConstraintTypeSel: ConstraintType option
     ConstraintIOSel: CellIO option
     ConstraintErrorMsg: string option
     NewConstraint: Constraint option
     AlgebraInputs: SimulationIO list option
     AlgebraError: SimulationError option
     VerilogCode: string option
-    VerilogErrors: ErrorInfo list*)
+    VerilogErrors: ErrorInfo list
     BadLabel: bool
     IntList: int list option;
     IntList2: int list option;
@@ -103,14 +102,14 @@ let projectPath_ = Lens.create (fun a -> a.ProjectPath) (fun s a -> {a with Proj
 let memorySetup_ = Lens.create (fun a -> a.MemorySetup) (fun s a -> {a with MemorySetup = s})
 let memoryEditorData_ = Lens.create (fun a -> a.MemoryEditorData) (fun s a -> {a with MemoryEditorData = s})
 let progress_ = Lens.create (fun a -> a.Progress) (fun s a -> {a with Progress = s})
-(*let constraintTypeSel_ = Lens.create (fun a -> a.ConstraintTypeSel) (fun s a -> {a with ConstraintTypeSel = s})
+let constraintTypeSel_ = Lens.create (fun a -> a.ConstraintTypeSel) (fun s a -> {a with ConstraintTypeSel = s})
 let constraintIOSel_ = Lens.create (fun a -> a.ConstraintIOSel) (fun s a -> {a with ConstraintIOSel = s})
 let constraintErrorMsg_ = Lens.create (fun a -> a.ConstraintErrorMsg) (fun s a -> {a with ConstraintErrorMsg = s})
 let newConstraint_ = Lens.create (fun a -> a.NewConstraint) (fun s a -> {a with NewConstraint = s})
 let algebraInputs_ = Lens.create (fun a -> a.AlgebraInputs) (fun s a -> {a with AlgebraInputs = s})
 let algebraError_ = Lens.create (fun a -> a.AlgebraError) (fun s a -> {a with AlgebraError = s})
 let verilogCode_ = Lens.create (fun a -> a.VerilogCode) (fun s a -> {a with VerilogCode = s})
-let verilogErrors_ = Lens.create (fun a -> a.VerilogErrors) (fun s a -> {a with VerilogErrors = s})*)
+let verilogErrors_ = Lens.create (fun a -> a.VerilogErrors) (fun s a -> {a with VerilogErrors = s})
 let badLabel_ = Lens.create (fun a -> a.BadLabel) (fun s a -> {a with BadLabel = s})
 let intlist_ = Lens.create (fun a -> a.IntList) (fun s a -> {a with IntList = s})
 let intlist2_ = Lens.create (fun a -> a.IntList2) (fun s a -> {a with IntList2 = s})
@@ -152,9 +151,7 @@ type WaveSimState =
     /// If no project is open
     | NoProject
     /// If there is an error in the circuit diagram
-    (*
     | SimError of SimulationError
-    *)
     /// If there is no sequential (clocked) logic in the circuit
     | NonSequential
     /// While waiting for the fast simulator to finish running
@@ -200,9 +197,9 @@ type Wave = {
     /// width of the waveform's bus
     Width: int
     /// Array indexed by clock cycle to show value of wave.
-    (*WaveValues: IOArray
+    WaveValues: IOArray
     /// SVG of waveform
-    SVG: ReactElement option*)
+    SVG: IView option
 }
 
 /// Contains all information required by waveform simulator.
@@ -295,9 +292,7 @@ type PopupProgress =
     }
     
 type TTMsg =
-    (*
     | GenerateTruthTable of option<Result<SimulationData,SimulationError> * CanvasState>
-    *)
     | RegenerateTruthTable
     | FilterTruthTable
     | SortTruthTable
@@ -306,7 +301,7 @@ type TTMsg =
     | CloseTruthTable
     | ClearInputConstraints
     | ClearOutputConstraints
-    (*| AddInputConstraint of Constraint
+    | AddInputConstraint of Constraint
     | AddOutputConstraint of Constraint
     | DeleteInputConstraint of Constraint
     | DeleteOutputConstraint of Constraint
@@ -318,7 +313,7 @@ type TTMsg =
     | SetIOOrder of CellIO []
     | SetTTAlgebraInputs of SimulationIO list
     | SetTTBase of NumberBase
-    | SetTTGridCache of ReactElement option
+    | SetTTGridCache of IView option
     | TogglePopupAlgebraInput of (SimulationIO * SimulationData)
     | SetPopupInputConstraints of ConstraintSet option
     | SetPopupOutputConstraints of ConstraintSet option
@@ -327,32 +322,19 @@ type TTMsg =
     | SetPopupConstraintErrorMsg of string option
     | SetPopupNewConstraint of Constraint option
     | SetPopupAlgebraInputs of SimulationIO list option
-    | SetPopupAlgebraError of SimulationError option*)
+    | SetPopupAlgebraError of SimulationError option
 
 
 type Msg =
-    | DoNothing
-    | Sheet of DrawModelType.SheetT.Msg
-    | SynchroniseCanvas
-    | SetProject of Project
-    | UpdateProject of (Project -> Project)
-    | UpdateModel of (Model -> Model)
-    | SendSeqMsgAsynch of seq<Msg>
-    | ExecCmdAsynch of Elmish.Cmd<Msg>
-    | ExecCmd of Elmish.Cmd<Msg>
-    | StartUICmd of UICommandType
-    | ExecFuncInMessage of (Model -> (Msg->Unit) -> Unit) * (Msg -> Unit)
-
-    (*| ShowExitDialog
+    | ShowExitDialog
     | Sheet of DrawModelType.SheetT.Msg
     | UpdateUISheetTrail of (string list -> string list)
-    | SheetBackAction of (Msg -> unit)*)
-    (*| JSDiagramMsg of JSDiagramMsg
+    | SheetBackAction of (Msg -> unit)
+    | SynchroniseCanvas
+    | JSDiagramMsg of JSDiagramMsg
     | KeyboardShortcutMsg of KeyboardShortcutMsg
     | Benchmark
-    (*
     | StartSimulation of Result<SimulationData, SimulationError>
-    *)
     /// Add WaveSimModel to Model.WaveSim map.
     /// String is name of current sheet.
     | AddWSModel of (string * WaveSimModel)
@@ -379,9 +361,7 @@ type Msg =
     | LockTabsToWaveSim
     | UnlockTabsFromWaveSim
     | TryStartSimulationAfterErrorFix of SimSubTab
-    (*
     | SetSimulationGraph of SimulationGraph  * FastSimulation
-    *)
     | SetSimulationBase of NumberBase
     | IncrementSimulationClockTick of int
     | EndSimulation
@@ -399,15 +379,13 @@ type Msg =
     | UpdateModel of (Model -> Model)
     | UpdateImportDecisions of Map<string, ImportDecision option>
     | UpdateProjectWithoutSyncing of (Project->Project)
-    (*| ShowPopup of ((Msg -> Unit) -> Model -> ReactElement)
-    | ShowStaticInfoPopup of (string * ReactElement * (Msg -> Unit))*)
+    | ShowPopup of ((Msg -> Unit) -> Model -> IView)
+    | ShowStaticInfoPopup of (string * IView * (Msg -> Unit))
     | ClosePopup
     | SetPopupDialogText of string option
     | SetPopupDialogBadLabel of bool
     | SetPopupDialogCode of string option
-    (*
     | SetPopupDialogVerilogErrors of ErrorInfo list
-    *)
     | SetPopupDialogInt of int option
     | SetPopupDialogInt2 of int64 option
     | SetPopupDialogTwoInts of (int64 option * IntMode * string option)
@@ -421,22 +399,14 @@ type Msg =
     | SimulateWithProgressBar of SimulationProgress
     | SetSelectedComponentMemoryLocation of int64 * int64
     | CloseDiagramNotification
-    (*
-    | SetSimulationNotification of ((Msg -> unit) -> ReactElement)
-    *)
+    | SetSimulationNotification of ((Msg -> unit) -> IView)
     | CloseSimulationNotification
     | CloseWaveSimNotification
-    (*
-    | SetFilesNotification of ((Msg -> unit) -> ReactElement)
-    *)
+    | SetFilesNotification of ((Msg -> unit) -> IView)
     | CloseFilesNotification
-    (*
-    | SetMemoryEditorNotification of ((Msg -> unit) -> ReactElement)
-    *)
+    | SetMemoryEditorNotification of ((Msg -> unit) -> IView)
     | CloseMemoryEditorNotification
-    (*
-    | SetPropertiesNotification of ((Msg -> unit) -> ReactElement)
-    *)
+    | SetPropertiesNotification of ((Msg -> unit) -> IView)
     | ClosePropertiesNotification
     | SetTopMenu of TopMenu
     | ReloadSelectedComponent of int
@@ -463,36 +433,30 @@ type Msg =
     | ExecFuncAsynch of (Unit -> Elmish.Cmd<Msg>)
     | ExecCmdAsynch of Elmish.Cmd<Msg>
     | SendSeqMsgAsynch of seq<Msg>
-    (*
-    | ContextMenuAction of e: Browser.Types.MouseEvent
-    *)
+    // | ContextMenuAction of e: Browser.Types.MouseEvent
     | ContextMenuItemClick of menuType:string * item:string * dispatch: (Msg -> unit)
-    *)
 
 
 //================================//
 // Componenents loaded from files //
 //================================//
 
-(*
-type Notifications = {
-    FromDiagram : ((Msg -> unit) -> Fable.React.ReactElement) option
-    FromSimulation : ((Msg -> unit) -> Fable.React.ReactElement) option
-    FromWaveSim : ((Msg -> unit) -> Fable.React.ReactElement) option
-    FromFiles : ((Msg -> unit) -> Fable.React.ReactElement) option
-    FromMemoryEditor : ((Msg -> unit) -> Fable.React.ReactElement) option
-    FromProperties : ((Msg -> unit) -> Fable.React.ReactElement) option
-}
-*)
 
-(*
+type Notifications = {
+    FromDiagram : ((Msg -> unit) -> IView) option
+    FromSimulation : ((Msg -> unit) -> IView) option
+    FromWaveSim : ((Msg -> unit) -> IView) option
+    FromFiles : ((Msg -> unit) -> IView) option
+    FromMemoryEditor : ((Msg -> unit) -> IView) option
+    FromProperties : ((Msg -> unit) -> IView) option
+}
+
 let fromDiagram_ = Lens.create (fun n -> n.FromDiagram) (fun s n -> {n with FromDiagram = s})
 let fromSimulation_ = Lens.create (fun n -> n.FromSimulation) (fun s n -> {n with FromSimulation = s})
 let fromWaveSim_ = Lens.create (fun n -> n.FromWaveSim) (fun s n -> {n with FromWaveSim = s})
 let fromFiles_ = Lens.create (fun n -> n.FromFiles) (fun s n -> {n with FromFiles = s})
 let fromMemoryEditor_ = Lens.create (fun n -> n.FromMemoryEditor) (fun s n -> {n with FromMemoryEditor = s})
 let fromProperties_ = Lens.create (fun n -> n.FromProperties) (fun s n -> {n with FromProperties = s})
-*)
 
 type UserData = {
     /// Where to save the persistent app data
@@ -513,7 +477,7 @@ type SpinnerState =
     Total: int
     }*)
 
-(*type TTType = {
+type TTType = {
     /// bits associated with the maximum number of input rows allowed in a Truth Table
     BitLimit: int
     /// input constraints on truth table generation
@@ -527,13 +491,12 @@ type SpinnerState =
     /// what is the display order of IOs in Table
     IOOrder: CellIO []
     /// Grid Styles for each column in the Table
-    GridStyles: Map<CellIO,Props.CSSProp list>
+    GridStyles: Map<CellIO,string list>
     /// Cached CSS Grid for displaying the Truth Table
-    GridCache: ReactElement option
+    GridCache: IView option
     /// which of the Truth Table's inputs are currently algebra
     AlgebraIns: SimulationIO list
-}*)
-(*
+}
 let gridStyles_ = Lens.create (fun a -> a.GridStyles) (fun s a -> {a with GridStyles = s})
 let ioOrder_ = Lens.create (fun a -> a.IOOrder) (fun s a -> {a with IOOrder = s})
 let inputConstraints_ = Lens.create (fun a -> a.InputConstraints) (fun s a -> {a with InputConstraints = s})
@@ -542,7 +505,6 @@ let hiddenColumns_ = Lens.create (fun a -> a.HiddenColumns) (fun s a -> {a with 
 let sortType_ = Lens.create (fun a -> a.SortType) (fun s a -> {a with SortType = s})
 let algebraIns_ = Lens.create (fun a -> a.AlgebraIns) (fun s a -> {a with AlgebraIns = s})
 let gridCache_ = Lens.create (fun a -> a.GridCache) (fun s a -> {a with GridCache = s})
-*)
 type Model = {
     UserData: UserData
     /// Map of sheet name to WaveSimModel
@@ -582,11 +544,11 @@ type Model = {
     /// component currently selected in properties dialog
     SelectedComponent : Component option // None if no component is selected.
     /// used during step simulation: simgraph for current clock tick
-    (*CurrentStepSimulationStep : Result<SimulationData,SimulationError> option // None if no simulation is running.
+    CurrentStepSimulationStep : Result<SimulationData,SimulationError> option // None if no simulation is running.
     /// stores the generated truth table 
     CurrentTruthTable: Result<TruthTable,SimulationError> option // None if no Truth Table is being displayed.
     /// style info for the truth table
-    TTConfig: TTType*)
+    // TTConfig: TTType
     /// which of the tabbed panes is currently visible
     RightPaneTabVisible : RightTab
     /// which of the subtabs for the right pane simulation is visible
@@ -642,9 +604,9 @@ let popupViewFunc_ = Lens.create (fun a -> a.PopupViewFunc) (fun s a -> {a with 
 *)
 
 let sheet_ = Lens.create (fun a -> a.Sheet) (fun s a -> {a with Sheet = s})
-(*let tTType_ = Lens.create (fun a -> a.TTConfig) (fun s a -> {a with TTConfig = s})
+// let tTType_ = Lens.create (fun a -> a.TTConfig) (fun s a -> {a with TTConfig = s})
 let currentStepSimulationStep_ = Lens.create (fun a -> a.CurrentStepSimulationStep) (fun s a -> {a with CurrentStepSimulationStep = s})
-let currentTruthTable_ = Lens.create (fun a -> a.CurrentTruthTable) (fun s a -> {a with CurrentTruthTable = s})*)
+let currentTruthTable_ = Lens.create (fun a -> a.CurrentTruthTable) (fun s a -> {a with CurrentTruthTable = s})
 (*
 let popupDialogData_ = Lens.create (fun a -> a.PopupDialogData) (fun p a -> {a with PopupDialogData = p})
 *)

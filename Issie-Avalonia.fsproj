@@ -22,11 +22,35 @@
         <Compile Include="src\Common\TimeHelpers.fs" />
         <Compile Include="src\Common\WidthInferer.fs" />
         <!--<Compile Include="src\Common\WidthInferer.fs" />-->
-        
-        <Compile Include="src\Simulator\SimulatorTypes.fs" />
-        <Compile Include="src\Simulator\Extractor.fs" />
-        <Compile Include="src\Simulator\NumberHelpers.fs" />
 
+        <!-- simulator -->
+        <Compile Include="src\Simulator\SimulatorTypes.fs" />
+        <Compile Include="src\Simulator\TruthTableTypes.fs" />
+        <Compile Include="src\Simulator\NumberHelpers.fs" />
+        <Compile Include="src\Simulator\SynchronousUtils.fs" />
+        <Compile Include="src\Simulator\Extractor.fs" />
+        <Compile Include="src\Simulator\CanvasStateAnalyser.fs" />
+        <Compile Include="src\Simulator\SimulationGraphAnalyser.fs" />
+        <Compile Include="src\Simulator\Fast\FastCreate.fs" />
+        <Compile Include="src\Simulator\Fast\FastReduce.fs" />
+        <Compile Include="src\Simulator\Fast\FastRun.fs" />
+        <Compile Include="src\Simulator\Builder.fs" />
+        <Compile Include="src\Simulator\Verilog.fs" />
+        <Compile Include="src\Simulator\Runner.fs" />
+        <Compile Include="src\Simulator\DependencyMerger.fs" />
+        <Compile Include="src\Simulator\Simulator.fs" />
+
+        <!-- Verilog Component -->
+        <Compile Include="src\VerilogComponent\VerilogTypes.fs" />
+<!--        <Compile Include="VerilogComponent\VerilogAST.fs" />
+        <Compile Include="VerilogComponent\NearleyBindings.fs" />
+        <Compile Include="VerilogComponent\ErrorCheckHelpers.fs" />
+        <Compile Include="VerilogComponent\ErrorCheckProcedural.fs" />
+        <Compile Include="VerilogComponent\ErrorCheck.fs" />
+        <Compile Include="VerilogComponent\SheetCreator.fs" />
+        <Compile Include="VerilogComponent\CodeEditorHelpers.fs" />-->
+
+        <!-- JS and File interface -->
         <Compile Include="src\Interface\FileIO.fs"/>
         
         <Compile Include="src\Model\DrawModelType.fs" />
@@ -61,11 +85,12 @@
         <Compile Include="src\UI\MiscMenuView.fs" />
         <Compile Include="src\UI\TopMenuView.fs"/>
         <Compile Include="src\UI\CatalogueView.fs"/>
+        <Compile Include="src\UI\MemoryEditorView.fs" />
+        <Compile Include="src\UI\SimulationView.fs" />
+        <Compile Include="src\VerilogComponent\VerilogTypes.fs" />
         <Compile Include="src\UI\MainView.fs"/>
         <Compile Include="src\UI\UpdateHelpers.fs" />
         <Compile Include="src\UI\Update.fs"/>
-        
-
 
         <Compile Include="Program.fs"/>
 
