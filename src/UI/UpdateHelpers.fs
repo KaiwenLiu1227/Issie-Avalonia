@@ -1,24 +1,25 @@
 ﻿module UpdateHelpers
 
 open Elmish
-(*open Fulma
-open Fable.React
-open Fable.React.Props
-open ElectronAPI*)
 open FilesIO
+open SimulatorTypes
 open ModelType
 open ModelHelpers
 open CommonTypes
 open Extractor
+open MenuHelpers
+open TopMenuView
 open Sheet.SheetInterface
 open BusWireUpdateHelpers
 open DrawModelType
-(*open Fable.SimpleJson
-open DiagramStyle
+open Fable.SimpleJson
+open NumberHelpers
+(*open DiagramStyle
 open Browser
 open PopupHelpers*)
 open Optics.Optic
-open Thoth.Json.Net
+open Optics.Operators
+open EEExtensions
 
 module Constants =
     let memoryUpdateCheckTime = 300.
@@ -26,6 +27,7 @@ module Constants =
 //-------------------------------------------------------------------------------------------------//
 //-------------------------------------MESSAGE TRACING---------------------------------------------//
 //-------------------------------------------------------------------------------------------------//
+
 
 ///Used to filter specific mouse messages based on mouse data.
 let matchMouseMsg (msgSelect: DrawHelpers.MouseT -> bool) (msg : Msg) : bool =
@@ -40,17 +42,151 @@ let matchMouseMsg (msgSelect: DrawHelpers.MouseT -> bool) (msg : Msg) : bool =
 /// short summary used where Sheet messages are too complex to print
 let shortDSheetMsg msg = Some "Sheet message"
 
+/// short summary of wavesim message which has a lot of data
+let shortDWSM (ws: WaveSimModel) =
+    ()
+    (*
+    Some <| sprintf $"WS<{ws.FastSim.SimulatedTopSheet}->{ws.StartCycle}-{ws.CurrClkCycle}-\
+            {ws.ShownCycles} Waves:{ws.AllWaves.Count} ({ws.SelectedWaves.Length})>"
+            *)
 
 /// Function returning a short but usually informative display of message
 /// used when message tracing (see Sheet menu to which on or off).
 /// Parameters that might be very large (like fastsimulation, or Model, or Symbols) should not be
 /// displayed using printf "%A".
-let shortDisplayMsg (msg: Msg) =
+let shortDisplayMsg (msg:Msg) =
     match msg with
+    | SheetBackAction _ -> Some "SheetBackAction"
+    | UpdateUISheetTrail _
+    | ShowExitDialog
     | SynchroniseCanvas -> None
     | Sheet sheetMsg -> shortDSheetMsg sheetMsg
-    | DoNothing -> None
-    | SetProject _ -> None
+    | JSDiagramMsg (InitCanvas _ )-> Some "JSDiagramMsg.InitCanvas"
+    | JSDiagramMsg _ -> None
+    | KeyboardShortcutMsg _ -> None
+    | StartSimulation x -> Some $"""StartSimulation({match x with | Ok _ -> "OK" | Error x -> "Error"})"""
+    | AddWSModel (s,ws) -> Some $"AddWSModel:{s}->{shortDWSM ws}"
+    //| SetWSModel ws -> Some $"SetWSModel:{ws.FastSim.SimulatedTopSheet}->{shortDWSM ws}"
+    | UpdateWSModel _ -> Some "Updating WS model"
+    | SetWSModelAndSheet (ws,s)-> Some $"SetWSModelAndSheet:{s}->{shortDWSM ws}"
+    | GenerateWaveforms ws -> Some $"GenerateWaveforms:{shortDWSM ws}"
+    | GenerateCurrentWaveforms -> Some $"Generate Current Waveforms"
+    | RefreshWaveSim ws -> Some "RefreshWaveSim"
+    | SetWaveSheetSelectionOpen _
+    | SetWaveComponentSelectionOpen _-> Some "SetWaveComponentSelectionOpen"
+    | SetWaveGroupSelectionOpen _
+    | LockTabsToWaveSim 
+    | UnlockTabsFromWaveSim -> None
+    | TryStartSimulationAfterErrorFix _ -> Some "TryStartSimulationAfterErrorFix"
+    | SetSimulationGraph _ -> Some "SetSimulationGraph"
+    | SetSimulationBase _
+    | IncrementSimulationClockTick _
+    | EndSimulation
+    | EndWaveSim -> None
+    | TruthTableMsg ttMsg ->
+        match ttMsg with
+        | GenerateTruthTable _ -> Some "GenerateTruthTable"
+        | RegenerateTruthTable
+        | FilterTruthTable
+        | SortTruthTable
+        | DCReduceTruthTable
+        | HideTTColumns
+        | CloseTruthTable
+        | ClearInputConstraints
+        | ClearOutputConstraints
+        | AddInputConstraint _
+        | AddOutputConstraint _
+        | DeleteInputConstraint _
+        | DeleteOutputConstraint _
+        | ToggleHideTTColumn _
+        | ClearHiddenTTColumns
+        | ClearDCMap
+        | SetTTSortType _
+        | MoveColumn _ -> None
+        | SetIOOrder _ -> Some "SetIOOrder"
+        | SetTTAlgebraInputs _ -> None
+        | SetTTBase _ -> None
+        | SetTTGridCache _ -> Some "SetTTGridCache"
+        | TogglePopupAlgebraInput _ -> Some  "TogglePopupAlgebraInput"
+        | SetPopupInputConstraints _ 
+        | SetPopupOutputConstraints _ 
+        | SetPopupConstraintTypeSel _ 
+        | SetPopupConstraintIOSel _ 
+        | SetPopupConstraintErrorMsg _ 
+        | SetPopupNewConstraint _ 
+        | SetPopupAlgebraInputs _ 
+        | SetPopupAlgebraError _ -> None
+
+    | ChangeRightTab _ -> None
+    | ChangeSimSubTab _ -> None
+    | SetHighlighted (comps,conns) -> Some $"SetHighlighted: {comps.Length} comps, {conns.Length} conns"
+    | SetSelWavesHighlighted x -> Some $"SetSelWavesHighlighted{x.Length}"
+    | SetClipboard _ -> Some "SetClipboard"
+    | SetCreateComponent _ -> Some "SetCreateComponent"
+    | SetProject _ -> Some "SetProject"
+    | UpdateProject _ 
+    | UpdateModel _
+    | UpdateImportDecisions _
+    | UpdateProjectWithoutSyncing _ 
+    | ShowPopup _ 
+    | ShowStaticInfoPopup _ 
+    | ClosePopup 
+    | SetPopupDialogBadLabel _ 
+    | SetPopupDialogText _ 
+    | SetPopupDialogCode _ 
+    | SetPopupDialogVerilogErrors _ 
+    | SetPopupDialogInt _ 
+    | SetPopupDialogInt2 _ 
+    | SetPopupDialogTwoInts _ 
+    | SetPopupDialogIntList _
+    | SetPopupDialogIntList2 _
+    | SetPropertiesExtraDialogText _ 
+    | SetPopupDialogBadLabel _ 
+    | SetPopupDialogMemorySetup _  
+    | SetPopupMemoryEditorData _ 
+    | SetPopupProgress _ 
+    | UpdatePopupProgress _ 
+    | SimulateWithProgressBar _ -> None
+    | SetSelectedComponentMemoryLocation _ -> Some "SetSelectedComponentMemoryLocation"
+    | CloseDiagramNotification
+    | SetSimulationNotification _ 
+    | CloseSimulationNotification
+    | CloseWaveSimNotification
+    | SetFilesNotification _ 
+    | CloseFilesNotification
+    | SetMemoryEditorNotification _ 
+    | CloseMemoryEditorNotification
+    | SetPropertiesNotification _ 
+    | ClosePropertiesNotification
+    | SetTopMenu _ 
+    | ReloadSelectedComponent _ 
+    | SetDragMode _ 
+    // Set width of right-hand pane when tab is WaveSimulator or TruthTable
+    | SetViewerWidth _ 
+    | MenuAction _ 
+    | DiagramMouseEvent
+    // | ContextMenuAction _ -> None
+    | ContextMenuItemClick _
+    | SelectionHasChanged -> Some "Selection has changed"
+    | SetIsLoading _
+    | SetRouterInteractive _
+    | CloseApp
+    | SetExitDialog _
+    | ExecutePendingMessages _ 
+    | DoNothing
+    | StartUICmd _
+    | FinishUICmd
+    | ChangeBuildTabVisibility
+    | ReadUserData _
+    | SetUserData _
+    | ChangeBuildTabVisibility
+    | Benchmark
+    | SetThemeUserData _ -> None
+    | ExecCmd _ -> Some "ExecCmd"
+    | ExecFuncInMessage _ -> Some "ExecFuncInMessage"
+    | ExecFuncAsynch _ -> Some "ExecFuncAsync"
+    | ExecCmdAsynch _ -> Some "ExecCmdAsynch"
+    | SendSeqMsgAsynch _ -> Some "SendSeqMsgAsynch"
 
 
 
@@ -61,7 +197,7 @@ let shortDisplayMsg (msg: Msg) =
 /// optimise for very quick return in the case that debugLevel = 0 (production version)
 /// optimise for quick return if nothing is printed.
 let getMessageTraceString (msg: Msg) =
-    let noDisplayMouseOp (mMsg: DrawHelpers.MouseT) =
+    let noDisplayMouseOp (mMsg:DrawHelpers.MouseT) = 
         mMsg.Op = DrawHelpers.Drag || mMsg.Op = DrawHelpers.Move
     let noDisplayMessage = function
         | Sheet (SheetT.Msg.Wire(BusWireT.Msg.Symbol(SymbolT.MouseMsg _ | SymbolT.ShowPorts _ ))) -> true
@@ -75,39 +211,40 @@ let getMessageTraceString (msg: Msg) =
     else *)
     match shortDisplayMsg msg with
     | Some shortName -> shortName
-    | None -> Helpers.sprintInitial 70 $"{msg}"
+    | None ->
+        Helpers.sprintInitial 70 $"{msg}"
 
 let mutable updateTimeTotal = 0.
 
-let traceMessage startOfUpdateTime (msg: Msg) ((model, cmdL): Model * Cmd<Msg>) =
+let traceMessage startOfUpdateTime (msg:Msg) ((model,cmdL): Model*Cmd<Msg>) =
+    // if JSHelpers.debugLevel > 0 then
+    let str = getMessageTraceString msg
+    let rootOfMsg = 
+        match str.Split [|' ';'('|] with
+        | ss when ss.Length > 0 -> ss.[0]
+        | _ -> ""
+    TimeHelpers.instrumentInterval rootOfMsg startOfUpdateTime |> ignore
+    let updateTime = TimeHelpers.getTimeMs() - startOfUpdateTime
+    updateTimeTotal <- match updateTimeTotal > 1000. with | true -> 0. | false -> updateTimeTotal + updateTime
+    //if str <> "" then printfn "%s" $"**Upd:{str} %.1f{updateTime}ms ({int startOfUpdateTime % 10000}ms)"
     (*
-    if JSHelpers.debugLevel > 0 then
-        let str = getMessageTraceString msg
-        let rootOfMsg = 
-            match str.Split [|' ';'('|] with
-            | ss when ss.Length > 0 -> ss.[0]
-            | _ -> ""
-        TimeHelpers.instrumentInterval rootOfMsg startOfUpdateTime |> ignore
-        let updateTime = TimeHelpers.getTimeMs() - startOfUpdateTime
-        updateTimeTotal <- match updateTimeTotal > 1000. with | true -> 0. | false -> updateTimeTotal + updateTime
-        //if str <> "" then printfn "%s" $"**Upd:{str} %.1f{updateTime}ms ({int startOfUpdateTime % 10000}ms)"
-        if Set.contains "update" JSHelpers.debugTraceUI then           
-            let logMsg = sprintf ">>Cmd:%.0f %s" updateTimeTotal (getMessageTraceString msg)
-            TimeHelpers.instrumentInterval logMsg (startOfUpdateTime)  msg|> ignore
-            *)
+    if Set.contains "update" JSHelpers.debugTraceUI then           
+        let logMsg = sprintf ">>Cmd:%.0f %s" updateTimeTotal (getMessageTraceString msg)
+        TimeHelpers.instrumentInterval logMsg (startOfUpdateTime)  msg|> ignore
+        *)
 
-    model, cmdL
+    model,cmdL
 
 let mutable lastMemoryUpdateCheck = 0.
 
-let updateAllMemoryCompsIfNeeded (model: Model) =
-    (*let time = TimeHelpers.getTimeMs()
+let updateAllMemoryCompsIfNeeded (model:Model) =
+    let time = TimeHelpers.getTimeMs()
     if time - lastMemoryUpdateCheck > Constants.memoryUpdateCheckTime && (getWSModel model).State = Success then
         printfn "checking update of memories"
         lastMemoryUpdateCheck <- time
         MemoryEditorView.updateAllMemoryComps model
-    else*)
-    model
+    else
+        model
 
 //-------------------------------------------------------------------------------------------------//
 //-------------------------------------CONTEXT MENUS-----------------------------------------------//
@@ -134,19 +271,18 @@ type RightClickElement =
     | DBInputPort of string
     | DBOutputPort of string
     | IssieElement of string
-    (*
     | SheetMenuBreadcrumb of Sheet: SheetTree * IsSubSheet: bool
-    *)
     | WaveSimHelp
     | NoMenu
-
+    
 
 let mutable rightClickElement: RightClickElement = NoMenu
 
 /// Function that works out from the right-click event and model
 /// what the current context menu should be.
 /// output should be a menu name as defined in ContextMenus.contextMenus, or "" for no menu.
-(*let getContextMenu (e: Browser.Types.MouseEvent) (model: Model) : string =
+(*
+let getContextMenu (e: Browser.Types.MouseEvent) (model: Model) : string =
     //--------- the sample code below shows how useful info can be extracted from e --------------//
     // calculate equivalent sheet XY coordinates - valid if mouse is over schematic.
     let symbols = model.Sheet.Wire.Symbol.Symbols
@@ -244,8 +380,9 @@ let mutable rightClickElement: RightClickElement = NoMenu
         "WaveSimHelp"
     | _ ->
         printfn $"Clicked on '{drawOn.ToString()}'"
-        "" // default is no menu*)
-
+        "" // default is no menu
+        *)
+            
 
 
 /// Function that implement action based on context menu item click.
@@ -445,7 +582,7 @@ let filterByOKSheets (model: Model) (sheet: string) =
     match model.CurrentProj with
     | Some p when p.OpenFileName = sheet -> false
     | Some p when p.LoadedComponents |> List.forall (fun ldc -> ldc.Name <> sheet) -> false
-    | _ -> true
+    | _ -> true   
 
 //-------------------------------------------------------------------------------------------------//
 //-------------------------------------UPDATE FUNCTIONS--------------------------------------------//
@@ -464,80 +601,60 @@ let filterByOKSheets (model: Model) (sheet: string) =
 
 /// Adapter function to pipeline adding a default "Cmd.none" command to a model as returned
 /// in update function.
-let withNoMsg (model: Model) : Model * Cmd<Msg> = model, Cmd.none
+let withNoMsg (model: Model) : Model * Cmd<Msg> =
+    model, Cmd.none
 
 /// Implement action of top bar 'Back' button using the UISheetTrail
-let processSheetBackAction (dispatch: Msg -> unit) (model: Model) =
+let processSheetBackAction (dispatch: Msg -> unit) (model: Model)  =
     let goodSheets = // filter trail to remove no-longer-valid sheets
-        model.UISheetTrail |> List.filter (filterByOKSheets model) // make sure trail still exists!
-
+        model.UISheetTrail
+        |> List.filter (filterByOKSheets model) // make sure trail still exists!
     let trail =
         match goodSheets with
-        | [] -> []
+        | [] ->
+            []
         | (sheet :: others) ->
             let p = Option.get model.CurrentProj
-            (*
             openFileInProject sheet p model dispatch
-            *)
             others
-
-    model |> set uISheetTrail_ trail
+    model
+    |> set uISheetTrail_ trail
 
 
 /// Read persistent user data from file in userAppDir.
 /// Store in Model UserData.
 let readUserData (userAppDir: string) (model: Model) : Model * Cmd<Msg> =
-    let addAppDirToUserData model =
-        { model with
-            UserData =
-                { model.UserData with
-                    UserAppDir = Some userAppDir } }
+    let addAppDirToUserData model = 
+        {model with UserData = {model.UserData with UserAppDir = Some userAppDir}}
 
     let modelOpt =
         try
-            let jsonRes = tryReadFileSync <| pathJoin [| userAppDir; "IssieSettings.json" |]
-
+            let jsonRes = tryReadFileSync <| pathJoin [|userAppDir;"IssieSettings.json"|]
             jsonRes
-            #if FABLE_COMPILER
             |> Result.bind (fun json -> Json.tryParseAs<UserData> json)
-            #else
-            |> Result.bind (fun json -> Decode.Auto.fromString<UserData>(json))
-            #endif
-            |> Result.bind (fun (data: UserData) -> Ok { model with UserData = data })
-            |> (function
-            | Ok model -> model
-            | Error _ ->
-                printfn "Error reading user data"
-                model)
-            |> addAppDirToUserData
+            |> Result.bind (fun (data: UserData) -> Ok {model with UserData = data})
+            |> (function | Ok model -> model | Error _ -> printfn "Error reading user data" ; model)
+            |> addAppDirToUserData 
             |> userDataToDrawBlockModel
             |> Some
-        with e ->
-            None
-
+        with
+        | e -> None
     match modelOpt with
     | Some model -> model, Cmd.none
     | None -> addAppDirToUserData model, Cmd.none
 
-let writeUserData (model: Model) =
+let writeUserData (model:Model) =
     model.UserData.UserAppDir
     |> Option.map (fun userAppDir ->
         try
             let data = drawBlockModelToUserData model model.UserData
-            #if FABLE_COMPILER
             Json.serialize<UserData> data |> Ok
-            #else
-            Encode.Auto.toString(data) |> Ok
-            #endif
-        with e ->
-            Error "Can't write settings on this PC because userAppDir does not exist"
-        |> Result.bind (fun json -> writeFile (pathJoin [| userAppDir; "IssieSettings.json" |]) json)
+        with
+        | e -> Error "Can't write settings on this PC because userAppDir does not exist"
+        |> Result.bind (fun json -> writeFile (pathJoin [|userAppDir;"IssieSettings.json"|]) json)
         |> Result.mapError (fun mess -> $"Write error on directory {userAppDir}: %s{mess}")
-        |> function
-            | Error mess -> printfn "%s" mess
-            | _ -> ())
+        |> function | Error mess -> printfn "%s" mess | _ -> ())
     |> ignore
-
     model
 
 
@@ -549,8 +666,8 @@ let getSimulationDataOrFail model msg =
         match sim with
         | Error _ -> failwithf "what? Getting simulation data when could not start because of error: %s" msg
         | Ok simData -> simData
-(*
-let verilogOutputPage sheet fPath  =
+
+(*let verilogOutputPage sheet fPath  =
     div [] [
         str $"You can write sheet '{sheet}' (and its subsheets) in either simulation or synthesis format. The output will be written to:"
         Text.div [ 
@@ -585,7 +702,7 @@ let verilogOutputPage sheet fPath  =
                             [ str "Instructions for synthesis work-flow"] 
                         ]
                       
-                         ] ] ] ] 
+                         ] ] ] ] *)
 
 /// handle Menu actions that may need Model data
 let getMenuView (act: MenuCommand) (model: Model) (dispatch: Msg -> Unit) =
@@ -596,14 +713,14 @@ let getMenuView (act: MenuCommand) (model: Model) (dispatch: Msg -> Unit) =
         |> JSDiagramMsg |> dispatch
     | MenuSaveProjectInNewFormat ->
         MenuHelpers.saveOpenProjectInNewFormat model |> ignore
-    | MenuNewFile -> 
-        TopMenuView.addFileToProject model dispatch
+    (*| MenuNewFile -> 
+        TopMenuView.addFileToProject model dispatch*)
     | MenuLostFocus ->
         printf "Lost focus!"
         
-    | MenuExit ->
-        TopMenuView.doActionWithSaveFileDialog "Exit ISSIE" CloseApp model dispatch ()
-    | MenuVerilogOutput ->
+    (*| MenuExit ->
+        TopMenuView.doActionWithSaveFileDialog "Exit ISSIE" CloseApp model dispatch ()*)
+    (*| MenuVerilogOutput ->
         mapOverProject () model (fun p ->
             let sheet = p.OpenFileName
             let fPath = FilesIO.pathJoin [|p.ProjectPath ; sheet|]
@@ -617,10 +734,10 @@ let getMenuView (act: MenuCommand) (model: Model) (dispatch: Msg -> Unit) =
                     | true -> SimulationView.verilogOutput Verilog.ForSynthesis model dispatch
                     | false -> SimulationView.verilogOutput Verilog.ForSimulation model dispatch
                     dispatch ClosePopup)
-                dispatch)
+                dispatch)*)
             
     | _ -> ()
-    model*)
+    model
 
 /// get timestamp of current loaded component.
 /// is this ever used? No.
@@ -630,29 +747,20 @@ let getCurrentTimeStamp model =
     | Some p ->
         p.LoadedComponents
         |> List.tryFind (fun lc -> lc.Name = p.OpenFileName)
-        |> function
-            | Some lc -> lc.TimeStamp
-            | None ->
-                failwithf
-                    "Project inconsistency: can't find component %s in %A"
-                    p.OpenFileName
-                    (p.LoadedComponents |> List.map (fun lc -> lc.Name))
+        |> function | Some lc -> lc.TimeStamp
+                    | None -> failwithf "Project inconsistency: can't find component %s in %A"
+                                p.OpenFileName ( p.LoadedComponents |> List.map (fun lc -> lc.Name))
 
 /// Replace timestamp of current loaded component in model project by current time
 /// Used in update function
 let updateTimeStamp model =
-    let setTimeStamp (lc: LoadedComponent) =
-        { lc with
-            TimeStamp = System.DateTime.Now }
-
+    let setTimeStamp (lc:LoadedComponent) = {lc with TimeStamp = System.DateTime.Now}
     match model.CurrentProj with
     | None -> model
     | Some p ->
         p.LoadedComponents
         |> List.map (fun lc -> if lc.Name = p.OpenFileName then setTimeStamp lc else lc)
-        |> fun lcs ->
-            { model with
-                CurrentProj = Some { p with LoadedComponents = lcs } }
+        |> fun lcs -> { model with CurrentProj=Some {p with LoadedComponents = lcs}}
 
 //Finds if the current canvas is different from the saved canvas
 // waits 50ms from last check
@@ -675,23 +783,23 @@ let findChange (model : Model) : bool =
 
 /// Needed so that constant properties selection will work
 /// Maybe good idea for other things too?
-(*let resetDialogIfSelectionHasChanged newModel oldModel : Model =
+let resetDialogIfSelectionHasChanged newModel oldModel : Model =
     let newSelected = newModel.Sheet.SelectedComponents
     if newSelected.Length = 1 && newSelected <> oldModel.Sheet.SelectedComponents then
         newModel
-        |> map popupDialogData_ (
+        (*|> map popupDialogData_ (
             set text_ None >>
             set int_ None
-        )
-    else newModel*)
+        )*)
+    else newModel
 
-let updateComponentMemory (addr: int64) (data: int64) (compOpt: Component option) =
+let updateComponentMemory (addr:int64) (data:int64) (compOpt: Component option) =
     match compOpt with
     | None -> None
-    | Some({ Type = (AsyncROM1 mem as ct) } as comp)
-    | Some({ Type = (ROM1 mem as ct) } as comp)
-    | Some({ Type = (AsyncRAM1 mem as ct) } as comp)
-    | Some({ Type = (RAM1 mem as ct) } as comp) ->
+    | Some ({Type= (AsyncROM1 mem as ct)} as comp)
+    | Some ({Type = (ROM1 mem as ct)} as comp)
+    | Some ({Type= (AsyncRAM1 mem as ct)} as comp)
+    | Some ({Type= (RAM1 mem as ct)} as comp) -> 
         let update mem ct =
             match ct with
             | AsyncROM1 _ -> AsyncROM1 mem
@@ -699,14 +807,10 @@ let updateComponentMemory (addr: int64) (data: int64) (compOpt: Component option
             | RAM1 _ -> RAM1 mem
             | AsyncRAM1 _ -> AsyncRAM1 mem
             | _ -> ct
-
-        let mem' =
-            { mem with
-                Data = mem.Data |> Map.add addr data }
-
-        Some { comp with Type = update mem' ct }
+        let mem' = {mem with Data = mem.Data |> Map.add addr data}
+        Some {comp with Type= update mem' ct}
     | _ -> compOpt
-
+   
 (*
 let exitApp (model:Model) =
     // send message to main process to initiate window close and app shutdown
@@ -718,14 +822,9 @@ let exitApp (model:Model) =
 /// Used because Msg type does not support structural equality.
 /// **DANGER** will only work for messages which are physically the the same.
 /// In this use case that is fine.
-let isSameMsg = LanguagePrimitives.PhysicalEquality
+let isSameMsg = LanguagePrimitives.PhysicalEquality 
 
-let sheetMsg sMsg model =
-    let sModel, sCmd = SheetUpdate.update sMsg model
 
-    { sModel with
-        SavedSheetIsOutOfDate = findChange sModel },
-    sCmd
 
 ///Returns None if no mouse drag message found, returns Some (lastMouseMsg, msgQueueWithoutMouseMsgs) if a drag message was found
 let getLastMouseMsg msgQueue =
@@ -735,7 +834,9 @@ let getLastMouseMsg msgQueue =
     | [] -> None
     | lst -> Some lst.Head //First item in the list was the last to be added (most recent)
 
-
+let sheetMsg sMsg model = 
+    let sModel, sCmd = SheetUpdate.update sMsg model
+    {sModel with SavedSheetIsOutOfDate = findChange sModel}, sCmd
 
 let executePendingMessagesF n model =
     (*if n = (List.length model.Pending)
@@ -751,3 +852,6 @@ let executePendingMessagesF n model =
     //ignore the exectue message
     else *)
         model, Cmd.none
+
+
+    

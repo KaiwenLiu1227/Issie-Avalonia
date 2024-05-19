@@ -1134,7 +1134,7 @@ let viewSimulation canvasState model dispatch =
             | Ok simData ->
                 Button.create
                     [ 
-                        Button.background "Grey"
+                        // Button.background "Grey"
                         Button.content "Save current input values as default"
                         // Button.Disabled (InputDefaultsEqualInputs simData.FastSim model simData.ClockTickNumber)
                         Button.onClick (fun _ -> setInputDefaultsFromInputs simData.FastSim dispatch simData.ClockTickNumber) ; 

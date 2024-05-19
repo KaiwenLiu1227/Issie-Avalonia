@@ -93,7 +93,9 @@ let init () =
 let viewSimSubTab canvasState model dispatch =
     match model.SimSubTabVisible with
     | StepSim -> 
-            SimulationView.viewSimulation canvasState model dispatch
+        SimulationView.viewSimulation canvasState model dispatch
+    | _ ->
+        StackPanel.create[]
         
     (*| TruthTable ->
         div [ Style [Width "90%"; MarginLeft "5%"; MarginTop "15px" ] ] [
@@ -135,8 +137,13 @@ let private  viewRightTab canvasState model dispatch =
                               [ MenuItem.header "Sruth Tables"]
                           MenuItem.create
                               [ MenuItem.header "Wave Simulation" ] ] ]
-        subtabs
-        viewSimSubTab canvasState model dispatch
+        StackPanel.create [
+            StackPanel.children [
+                subtabs
+                viewSimSubTab canvasState model dispatch
+            ]
+        ]
+
             
     (*| Build ->
         div [ Style [Width "90%"; MarginLeft "5%"; MarginTop "15px" ] ] [

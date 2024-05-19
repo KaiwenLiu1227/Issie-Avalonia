@@ -232,7 +232,10 @@ let fastReduce (maxArraySize: int) (numStep: int) (isClockedReduction: bool) (co
     ///  get data feom input i of component
     let inline insUInt32 i =
         checkInputPortNumber i
-        comp.InputLinks[i].UInt32Step[simStep]
+        try
+            comp.InputLinks[i].UInt32Step[simStep]
+        with e->
+            uint32 0
 
     let inline insBigInt i =
         checkInputPortNumber i
