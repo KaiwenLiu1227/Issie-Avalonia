@@ -292,34 +292,24 @@ let simulateModel (simulatedSheet: string option) (simulationArraySize: int) ope
 let changeBase dispatch numBase = numBase |> SetSimulationBase |> dispatch
 
 /// A line that can be used for an input, an output, or a state.
+let private splittedLine (leftContent: IView) (rightContent: IView) =
+    DockPanel.create
+        [ 
+          DockPanel.children [
+            // Left content: Aligned to the left
+            leftContent
 
-let private splittedLine leftContent rightContent =
-    StackPanel.create [
-        StackPanel.orientation Orientation.Horizontal
-        StackPanel.children [
-            StackPanel.create [
-                StackPanel.orientation Orientation.Horizontal
-                // StackPanel.margin 10.0 0.0 0.0 0.0  // Left margin example
-                StackPanel.children [
-                    leftContent  // Your left content injected here
-                ]
-            ]
-
-            // Spacer to push content to the left and right
-            Control.create [
-                Control.horizontalAlignment HorizontalAlignment.Stretch
-                // Control.grow 1.0
-            ]
-
-            StackPanel.create [
-                StackPanel.orientation Orientation.Horizontal
-                // StackPanel.margin 0.0 0.0 10.0 0.0  // Right margin example
-                StackPanel.children [
-                    rightContent  // Your right content injected here
-                ]
-            ]
+            // Right content: Aligned to the right
+            DockPanel.create
+                [
+                  DockPanel.horizontalAlignment HorizontalAlignment.Right
+                  DockPanel.children [
+                      rightContent
+                  ]]
+            
         ]
-    ] |> generalize 
+    ] |> generalize
+
 
 /// Pretty print a label with its width.
 let makeIOLabel label width =
@@ -346,10 +336,9 @@ let private viewSimulationInputs
                 // For simple bits, just have a Zero/One button.
                 Button.create [
                     Button.content (bitToString (match bit with 0u -> Zero | _ -> One))
-                    (*Button.Props [ simulationBitStyle ]
-                    //Button.Color IsPrimary
-                    (match bit with 0u -> Button.Color Color.IsGreyLighter | _ -> Button.Color IsPrimary)
-                    Button.IsHovered false*)
+                    Button.background (match bit with 0u -> "White" | _ -> "LightBlue")
+                    Button.borderBrush (SolidColorBrush(Color.FromArgb(75uy, 0uy, 0uy, 0uy)))
+                    Button.width 60
                     Button.onClick (fun _ ->
                         let newBit = 1u - bit
                         let graph = simulationGraph
@@ -406,13 +395,13 @@ let private viewSimulationInputs
     ]
 
 let private staticBitButton bit =
+
     Button.create [
         Button.content (bitToString bit)
-        (*Button.Props [ simulationBitStyle ]
-        //Button.Color IsPrimary
-        (match bit with Zero -> Button.Color IsGreyLighter | One -> Button.Color IsPrimary)
-        Button.IsHovered false
-        Button.Disabled true*)
+        Button.borderBrush (SolidColorBrush(Color.FromArgb(75uy, 0uy, 0uy, 0uy)))
+        Button.background (match (bitToString bit) with "0" -> "White" | _ -> "LightBlue")
+        Button.width 60
+        Button.height 10
     ] |> generalize
 
 let private staticNumberBox maxChars numBase (bits: FastData) =

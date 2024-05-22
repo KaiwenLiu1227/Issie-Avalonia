@@ -302,7 +302,7 @@ let makePolygon (points: string) (polygonParameters: Polygon) =
 
 /// Makes a circle ReactElement
 let makeCircle (centreX: float) (centreY: float) (circleParameters: Circle) =
-    printfn $"{circleParameters}"
+    // printfn $"{circleParameters}"
     Ellipse.create
       [
         Ellipse.width (circleParameters.R*2.0)
