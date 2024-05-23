@@ -19,7 +19,7 @@ open Browser
 open PopupHelpers*)
 open Optics.Optic
 open Optics.Operators
-open EEExtensions
+// open EEExtensions
 
 module Constants =
     let memoryUpdateCheckTime = 300.

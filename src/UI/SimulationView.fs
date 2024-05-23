@@ -334,9 +334,11 @@ let private viewSimulationInputs
             match inputVals with
             | IData {Dat = (Word bit); Width =1} ->
                 // For simple bits, just have a Zero/One button.
+                let color = (match bit with 0u -> "White" | _ -> "LightBlue")
+                let content = bitToString (match bit with 0u -> Zero | _ -> One)
                 Button.create [
-                    Button.content (bitToString (match bit with 0u -> Zero | _ -> One))
-                    Button.background (match bit with 0u -> "White" | _ -> "LightBlue")
+                    Button.content content
+                    Button.background color
                     Button.borderBrush (SolidColorBrush(Color.FromArgb(75uy, 0uy, 0uy, 0uy)))
                     Button.width 60
                     Button.onClick (fun _ ->
@@ -401,7 +403,6 @@ let private staticBitButton bit =
         Button.borderBrush (SolidColorBrush(Color.FromArgb(75uy, 0uy, 0uy, 0uy)))
         Button.background (match (bitToString bit) with "0" -> "White" | _ -> "LightBlue")
         Button.width 60
-        Button.height 10
     ] |> generalize
 
 let private staticNumberBox maxChars numBase (bits: FastData) =
