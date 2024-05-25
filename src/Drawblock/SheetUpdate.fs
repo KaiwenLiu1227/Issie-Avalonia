@@ -866,8 +866,8 @@ let update (msg : Msg) (issieModel : ModelType.Model): ModelType.Model*Cmd<Model
         
         | _ -> model, Cmd.none
     stopwatch.Stop()
-    (*if stopwatch.ElapsedMilliseconds > 10 then
-        printfn $"Update function {msg} took {stopwatch.ElapsedMilliseconds} ms" *)
+    if stopwatch.ElapsedMilliseconds > 50 then
+        printfn $"Update function {msg} took {stopwatch.ElapsedMilliseconds} ms" 
     newModel
     |> postUpdateChecks
     // |> Optic.map fst_ postUpdateChecks

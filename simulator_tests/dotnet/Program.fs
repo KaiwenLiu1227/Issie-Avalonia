@@ -183,7 +183,7 @@ let benchmarkWithJSON designSheets memories =
 
             let comps =
                 fastSim.FComps.Values
-                |> Seq.filter (fun fc -> not <| Helpers.isIOLabel fc.FType)
+                // |> Seq.filter (fun fc -> not <| Helpers.isIOLabel fc.FType)
                 |> Seq.length
 
             [ 1 .. (warmup + simulationRound) ]
@@ -239,7 +239,7 @@ let benchmark path =
 
             let comps =
                 fastSim.FComps.Values
-                |> Seq.filter (fun fc -> not <| Helpers.isIOLabel fc.FType)
+                // |> Seq.filter (fun fc -> not <| Helpers.isIOLabel fc.FType)
                 |> Seq.length
 
             [ 1 .. (warmup + simulationRound) ]
@@ -257,7 +257,7 @@ let benchmark path =
 [<EntryPoint>]
 let main argv =
     // let path = argv[0]
-    let path = "D:\projs\imperial\Issie-Avalonia\demos\1fulladder"
+    let path = "D:\docs\imperial\issie\\test\2adder\2adder"
     printfn "Benchmarking %s" path
 
     [ 1..benchmarkRound ]

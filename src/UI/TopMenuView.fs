@@ -141,6 +141,7 @@ let topMenuView model dispatch =
                                       MenuItem.create [ MenuItem.header "CLose Project" ]
                                       MenuItem.create
                                           [ MenuItem.header "Demo"
+                                            // MenuItem.onClick (fun _ -> loadDemoProject "2adder (4-bit)" model dispatch) ] ] ]
                                             MenuItem.onClick (fun _ -> loadDemoProject "test" model dispatch) ] ] ]
 
                           TextBlock.create [ TextBlock.text "Path/this_project/this_sheet" ]
