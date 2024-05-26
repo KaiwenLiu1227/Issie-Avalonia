@@ -755,9 +755,9 @@ module CommonTypes
             | SkyBlue -> "Skyblue"
             | Yellow -> "Yellow"
             | Green -> "Green"
-            | Grey -> "Grey"
+            | Grey -> "Gray"
             | Purple -> "Purple"
-            | DarkSlateGrey -> "darkslategrey"
+            | DarkSlateGrey -> "DarkGray"
             | Thistle -> "thistle"
             | c -> sprintf "%A" c
             

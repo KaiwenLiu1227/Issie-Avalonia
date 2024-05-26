@@ -155,7 +155,9 @@ let displaySvgWithZoom
             : IView=
 
     let zoom = model.Zoom
-    let mDown (ev:Input.PointerEventArgs) = true
+    let mDown (ev:Input.PointerEventArgs) =
+        // printfn $"{ev.GetCurrentPoint(null).Properties}"
+        ev.GetCurrentPoint(null).Properties.IsLeftButtonPressed
     
     let onkeydown (ev: Input.KeyEventArgs) =
         if ev.Key = Input.Key.Space then// Check for spacebar
@@ -200,11 +202,14 @@ let displaySvgWithZoom
         DockPanel.onKeyUp (fun ev -> onkeyup ev)
         DockPanel.children [
             Canvas.create [
-                Canvas.background (SolidColorBrush(Color.FromArgb(25uy, 25uy, 0uy, 0uy)))
+                Canvas.background "White"
                 Canvas.onPointerPressed (fun ev -> mouseOp Down ev)
                 Canvas.onPointerReleased (fun ev -> mouseOp Up ev)
                 Canvas.onPointerMoved (fun ev ->  mouseOp (if mDown ev then Drag else Move) ev)
                 Canvas.onPointerWheelChanged (fun ev -> wheelUpdate ev)
+                Canvas.renderTransform (
+                    if zoom <> 0 then ScaleTransform(zoom, zoom) else ScaleTransform(1., 1.)
+                )
                 Canvas.children (
                    svgReact
                 )  

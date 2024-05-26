@@ -166,7 +166,7 @@ let defaultText = {
 }
 
 /// Port circle, used by both Sheet and Symbol to create ports
-let portCircle = { defaultCircle with R = 5.0; Stroke = "Black"; StrokeWidth = "1.0px"; Fill = "Grey"}
+let portCircle = { defaultCircle with R = 5.0; Stroke = "Black"; StrokeWidth = "1.0px"; Fill = "Gray"}
 let portCircleTarget= { defaultCircle with R = 8.0; Stroke = "DodgerBlue"; StrokeWidth = "2.0px"; Fill = "None"}
 
 /// HLP23 AUTHOR: BRYAN TAN
@@ -246,17 +246,20 @@ let makePathAttr (startingControlPoint: XYPos) (endingControlPoint: XYPos) (endi
 
 
 let makePathFromAttr (attr:string) (pathParameters: Path) =
+    let stroke = Color.Parse(pathParameters.Stroke)
+    let width = float (pathParameters.StrokeWidth.TrimEnd('p', 'x'))
+    let fill = Color.Parse(pathParameters.Fill)
+
     Path.create [
         Path.data attr
-        Path.stroke "DarkBlue"
-        Path.strokeThickness (float (pathParameters.StrokeWidth.TrimEnd('p', 'x')))
-            (*D attr
-            SVGAttr.Stroke pathParameters.Stroke
-            SVGAttr.StrokeWidth pathParameters.StrokeWidth
+        Path.stroke (SolidColorBrush(stroke, 1.0))
+        Path.strokeThickness width
+        Path.fill (SolidColorBrush(fill, 1.0))
+            (*
             SVGAttr.StrokeDasharray pathParameters.StrokeDashArray
             SVGAttr.StrokeLinecap pathParameters.StrokeLinecap
-            SVGAttr.Fill pathParameters.Fill*)
-    ] :> IView
+            *)
+    ] |> generalize
 
 /// Makes a path ReactElement, points are to be given as an XYPos record element.
 /// Please note that this function is designed to create ONLY "Move to - Bézier Curve"
@@ -273,17 +276,20 @@ let makePath (startingPoint: XYPos) (startingControlPoint: XYPos) (endingControl
     let x1, y1, x2, y2 = startingPoint.X, startingPoint.Y, endingPoint.X, endingPoint.Y
     let dx1, dy1, dx2, dy2 = startingControlPoint.X, startingControlPoint.Y, endingControlPoint.X, endingControlPoint.Y
     let dAttrribute = sprintf "M %f %f C %f %f, %f %f, %f %f" x1 y1 dx1 dy1 dx2 dy2 x2 y2
+    let stroke = Color.Parse(pathParameters.Stroke)
+    let width = float (pathParameters.StrokeWidth.TrimEnd('p', 'x'))
+    let fill = Color.Parse(pathParameters.Fill)
+    
     Path.create [
         Path.data dAttrribute
-        ] :> IView
-    (*path [
-            D dAttrribute
-            SVGAttr.Stroke pathParameters.Stroke
-            SVGAttr.StrokeWidth pathParameters.StrokeWidth
+        Path.stroke (SolidColorBrush(stroke, 1.0))
+        Path.strokeThickness width
+        Path.fill (SolidColorBrush(fill, 1.0))
+        ] |> generalize
+            (*
             SVGAttr.StrokeDasharray pathParameters.StrokeDashArray
             SVGAttr.StrokeLinecap pathParameters.StrokeLinecap
-            SVGAttr.Fill pathParameters.Fill
-    ] []*)
+            *)
     
 /// Makes a polygon IView Element, points are to be given as a correctly formatted SVGAttr.Points string 
 let makePolygon (points: string) (polygonParameters: Polygon) =
@@ -300,14 +306,27 @@ let makePolygon (points: string) (polygonParameters: Polygon) =
         ] |> generalize
     
 
-/// Makes a circle ReactElement
+/// Makes a circle IView Element
 let makeCircle (centreX: float) (centreY: float) (circleParameters: Circle) =
     // printfn $"{circleParameters}"
+    let stroke = Color.Parse(circleParameters.Stroke)
+    let fill =
+        if circleParameters.Fill <> "None" then
+            Color.Parse(circleParameters.Fill)
+        else
+            Color.Parse("LightGray")
+    let width = float (circleParameters.StrokeWidth.TrimEnd('p', 'x'))
     Ellipse.create
       [
+        Ellipse.renderTransform (
+                TranslateTransform(centreX-circleParameters.R, centreY-circleParameters.R)
+            )
         Ellipse.width (circleParameters.R*2.0)
         Ellipse.height (circleParameters.R*2.0)
-        (*Cx centreX
+        Ellipse.stroke (SolidColorBrush(stroke, 1.0))
+        Ellipse.strokeThickness width
+        Ellipse.fill (SolidColorBrush(fill, circleParameters.FillOpacity))
+        (*
         Cy centreY
         R circleParameters.R
         SVGAttr.Fill circleParameters.Fill

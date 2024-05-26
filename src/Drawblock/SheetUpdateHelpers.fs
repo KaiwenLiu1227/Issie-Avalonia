@@ -247,7 +247,7 @@ let appendUndoList (undoList: Model List) (model_in: Model): Model List =
         |> List.truncate (max 0 (inputLst.Length - 1))
 
     match List.length undoList with
-    | n when n < 3 -> 
+    | n when n < 1 -> 
         model_in :: undoList
     | _ -> 
         model_in :: (removeLast undoList)
@@ -258,10 +258,10 @@ let mDownUpdate
         (model: Model) 
         (mMsg: MouseT) 
             : Model * Cmd<ModelType.Msg> =
-    let newModel =
+    (*let newModel =
         match model.TmpModel with
         | None -> model
-        | Some newModel -> newModel
+        | Some newModel -> newModel*)
     // printfn "running mDownUpdate"
     //printfn "mDownUpdate Action: %A" model.Action
     match model.Action with

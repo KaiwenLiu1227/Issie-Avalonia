@@ -539,7 +539,7 @@ let fitCircuitToWindowParas (model:Model) =
     let sBox = {sBox with TopLeft = sBox.TopLeft + offsetToCentreCircuit} 
     let paras = getWindowParasToFitBox model sBox
     {modelWithMovedCircuit with
-        Zoom = paras.MagToUse
+        // Zoom = paras.MagToUse
         ScreenScrollPos = paras.Scroll}, paras
 
 

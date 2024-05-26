@@ -274,14 +274,12 @@ let update (msg : Msg) (issieModel : ModelType.Model): ModelType.Model*Cmd<Model
 
         // Zooming in increases model.Zoom. The centre of the screen will stay centred (if possible)
         | KeyPress ZoomIn ->
-            printfn "zoom"
             let oldScreenCentre = getVisibleScreenCentre model
             { model with Zoom = min Constants.maxMagnification (model.Zoom*Constants.zoomIncrement) }, 
             sheetCmd (KeepZoomCentered oldScreenCentre)
 
         // Zooming out decreases the model.Zoom. The centre of the screen will stay centred (if possible)
         | KeyPress ZoomOut ->
-            printfn "zoom"
             // get current screen edge coords
             let edge = getScreenEdgeCoords model
             //Check if the new zoom will exceed the canvas width or height
@@ -866,9 +864,20 @@ let update (msg : Msg) (issieModel : ModelType.Model): ModelType.Model*Cmd<Model
         
         | _ -> model, Cmd.none
     stopwatch.Stop()
+    (*
     if stopwatch.ElapsedMilliseconds > 50 then
         printfn $"Update function {msg} took {stopwatch.ElapsedMilliseconds} ms" 
-    newModel
+        *)
+    
+    // Function to update TmpModel within the model
+    let updateTmpModel (model, cmd) =
+        // Create a new model with TmpModel set to an empty list
+        let updatedModel = { model with TmpModel = None }
+        // Return new tuple with updated model and existing command
+        (updatedModel, cmd)
+
+    // Usage
+    updateTmpModel newModel
     |> postUpdateChecks
     // |> Optic.map fst_ postUpdateChecks
     // |> RotateScale.postUpdateScalingBox

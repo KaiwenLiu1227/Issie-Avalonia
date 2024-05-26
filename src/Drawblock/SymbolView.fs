@@ -260,19 +260,21 @@ let drawComponent (symbol:Symbol) (theme:ThemeType) =
             canvasWidthContext.font <- fontStr
             canvasWidthContext.measureText(txt).width
             *)
+        let textMeasureWidth (font:DrawHelpers.Text) (txt:string) =
+            10.
 
         let textStyle =
             {defaultText with TextAnchor = "middle"; FontWeight = "bold"; FontSize = Constants.mergeSplitTextSize}
         let posNew = 
             match compType with
-            (*| MergeN _ -> 
+            | MergeN _ -> 
                 match portType with 
                 | PortType.Input -> pos - {X = (textMeasureWidth textStyle text)/2.; Y = -4.}
                 | PortType.Output -> pos + {X = (textMeasureWidth textStyle text)/2.; Y = 4.}
             | SplitN _ -> 
                 match portType with 
                 | PortType.Input -> pos - {X = (textMeasureWidth textStyle text)/2.; Y = -4.}
-                | PortType.Output -> pos - {X = (textMeasureWidth textStyle text)/2.; Y = 5.}*)
+                | PortType.Output -> pos - {X = (textMeasureWidth textStyle text)/2.; Y = 5.}
             | _ -> pos
         
         addText posNew text "middle" "bold" Constants.mergeSplitTextSize
@@ -315,10 +317,11 @@ let drawComponent (symbol:Symbol) (theme:ThemeType) =
         let originalPoints =
             match comp.Type with
             // legacy component: to be deleted
-            | Input1 _  -> 
+            | Input _
+            | Input1 _ |Output _ -> 
                 [|{X=0;Y=0};{X=0;Y=H};{X=W*4./5.;Y=H};{X=W;Y=H/2.};{X=W*0.8;Y=0}|] 
-            | Output _ -> 
-                [|{X=W/5.;Y=0};{X=0;Y=H/2.};{X=W/5.;Y=H};{X=W;Y=H};{X=W;Y=0}|]
+            //| Output _ -> 
+            //    [|{X=W/5.;Y=0};{X=0;Y=H/2.};{X=W/5.;Y=H};{X=W;Y=H};{X=W;Y=0}|]
             | Constant1 _ -> 
                 [|{X=W;Y=H/2.};{X=W/2.;Y=H/2.};{X=0;Y=H};{X=0;Y=0};{X=W/2.;Y=H/2.}|]
             | IOLabel ->
