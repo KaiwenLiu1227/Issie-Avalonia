@@ -33,8 +33,9 @@ type MainWindow() as this =
         this.AttachDevTools();
         Program.mkProgram init update view 
         |> Program.withHost this
+        |> Program.runWithAvaloniaSyncDispatch ()
         // |> Program.withSubscription subscriptions
-        |> Program.run    
+        // |> Program.run    
 
 type App() =
     inherit Application()

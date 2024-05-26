@@ -4,6 +4,7 @@
 
 module DrawHelpers
 
+open Avalonia.Platform.Storage
 open Elmish
 open Avalonia
 open Avalonia.Controls

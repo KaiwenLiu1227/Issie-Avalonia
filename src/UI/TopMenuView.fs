@@ -3,6 +3,8 @@
 open Avalonia.Controls
 open Avalonia.FuncUI.DSL
 open Avalonia.Media
+open Avalonia.FuncUI
+open Avalonia.FuncUI.Types
 open MenuHelpers
 open FilesIO
 open System
@@ -53,7 +55,68 @@ let loadDemoProject basename model dispatch =
         copyFile (pathJoin [|sourceDir; basename|]) newPath)
 
     openDemoProjectFromPath newDir model dispatch
-          
+
+/// force either save of current file before action, or abort (closeProject is special case of this)
+let doActionWithSaveFileDialog (name: string) (nextAction: Msg)  model dispatch _ =
+    let closeDialogButtons keepOpen _ =
+        if keepOpen then
+            dispatch ClosePopup
+        else
+            dispatch nextAction
+
+    if model.SavedSheetIsOutOfDate then 
+        (*choicePopup 
+                $"{name}?" 
+                (div [] [ str "The current sheet has unsaved changes."])
+                "Go back to sheet" 
+                $"{name} without saving changes"  
+                closeDialogButtons 
+                dispatch
+    else*)
+        dispatch nextAction
+        
+/// open an existing project
+let private openProject model dispatch topLevel=
+    //trying to force the spinner to load earlier
+    //doesn't really work right now
+    // warnAppWidth dispatch (fun _ -> 
+    dispatch (Sheet (SheetT.SetSpinner true))
+    let dirName =
+        match Option.map readFilesFromDirectory model.UserData.LastUsedDirectory with
+        | Some [] | None -> None
+        | _ -> model.UserData.LastUsedDirectory
+    async {
+        let! folder = askForExistingProjectPath dirName topLevel
+        match folder with
+        | None -> () // User gave no path.
+        | Some path -> openProjectFromPath path model dispatch
+    }    
+
+let newProjectBtn model dispatch :IView=
+    Component.create("newProject", fun ctx ->
+        let topLevel = TopLevel.GetTopLevel(ctx.control)
+        MenuItem.create
+          [ MenuItem.header "New Project"
+            MenuItem.onClick (fun _ -> 
+                async {
+                    do! (openProject model dispatch topLevel)
+                } |> Async.StartImmediate
+            )
+            ]
+    )
+let importProjectBtn model dispatch :IView=
+    Component.create("importProject", fun ctx ->
+        let topLevel = TopLevel.GetTopLevel(ctx.control)
+        MenuItem.create
+          [ MenuItem.header "Import Project"
+            MenuItem.onClick (fun _ -> 
+                async {
+                    do! (openProject model dispatch topLevel)
+                } |> Async.StartImmediate
+            )
+            ]
+    )
+
 let topMenuView model dispatch =
     let fileTab model =
         match model.CurrentProj with
@@ -136,7 +199,8 @@ let topMenuView model dispatch =
                           MenuItem.create
                               [ MenuItem.header "Project"
                                 MenuItem.viewItems
-                                    [ MenuItem.create [ MenuItem.header "New Project" ]
+                                    [
+                                      newProjectBtn model dispatch
                                       MenuItem.create [ MenuItem.header "Import Project" ]
                                       MenuItem.create [ MenuItem.header "CLose Project" ]
                                       MenuItem.create

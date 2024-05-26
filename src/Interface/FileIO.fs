@@ -7,6 +7,7 @@
 module FilesIO
 (*open Fulma
 open Fable.React.Props*)
+open Avalonia.Platform.Storage
 open Helpers
 open CommonTypes
 open Fable.Core
@@ -21,6 +22,12 @@ open EEExtensions
 open Fable.SimpleJson
 (*open JSHelpers*)
 open System.IO
+
+open Avalonia
+open Avalonia.FuncUI.Types
+open Avalonia.Controls
+open Avalonia.Threading
+
 
 [<Emit("process.cwd()")>]
 let getCWD (u:unit): string = jsNative
@@ -322,21 +329,27 @@ let getBaseNameNoExtension filePath =
 /// Ask the user to choose a project file, with a dialog window.
 /// Return the folder containing the chosen project file.
 /// Return None if the user exits withouth selecting a path.
-(*let askForExistingProjectPath (defaultPath: string option) : string option =
-    let options = createEmpty<OpenDialogSyncOptions>
-    options.filters <- Some (makeFileFilters "ISSIE project file" "dprj" |> ResizeArray)
-    options.defaultPath <-
-        defaultPath
-        |> Option.defaultValue (electronRemote.app.getPath ElectronAPI.Electron.AppGetPath.Documents)
-        |> Some
-    let w = electronRemote.getCurrentWindow()
-    electronRemote.dialog.showOpenDialogSync(w,options)
-    |> Option.bind (
-        Seq.toList
-        >> function
-        | [] -> Option.None
-        | p :: _ -> Some <| dirName p
-    )*)
+let askForExistingProjectPath (defaultPath: string option) (topLevel : TopLevel) : Async<string option> =
+    Dispatcher.UIThread.InvokeAsync<string option>(
+        (fun () ->
+            task {
+                
+                let options =
+                    FolderPickerOpenOptions(
+                        Title = "Select Project folder",
+                        AllowMultiple = false
+                    )
+
+                let! folders = topLevel.StorageProvider.OpenFolderPickerAsync(options)
+
+                match List.ofSeq folders with
+                | [ folder ] -> return Some folder.Path.LocalPath
+                | _ -> return None
+            }
+        )
+    )
+    |> Async.AwaitTask
+    // async { do! saveFileAsync this } |> Async.Start
 
 /// ask for existing sheet paths
 (*let askForExistingSheetPaths (defaultPath: string option) : string list option =

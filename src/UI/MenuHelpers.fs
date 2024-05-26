@@ -790,21 +790,21 @@ let openDemoProjectFromPath (path: string) model dispatch =
         ())
 
 /// open an existing project from its path
-(*let openProjectFromPath (path:string) model dispatch =
+let openProjectFromPath (path:string) model dispatch =
     warnAppWidth dispatch (fun _ ->
     dispatch (ExecFuncAsynch <| fun () ->
-        traceIf "project" (fun () -> "loading files")
+        // traceIf "project" (fun () -> "loading files")
         match loadAllComponentFiles path with
         | Error err ->
-            log err
-            displayFileErrorNotification err dispatch
+            // log err
+            // displayFileErrorNotification err dispatch
             model.UserData.RecentProjects
             |> Option.map (List.filter ((<>) path)) 
         | Ok (componentsToResolve: LoadStatus list) ->
-            traceIf "project" (fun () -> "resolving popups...")
+            // traceIf "project" (fun () -> "resolving popups...")
             
             resolveComponentOpenPopup path [] componentsToResolve model dispatch
-            traceIf "project" (fun () ->  "project successfully opened.")
+            // traceIf "project" (fun () ->  "project successfully opened.")
             addToRecents path model.UserData.RecentProjects
         |> fun recents ->
                 dispatch <| SetUserData {
@@ -812,7 +812,7 @@ let openDemoProjectFromPath (path: string) model dispatch =
                         LastUsedDirectory = Some path; 
                         RecentProjects = recents
                         }
-        Elmish.Cmd.none))*)
+        Elmish.Cmd.none))
 
 
 
