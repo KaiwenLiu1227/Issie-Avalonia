@@ -40,8 +40,8 @@ let getDrawBlockPos (ev:Input.PointerEventArgs) (headerHeight: float) (sheetMode
     let roundedX = roundUp newPos.X
     let roundedY = roundUp newPos.Y
     {
-        X = (roundedX + sheetModel.ScreenScrollPos.X) / sheetModel.Zoom + 1400.0;
-        Y = (roundedY - headerHeight + sheetModel.ScreenScrollPos.Y) / sheetModel.Zoom + 1400.0
+        X = (roundedX + sheetModel.ScreenScrollPos.X + 1400.0) / sheetModel.Zoom ;
+        Y = (roundedY - headerHeight + sheetModel.ScreenScrollPos.Y + 1400.0) / sheetModel.Zoom
     }
     
 (*/// This actually writes to the DOM a new scroll position.
@@ -197,8 +197,8 @@ let displaySvgWithZoom
         DockPanel.onKeyUp (fun ev -> onkeyup ev)
         DockPanel.children [
             Canvas.create [
-                Canvas.height (model.CanvasSize * zoom)
-                Canvas.width (model.CanvasSize * zoom)
+                (*Canvas.height (model.CanvasSize * zoom)
+                Canvas.width (model.CanvasSize * zoom)*)
                 Canvas.background "White"
                 Canvas.onPointerPressed (fun ev -> mouseOp Down ev)
                 Canvas.onPointerReleased (fun ev -> mouseOp Up ev)

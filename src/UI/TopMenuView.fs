@@ -185,7 +185,9 @@ let topMenuView model dispatch =
                     ) 
           ]
     Border.create
-        [ Border.borderThickness 2.0
+        [ Border.borderThickness 1.0
+          Border.zIndex 1
+          Border.background "white"
           Border.borderBrush (SolidColorBrush(Color.FromArgb(75uy, 0uy, 0uy, 0uy))) // 描边颜色
           Border.padding 10.0
           Border.dock Dock.Top

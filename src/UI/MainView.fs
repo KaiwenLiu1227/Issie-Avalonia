@@ -183,10 +183,12 @@ let viewRightTabs canvasState model dispatch =
             
     DockPanel.create
         [ DockPanel.dock Dock.Right
+          DockPanel.zIndex 1
+          DockPanel.background "white"
           DockPanel.lastChildFill true
           DockPanel.children
               [ Border.create
-                    [ Border.borderThickness 2.0
+                    [ Border.borderThickness 1.0
                       Border.borderBrush (SolidColorBrush(Color.FromArgb(75uy, 0uy, 0uy, 0uy)))
                       Border.padding 10.0
                       Border.width 350
