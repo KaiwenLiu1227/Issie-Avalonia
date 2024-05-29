@@ -51,11 +51,6 @@ let writeCanvasScroll (scrollPos:XYPos) =
     canvasDiv
     |> Option.iter (fun el -> el.scrollLeft <- scrollPos.X; el.scrollTop <- scrollPos.Y)
 
-let getDrawBlockPos (ev: Types.MouseEvent) (headerHeight: float) (sheetModel:Model) =
-    {
-        X = (ev.pageX + sheetModel.ScreenScrollPos.X) / sheetModel.Zoom  ;
-        Y = (ev.pageY - headerHeight + sheetModel.ScreenScrollPos.Y) / sheetModel.Zoom
-    }
 
 /// This function zooms an SVG canvas by transforming its content and altering its size.
 /// Currently the zoom expands based on top left corner.
@@ -202,6 +197,8 @@ let displaySvgWithZoom
         DockPanel.onKeyUp (fun ev -> onkeyup ev)
         DockPanel.children [
             Canvas.create [
+                Canvas.height (model.CanvasSize * zoom)
+                Canvas.width (model.CanvasSize * zoom)
                 Canvas.background "White"
                 Canvas.onPointerPressed (fun ev -> mouseOp Down ev)
                 Canvas.onPointerReleased (fun ev -> mouseOp Up ev)
@@ -218,7 +215,7 @@ let displaySvgWithZoom
     ] |> generalize
 
 /// View function, displays symbols / wires and possibly also a grid / drag-to-select box / connecting ports line / snap-to-grid visualisation
-let view 
+let view
     (model:Model) 
     (headerHeight: float) 
     (style: string list) 
@@ -398,4 +395,4 @@ let view
 
     | _ ->
         displaySvgWithZoom model headerHeight style ( displayElements @ [ dragToSelectBox ] ) dispatch
-    //|> TimeHelpers.instrumentInterval "SheetView" start
+    |> TimeHelpers.instrumentInterval "SheetView" start

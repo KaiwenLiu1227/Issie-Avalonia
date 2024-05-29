@@ -226,11 +226,9 @@ let traceMessage startOfUpdateTime (msg:Msg) ((model,cmdL): Model*Cmd<Msg>) =
     let updateTime = TimeHelpers.getTimeMs() - startOfUpdateTime
     updateTimeTotal <- match updateTimeTotal > 1000. with | true -> 0. | false -> updateTimeTotal + updateTime
     //if str <> "" then printfn "%s" $"**Upd:{str} %.1f{updateTime}ms ({int startOfUpdateTime % 10000}ms)"
-    (*
     if Set.contains "update" JSHelpers.debugTraceUI then           
         let logMsg = sprintf ">>Cmd:%.0f %s" updateTimeTotal (getMessageTraceString msg)
         TimeHelpers.instrumentInterval logMsg (startOfUpdateTime)  msg|> ignore
-        *)
 
     model,cmdL
 
