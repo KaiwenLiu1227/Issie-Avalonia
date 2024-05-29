@@ -14,12 +14,11 @@ open BusWireUpdateHelpers
 open DrawModelType
 open Fable.SimpleJson
 open NumberHelpers
-(*open DiagramStyle
-open Browser
-open PopupHelpers*)
+open DiagramStyle
 open Optics.Optic
 open Optics.Operators
 // open EEExtensions
+open Avalonia
 
 module Constants =
     let memoryUpdateCheckTime = 300.
@@ -165,7 +164,7 @@ let shortDisplayMsg (msg:Msg) =
     | SetViewerWidth _ 
     | MenuAction _ 
     | DiagramMouseEvent
-    // | ContextMenuAction _ -> None
+    | ContextMenuAction _ -> None
     | ContextMenuItemClick _
     | SelectionHasChanged -> Some "Selection has changed"
     | SetIsLoading _
@@ -281,16 +280,17 @@ let mutable rightClickElement: RightClickElement = NoMenu
 /// Function that works out from the right-click event and model
 /// what the current context menu should be.
 /// output should be a menu name as defined in ContextMenus.contextMenus, or "" for no menu.
-(*
-let getContextMenu (e: Browser.Types.MouseEvent) (model: Model) : string =
+let getContextMenu (e: Input.PointerEventArgs) (model: Model) : string =
     //--------- the sample code below shows how useful info can be extracted from e --------------//
     // calculate equivalent sheet XY coordinates - valid if mouse is over schematic.
     let symbols = model.Sheet.Wire.Symbol.Symbols
     let bwModel = model.Sheet.Wire
     let sheetXYPos = SheetDisplay.getDrawBlockPos e DiagramStyle.getHeaderHeight model.Sheet
-    let element:Types.Element = unbox e.target
-    let htmlId = try element.id with | e -> "invalid"
-    let elType = try element.nodeName with | e -> "invalid"
+    // let element:Types.Element = unbox e.target
+    // let htmlId = try element.id with | e -> "invalid"
+    // let elType = try element.nodeName with | e -> "invalid"
+    let htmlId = ""
+    let elType = ""
     let drawOn = Sheet.mouseOn model.Sheet sheetXYPos
     let mouseInScalingBox = 
         let insideBox (pos: XYPos) boundingBox =
@@ -308,6 +308,7 @@ let getContextMenu (e: Browser.Types.MouseEvent) (model: Model) : string =
         | _, "selectRamButton", _
         | _, "startEndButton", _ ->
             WaveSimHelp
+        (*
         | _, elId, _ when String.startsWith "SheetMenuBreadcrumb:" elId ->
             let nameParts = elId.Split(":",System.StringSplitOptions.RemoveEmptyEntries)
             //printfn "NameParts: %A"nameParts
@@ -318,6 +319,7 @@ let getContextMenu (e: Browser.Types.MouseEvent) (model: Model) : string =
                     SheetMenuBreadcrumb (sheet, nameParts.Length > 2)))
             |> Option.flatten
             |> Option.defaultValue NoMenu
+            *)
 
         | SheetT.MouseOn.Canvas, _ , "path"
         | _, "WaveSimHelp", _ ->
@@ -329,9 +331,11 @@ let getContextMenu (e: Browser.Types.MouseEvent) (model: Model) : string =
             else 
                 DBCanvas sheetXYPos
 
+        (*
         | SheetT.MouseOn.Canvas, x, _ ->
             printfn "Other issie element: type:'%A'-> id:'%A'" elType x
             IssieElement (element.ToString())
+            *)
 
         | SheetT.MouseOn.Component compId, _, _->
             if mouseInScalingBox then  
@@ -364,8 +368,8 @@ let getContextMenu (e: Browser.Types.MouseEvent) (model: Model) : string =
             
     // return the desired menu
     match rightClickElement with
-    | SheetMenuBreadcrumb _ ->
-        if JSHelpers.debugLevel > 0 then "SheetMenuBreadcrumbDev" else "SheetMenuBreadcrumbDev"
+    (*| SheetMenuBreadcrumb _ ->
+        if JSHelpers.debugLevel > 0 then "SheetMenuBreadcrumbDev" else "SheetMenuBreadcrumbDev"*)
     | DBScalingBox _ -> 
         "ScalingBox"
     | DBCustomComp _->        
@@ -381,14 +385,12 @@ let getContextMenu (e: Browser.Types.MouseEvent) (model: Model) : string =
     | _ ->
         printfn $"Clicked on '{drawOn.ToString()}'"
         "" // default is no menu
-        *)
             
 
 
 /// Function that implement action based on context menu item click.
 /// menuType is the menu from chooseContextMenu.
 /// item will be one of the possible items in this menu.
-(*
 let processContextMenuClick
         (menuType: string) // name of menu
         (item: string) // name of menu item clicked
@@ -408,7 +410,7 @@ let processContextMenuClick
     //printfn "context Menu: '%A'  : '%s'" rightClickElement item
 
     match rightClickElement,item with
-    | SheetMenuBreadcrumb(sheet,_), "Rename" ->
+    (*| SheetMenuBreadcrumb(sheet,_), "Rename" ->
         renameFileInProject sheet.SheetName p model dispatch
         withNoCmd model
     | SheetMenuBreadcrumb(sheet,_), "Delete" ->
@@ -437,7 +439,7 @@ let processContextMenuClick
         printfn "Unlocking subtree %s" sheet.SheetName
         model
         |> changeSubtreeLockState isSubSheet sheet (fun _ -> Unlocked)
-        |> withNoCmd 
+        |> withNoCmd *)
 
     | DBCustomComp(_,ct), "Go to sheet" ->
         let p = Option.get model.CurrentProj
@@ -560,9 +562,9 @@ let processContextMenuClick
                 (model.Sheet.Wire.Wires.Keys |> Seq.toList |> BusWireSeparate.updateWireSegmentJumpsAndSeparations)
         |> withNoCmd
 
-    | WaveSimHelp, feature ->
+    (*| WaveSimHelp, feature ->
         UIPopups.viewWaveInfoPopup dispatch feature
-        withNoCmd model
+        withNoCmd model*)
 
     | DBCanvas _, "Properties" ->
         model
@@ -576,7 +578,6 @@ let processContextMenuClick
         printfn "%s" $"Context menu item not implemented: {rightClickElement} -> {item}"
         model
         |> withNoCmd
-        *)
 
 let filterByOKSheets (model: Model) (sheet: string) =
     match model.CurrentProj with

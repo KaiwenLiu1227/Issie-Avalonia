@@ -865,7 +865,7 @@ let update (msg : Msg) (issieModel : ModelType.Model): ModelType.Model*Cmd<Model
         | _ -> model, Cmd.none
     stopwatch.Stop()
     (*
-    if stopwatch.ElapsedMilliseconds > 50 then
+    if stopwatch.ElapsedMilliseconds < 10 then
         printfn $"Update function {msg} took {stopwatch.ElapsedMilliseconds} ms" 
         *)
     

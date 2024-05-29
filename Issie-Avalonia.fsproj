@@ -21,6 +21,7 @@
         <Compile Include="src\Common\Helpers.fs" />
         <Compile Include="src\Common\TimeHelpers.fs" />
         <Compile Include="src\Common\WidthInferer.fs" />
+        <Compile Include="src\Common\JSHelpers.fs" />
         <!--<Compile Include="src\Common\WidthInferer.fs" />-->
 
         <!-- simulator -->
@@ -80,6 +81,7 @@
         <Compile Include="src\DrawBlock\SheetUpdate.fs" />
 
         <Compile Include="src\UI\ModelHelpers.fs" />
+        <Compile Include="src\UI\Styles.fs"/>
         <Compile Include="src\UI\UIPopups.fs" />
         <Compile Include="src\UI\MenuHelpers.fs" />
         <Compile Include="src\UI\MiscMenuView.fs" />
@@ -88,6 +90,7 @@
         <Compile Include="src\UI\MemoryEditorView.fs" />
         <Compile Include="src\UI\SimulationView.fs" />
         <Compile Include="src\VerilogComponent\VerilogTypes.fs" />
+        <Compile Include="src\UI\ContextMenus.fs" />
         <Compile Include="src\UI\MainView.fs"/>
         <Compile Include="src\UI\UpdateHelpers.fs" />
         <Compile Include="src\UI\Update.fs"/>

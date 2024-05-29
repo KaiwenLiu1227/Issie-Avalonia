@@ -1,4 +1,4 @@
-module MainView
+module DiagramMainView
 
 open Avalonia.Controls
 open Avalonia.FuncUI
@@ -11,6 +11,7 @@ open TopMenuView
 open CatalogueView
 open SimulationView
 open UIPopups
+open ContextMenu
 
 
 let init () =
@@ -210,7 +211,7 @@ let viewRightTabs canvasState model dispatch =
                                       ] ]
                       ) ] ] ]
 
-let view model dispatch =
+let displayView model dispatch =
     let sheetDispatch sMsg = dispatch (Sheet sMsg)
     let conns = BusWire.extractConnections model.Sheet.Wire
     let comps = SymbolUpdate.extractComponents model.Sheet.Wire.Symbol
@@ -221,7 +222,11 @@ let view model dispatch =
               [
                 // Your main content here
                 DockPanel.create
-                    [ DockPanel.children
+                    [
+                        DockPanel.contextMenu (
+                            ContextMenus.makeTestContextMenu
+                        )
+                        DockPanel.children
                           [ viewRightTabs canvasState model dispatch
                             topMenuView model dispatch
                             SheetDisplay.view model.Sheet 50.0 [] sheetDispatch ] ]

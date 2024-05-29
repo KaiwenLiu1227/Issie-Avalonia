@@ -15,6 +15,8 @@ open VerilogTypes
 open Optics
 open Optics.Operators
 
+open Avalonia
+
 module Constants =
     /// waveform simulator constant here for WSHelpers.initialWSModel reference
     /// maybe better to have this with WaveSim and parametrise initilaWSModel?
@@ -433,7 +435,7 @@ type Msg =
     | ExecFuncAsynch of (Unit -> Elmish.Cmd<Msg>)
     | ExecCmdAsynch of Elmish.Cmd<Msg>
     | SendSeqMsgAsynch of seq<Msg>
-    // | ContextMenuAction of e: Browser.Types.MouseEvent
+    | ContextMenuAction of e: Input.PointerEventArgs * dispatch: (Msg -> unit)
     | ContextMenuItemClick of menuType:string * item:string * dispatch: (Msg -> unit)
 
 

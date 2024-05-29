@@ -522,21 +522,20 @@ let update (msg : Msg) oldModel =
     | SendSeqMsgAsynch msgs ->
         model, SimulationView.doBatchOfMsgsAsynch msgs
 
-    (*
     | MenuAction(act,dispatch) ->
         match act with 
         | MenuSaveFile -> getMenuView act model dispatch, Cmd.ofMsg (Sheet SheetT.SaveSymbols)
         | MenuSaveProjectInNewFormat -> getMenuView act model dispatch, Cmd.ofMsg (Sheet SheetT.SaveSymbols)
         | _ -> getMenuView act model dispatch, Cmd.none
 
-    | ContextMenuAction e ->
-        let menuType = getContextMenu e model
-        renderer.ipcRenderer.send("show-context-menu", [|unbox menuType|])
+    | ContextMenuAction (e, dispatch)->
+        (*let menuTypeAndS = getContextMenu e model
+        let args= [|unbox menuTypeAndS|]
+        makeMenu dispatch args*)
         model, Cmd.none
 
     | ContextMenuItemClick(menuType, item, dispatch) ->
         processContextMenuClick menuType item dispatch model
-        *)
 
 
     | DiagramMouseEvent ->
