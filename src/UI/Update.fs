@@ -13,6 +13,8 @@ open UpdateHelpers
 open Optics
 open Optics.Optic
 open Optics.Operators
+open System
+open System.Diagnostics
 
 //---------------------------------------------------------------------------------------------//
 //---------------------------------------------------------------------------------------------//
@@ -173,6 +175,7 @@ let update (msg : Msg) oldModel =
                         |> (fun time ->
                             let speed = float (comps * step) / time
                             printfn "simulated %20s for %5d steps with %4d effective components, simulation finished in %8.3fms, average simulation speed: %10.3f (comp * step / ms)" c.Name step comps time speed
+                            
                             speed))
                 |> geometricMean
 

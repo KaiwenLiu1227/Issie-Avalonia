@@ -920,72 +920,58 @@ let private viewSimulationData (step: int) (simData : SimulationData) model disp
         ] |> generalize    
     let maybeClockTickBtn =
         let step = simData.ClockTickNumber
-        let clokcTick =
-            match simData.IsSynchronous with
-            | false -> []
-            | true ->
-            []
-        StackPanel.create [
-            StackPanel.children (
-                clokcTick
-            )
-        ] |> generalize      
-            (*div [] [
-                Button.button [
-                    Button.Color IsSuccess
-                    Button.Disabled (simData.ClockTickNumber = 0)
-                    Button.OnClick (fun _ ->
-                        if SimulationRunner.simTrace <> None then
-                            printfn "*********************Incrementing clock from simulator button******************************"
-                            printfn "-------------------------------------------------------------------------------------------"
-                        //let graph = feedClockTick simData.Graph
-                        printfn "clock %d "simData.ClockTickNumber
-                        FastRun.runFastSimulation None (simData.ClockTickNumber-1) simData.FastSim |> ignore
-                        dispatch <| SetSimulationGraph(simData.Graph, simData.FastSim)                    
-                        if SimulationRunner.simTrace <> None then
-                            printfn "-------------------------------------------------------------------------------------------"
-                            printfn "*******************************************************************************************"
-                        IncrementSimulationClockTick -1 |> dispatch
-                    )
-                ] [ str "◀" ]
-                str " "
-                str " "
-                Button.button [
-                    Button.Props [Tooltip.dataTooltip "Click to goto"]
-                    Button.Color IsSuccess
-                    Button.OnClick (fun _ ->
-                        let isDisabled (model': Model) =
-                            let dialogData = model'.PopupDialogData
-                            match dialogData.Int with
-                            | Some n -> n < 0
-                            | None -> true
-                        dialogPopup 
-                            "Advance Simulation"
-                            (simulationClockChangePopup simData dispatch)
-                            "Goto Tick"
-                            (simulationClockChangeAction dispatch simData)
-                            isDisabled
-                            []
-                            dispatch)
-                        ] [ str <| sprintf "Clock Tick %d" simData.ClockTickNumber ]
-                str " "
-                str " "
-                Button.button [
-                    Button.Color IsSuccess
-                    Button.OnClick (fun _ ->
-                        if SimulationRunner.simTrace <> None then
-                            printfn "*********************Incrementing clock from simulator button******************************"
-                            printfn "-------------------------------------------------------------------------------------------"
-                        //let graph = feedClockTick simData.Graph
-                        FastRun.runFastSimulation None (simData.ClockTickNumber+1) simData.FastSim |> ignore
-                        dispatch <| SetSimulationGraph(simData.Graph, simData.FastSim)                    
-                        if SimulationRunner.simTrace <> None then
-                            printfn "-------------------------------------------------------------------------------------------"
-                            printfn "*******************************************************************************************"
-                        IncrementSimulationClockTick 1 |> dispatch
-                    )
-                ] [ str "▶" ]
-            ]*)
+
+        match simData.IsSynchronous with
+        | false -> makeIOLabel "" 1
+        | true ->
+             StackPanel.create [
+                 StackPanel.orientation Orientation.Horizontal
+                 StackPanel.children [
+                     Button.create [
+                        Button.background "LightGreen"
+                        Button.foreground "white"
+                        Button.content  "◀"
+                        Button.onClick (fun _ ->
+                            if SimulationRunner.simTrace <> None then
+                                printfn "*********************Incrementing clock from simulator button******************************"
+                                printfn "-------------------------------------------------------------------------------------------"
+                            //let graph = feedClockTick simData.Graph
+                            printfn "clock %d "simData.ClockTickNumber
+                            FastRun.runFastSimulation None (simData.ClockTickNumber-1) simData.FastSim |> ignore
+                            dispatch <| SetSimulationGraph(simData.Graph, simData.FastSim)                    
+                            if SimulationRunner.simTrace <> None then
+                                printfn "-------------------------------------------------------------------------------------------"
+                                printfn "*******************************************************************************************"
+                            IncrementSimulationClockTick -1 |> dispatch
+                        )
+                        ] 
+                     TextBox.create [
+                        TextBox.text (sprintf "%d" step)
+                        (*TextBox.onTextChanged (
+                            parseInt >> SetPopupDialogInt >> dispatch
+                            )*)
+                        ] 
+                     Button.create [
+                        Button.background "LightGreen"
+                        Button.foreground "white"
+                        Button.content  "▶"
+                        Button.onClick (fun _ ->
+                            if SimulationRunner.simTrace <> None then
+                                printfn "*********************Incrementing clock from simulator button******************************"
+                                printfn "-------------------------------------------------------------------------------------------"
+                            //let graph = feedClockTick simData.Graph
+                            FastRun.runFastSimulation None (simData.ClockTickNumber+1) simData.FastSim |> ignore
+                            dispatch <| SetSimulationGraph(simData.Graph, simData.FastSim)                    
+                            if SimulationRunner.simTrace <> None then
+                                printfn "-------------------------------------------------------------------------------------------"
+                                printfn "*******************************************************************************************"
+                            IncrementSimulationClockTick 1 |> dispatch
+                        )
+                        ] 
+                 ]
+             ]
+
+                
     let maybeStatefulComponents() =
         let stateful = 
             FastRun.extractStatefulComponents simData.ClockTickNumber simData.FastSim

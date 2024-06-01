@@ -138,34 +138,24 @@ let baseSelector numBase changeBase =
         StackPanel.children [
             Button.create [
                 Button.content "hex"
+                Button.foreground (if numBase = Hex then "White" else "Black")
+                Button.background (if numBase = Hex then "LightGreen" else "White")
                 Button.onClick (fun _ -> changeBase Hex)
             ]
             Button.create [
                 Button.content "dec"
+                Button.foreground (if numBase = Dec then "White" else "Black")
+                Button.background (if numBase = Dec then "LightGreen" else "White")
                 Button.onClick (fun _ -> changeBase Dec)
             ]
             Button.create [
                 Button.content "bin"
+                Button.foreground (if numBase = Bin then "White" else "Black")
+                Button.background (if numBase = Bin then "LightGreen" else "White")
                 Button.onClick (fun _ -> changeBase Bin)
             ]
         ]
     ] |> generalize]
-    (*Level.item [ Level.Item.HasTextCentered ] [
-        Field.div [ Field.HasAddonsCentered ] [
-            Control.div [] [ Button.button [
-                Button.Color (if numBase = Hex then IsPrimary else NoColor)
-                Button.OnClick (fun _ -> changeBase Hex)
-            ] [ str "hex" ] ]
-            Control.div [] [ Button.button [
-                Button.Color (if numBase = Dec then IsPrimary else NoColor)
-                Button.OnClick (fun _ -> changeBase Dec)
-            ] [ str "dec" ] ]
-            Control.div [] [ Button.button [
-                Button.Color (if numBase = Bin then IsPrimary else NoColor)
-                Button.OnClick (fun _ -> changeBase Bin)
-            ] [ str "bin" ] ]
-        ]
-    ]*)
 
 let changeBase memoryEditorData dispatch numBase =
     { memoryEditorData with NumberBase = numBase }

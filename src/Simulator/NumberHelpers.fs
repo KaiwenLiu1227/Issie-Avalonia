@@ -611,3 +611,9 @@ let toDecimal (num: string) numBase (width:string) =
     | "'h" -> 
         num.ToLower()  |> hexToBin |> convertBinToDec
     | _ -> failwithf "Wrong base, should not happen!"
+    
+let parseInt (text: string) =
+    match System.Int32.TryParse(text) with
+    | (true, value) -> Some value
+    | _ -> None
+

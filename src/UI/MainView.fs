@@ -226,7 +226,7 @@ let displayView model dispatch =
                 DockPanel.create
                     [
                         DockPanel.contextMenu (
-                            ContextMenus.makeTestContextMenu
+                            ContextMenus.makeTestContextMenu dispatch
                         )
                         DockPanel.children
                           [ viewRightTabs canvasState model dispatch

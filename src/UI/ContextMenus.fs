@@ -101,7 +101,7 @@ let makeMenu model dispatch e =
     ]
     *)
 
-let makeTestContextMenu =
+let makeTestContextMenu dispatch =
     ContextMenu.create [
         ContextMenu.viewItems [
             makeWinDebugItem "Trace all" None (fun _ ->
@@ -112,5 +112,7 @@ let makeTestContextMenu =
                 debugTraceUI <- Set.ofList ["update"])
             makeWinDebugItem "Trace off" None (fun _ ->
                 debugTraceUI <- Set.ofList [])
+            makeWinDebugItem "Benchmark" None (fun _ ->
+                dispatch Benchmark)
         ]
     ]
