@@ -44,9 +44,7 @@ type ComponentGroup =
 /// control checkboxes in waveform simulator wave selection
 type CheckBoxStyle =
     | PortItem of Wave * string
-    (*
     | ComponentItem of FastComponent
-    *)
     | GroupItem of ComponentGroup * string list
     | SheetItem of string list
 
@@ -235,15 +233,11 @@ type WaveSimModel = {
     /// If the ram selection modal is visible.
     RamModalActive: bool
     /// List of RAM components on the sheet.
-    (*
     RamComps: FastComponent list
-    *)
     /// Map of which RAM components have been selected.
     SelectedRams: Map<FComponentId, string>
     /// FastSimulation used in the wave simulator.
-    (*
     FastSim: FastSimulation
-    *)
     /// String which the user is searching the list of waves by.
     SearchString: string
     /// What is shown in wave sim sheet detail elements
