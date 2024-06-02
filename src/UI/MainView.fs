@@ -49,8 +49,8 @@ let init () =
       LastCreatedComponent = None
       SavedSheetIsOutOfDate = false
       (*
-        PopupViewFunc = None
-        PopupDialogData = {
+        PopupViewFunc = None*)
+      PopupDialogData = {
             ProjectPath = ""
             Text = None
             ImportDecisions = Map.empty
@@ -71,7 +71,7 @@ let init () =
             IntList = None
             IntList2 = None
         }
-        Notifications = {
+        (*Notifications = {
             FromDiagram = None
             FromSimulation = None
             FromWaveSim = None

@@ -568,10 +568,10 @@ type Model = {
     (*/// function to create popup pane if present
     PopupViewFunc : ((Msg -> Unit) -> Model -> Fable.React.ReactElement) option
     /// function to create spinner popup pane if present (overrides otehr popups)
-    SpinnerPayload : SpinPayload option
+    SpinnerPayload : SpinPayload option *)
     /// data to populate popup (may not all be used)
     PopupDialogData : PopupDialogData
-    /// record containing functions that create react elements of notifications
+    (*/// record containing functions that create react elements of notifications
     Notifications : Notifications
     /// State of menus for sheets, projects etc
     TopMenuOpenState : TopMenu*)
@@ -609,9 +609,7 @@ let sheet_ = Lens.create (fun a -> a.Sheet) (fun s a -> {a with Sheet = s})
 // let tTType_ = Lens.create (fun a -> a.TTConfig) (fun s a -> {a with TTConfig = s})
 let currentStepSimulationStep_ = Lens.create (fun a -> a.CurrentStepSimulationStep) (fun s a -> {a with CurrentStepSimulationStep = s})
 let currentTruthTable_ = Lens.create (fun a -> a.CurrentTruthTable) (fun s a -> {a with CurrentTruthTable = s})
-(*
 let popupDialogData_ = Lens.create (fun a -> a.PopupDialogData) (fun p a -> {a with PopupDialogData = p})
-*)
 let selectedComponent_ = Lens.create (fun a -> a.SelectedComponent) (fun s a -> {a with SelectedComponent = s})
 let userData_ = Lens.create (fun a -> a.UserData) (fun s a -> {a with UserData = s})
 let uISheetTrail_ = Lens.create (fun a -> a.UISheetTrail) (fun s a -> {a with UISheetTrail = s})
