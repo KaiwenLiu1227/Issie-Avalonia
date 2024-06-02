@@ -97,13 +97,14 @@ let update (msg : Msg) oldModel =
         *)
 
     | Sheet sMsg ->
-        match sMsg, model.PopupViewFunc with
+        (*match sMsg, model.PopupViewFunc with
         | SheetT.ToggleNet canvas, _ ->
             model, Cmd.none
         | SheetT.KeyPress _, Some _ -> 
             // do not allow keys to affect Sheet when popup is on.
             model, Cmd.none
-        | _ -> sheetMsg sMsg model
+        | _ -> sheetMsg sMsg model*)
+        sheetMsg sMsg model
 
     | SynchroniseCanvas ->
         // used after drawblock components are centred on load to enusre that Issie CanvasState is updated
@@ -207,6 +208,7 @@ let update (msg : Msg) oldModel =
     | UpdateModel( updateFn: Model -> Model) ->
         updateFn model, Cmd.none
 
+    (*
     | UpdateImportDecisions importDecisions' ->
         let updatedModel = 
             model
@@ -214,9 +216,10 @@ let update (msg : Msg) oldModel =
        
         updatedModel, Cmd.none
 
-    (*| RefreshWaveSim ws ->
+    | RefreshWaveSim ws ->
         // restart the wave simulator after design change etc that invalidates all waves
-        WaveSim.refreshWaveSim true ws model*)
+        WaveSim.refreshWaveSim true ws model
+        *)
 
     | AddWSModel (sheet, wsModel) ->
         model
@@ -400,7 +403,6 @@ let update (msg : Msg) oldModel =
         model
         |> set (popupDialogData_ >-> verilogErrors_) errorList
         |> withNoMsg
-        *)
 
     | SetPopupDialogInt int ->
         model
@@ -445,7 +447,8 @@ let update (msg : Msg) oldModel =
         model
         |> map (popupDialogData_ >-> progress_) (Option.map updateFn)
         |> withNoMsg
-        
+        *)
+
     | SimulateWithProgressBar simPars ->
         SimulationView.simulateWithProgressBar simPars model
 

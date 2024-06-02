@@ -947,9 +947,9 @@ let private viewSimulationData (step: int) (simData : SimulationData) model disp
                         ] 
                      TextBox.create [
                         TextBox.text (sprintf "%d" step)
-                        TextBox.onTextChanged (
+                        (*TextBox.onTextChanged (
                             parseInt >> SetPopupDialogInt >> dispatch
-                            )
+                            )*)
                         ] 
                      Button.create [
                         Button.background "LightGreen"
@@ -1200,7 +1200,6 @@ let viewSimulation canvasState model dispatch =
                 [Button.create
                     [
                         Button.background "Red"
-                        Button.foreground "White"
                         Button.content "End simulation" 
                         Button.onClick (fun _ ->
                             simReset dispatch

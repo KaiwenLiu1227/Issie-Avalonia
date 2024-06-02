@@ -557,7 +557,9 @@ module SheetT =
         | CheckAutomaticScrolling
         | DoNothing
         // ------------------- Popup Dialog Management Messages----------------------//
-        | ShowPopup of ((Msg -> Unit) -> PopupDialogData -> IView)
+        (*
+        | ShowPopup of ((Msg -> Unit) -> PopupDialogData -> ReactElement)
+        *)
         | ClosePopup
         | SetPopupDialogText of string option
         | SetPopupDialogInt of int option
@@ -617,7 +619,9 @@ module SheetT =
     type Model = {
         Wire: BusWireT.Model
         // function to create popup pane if present
-        PopupViewFunc : ((Msg -> Unit) -> PopupDialogData -> IView) option
+        (*
+        PopupViewFunc : ((Msg -> Unit) -> PopupDialogData -> Fable.React.ReactElement) option
+        *)
         // data to populate popup (may not all be used)
         PopupDialogData : PopupDialogData
         BoundingBoxes: Map<CommonTypes.ComponentId, BoundingBox>

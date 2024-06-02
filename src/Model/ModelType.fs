@@ -44,7 +44,9 @@ type ComponentGroup =
 /// control checkboxes in waveform simulator wave selection
 type CheckBoxStyle =
     | PortItem of Wave * string
+    (*
     | ComponentItem of FastComponent
+    *)
     | GroupItem of ComponentGroup * string list
     | SheetItem of string list
 
@@ -233,11 +235,15 @@ type WaveSimModel = {
     /// If the ram selection modal is visible.
     RamModalActive: bool
     /// List of RAM components on the sheet.
+    (*
     RamComps: FastComponent list
+    *)
     /// Map of which RAM components have been selected.
     SelectedRams: Map<FComponentId, string>
     /// FastSimulation used in the wave simulator.
+    (*
     FastSim: FastSimulation
+    *)
     /// String which the user is searching the list of waves by.
     SearchString: string
     /// What is shown in wave sim sheet detail elements
@@ -559,16 +565,16 @@ type Model = {
     SavedSheetIsOutOfDate : bool
     /// the project contains, as loadable components, the state of each of its sheets
     CurrentProj : Project option
-    /// function to create popup pane if present
-    PopupViewFunc : ((Msg -> Unit) -> Model -> IView) option
-    (*/// function to create spinner popup pane if present (overrides otehr popups)
-    SpinnerPayload : SpinPayload option*)
+    (*/// function to create popup pane if present
+    PopupViewFunc : ((Msg -> Unit) -> Model -> Fable.React.ReactElement) option
+    /// function to create spinner popup pane if present (overrides otehr popups)
+    SpinnerPayload : SpinPayload option
     /// data to populate popup (may not all be used)
     PopupDialogData : PopupDialogData
     /// record containing functions that create react elements of notifications
     Notifications : Notifications
     /// State of menus for sheets, projects etc
-    TopMenuOpenState : TopMenu
+    TopMenuOpenState : TopMenu*)
     /// used to determine whether mouse is currently dragging the divider, or used normally
     DividerDragMode: DragMode
     /// viewer width in pixels altered by dragging the divider
@@ -595,13 +601,17 @@ let waveSim_ = Lens.create (fun a -> a.WaveSim) (fun s a -> {a with WaveSim = s}
 let rightPaneTabVisible_ = Lens.create (fun a -> a.RightPaneTabVisible) (fun s a -> {a with RightPaneTabVisible = s})
 let simSubTabVisible_ = Lens.create (fun a -> a.SimSubTabVisible) (fun s a -> {a with SimSubTabVisible = s})
 let buildVisible_ = Lens.create (fun a -> a.BuildVisible) (fun s a -> {a with BuildVisible = s})
+(*
 let popupViewFunc_ = Lens.create (fun a -> a.PopupViewFunc) (fun s a -> {a with PopupViewFunc = s})
+*)
 
 let sheet_ = Lens.create (fun a -> a.Sheet) (fun s a -> {a with Sheet = s})
 // let tTType_ = Lens.create (fun a -> a.TTConfig) (fun s a -> {a with TTConfig = s})
 let currentStepSimulationStep_ = Lens.create (fun a -> a.CurrentStepSimulationStep) (fun s a -> {a with CurrentStepSimulationStep = s})
 let currentTruthTable_ = Lens.create (fun a -> a.CurrentTruthTable) (fun s a -> {a with CurrentTruthTable = s})
+(*
 let popupDialogData_ = Lens.create (fun a -> a.PopupDialogData) (fun p a -> {a with PopupDialogData = p})
+*)
 let selectedComponent_ = Lens.create (fun a -> a.SelectedComponent) (fun s a -> {a with SelectedComponent = s})
 let userData_ = Lens.create (fun a -> a.UserData) (fun s a -> {a with UserData = s})
 let uISheetTrail_ = Lens.create (fun a -> a.UISheetTrail) (fun s a -> {a with UISheetTrail = s})
@@ -609,7 +619,9 @@ let uISheetTrail_ = Lens.create (fun a -> a.UISheetTrail) (fun s a -> {a with UI
 
 let currentProj_ = Lens.create (fun a -> a.CurrentProj) (fun s a -> {a with CurrentProj = s})
 let openLoadedComponentOfModel_ = currentProj_ >-> Optics.Option.value_ >?> openLoadedComponent_
+(*
 let notifications_ = Lens.create (fun a -> a.Notifications) (fun s a -> {a with Notifications = s})
+*)
 let project_ = Lens.create (fun a -> Option.get (a.CurrentProj)) (fun s a -> {a with CurrentProj = Some s})
 let projectOpt_ = Prism.create (fun a -> a.CurrentProj) (fun s a -> {a with CurrentProj =  a.CurrentProj |> Option.map (fun _ -> s)})
 let ldcM = project_ >-> loadedComponents_
