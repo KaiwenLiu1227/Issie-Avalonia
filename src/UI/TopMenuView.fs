@@ -92,37 +92,14 @@ let private openProject model dispatch topLevel=
         | Some path -> openProjectFromPath path model dispatch
     }    
 
-let newProjectBtn model dispatch :IView=
-    Component.create("newProject", fun ctx ->
-        let topLevel = TopLevel.GetTopLevel(ctx.control)
-        MenuItem.create
-          [ MenuItem.header "New Project"
-            MenuItem.onClick (fun _ -> 
-                async {
-                    do! (openProject model dispatch topLevel)
-                } |> Async.StartImmediate
-            )
-            ]
-    )
-let importProjectBtn model dispatch :IView=
-    Component.create("importProject", fun ctx ->
-        let topLevel = TopLevel.GetTopLevel(ctx.control)
-        MenuItem.create
-          [ MenuItem.header "Import Project"
-            MenuItem.onClick (fun _ -> 
-                async {
-                    do! (openProject model dispatch topLevel)
-                } |> Async.StartImmediate
-            )
-            ]
-    )
+
 
 let topMenuView model dispatch =
-    let fileTab model =
+    let fileTab topLevel=
         match model.CurrentProj with
         | None ->
          MenuItem.create
-            [ MenuItem.header "Sheet"]
+            [ MenuItem.header "Sheet  ⮟"]
         | Some project ->
         let updatedProject = getUpdatedLoadedComponents project model
         let updatedModel = {model with CurrentProj = Some updatedProject}
@@ -159,62 +136,86 @@ let topMenuView model dispatch =
 
             
         MenuItem.create
-          [ MenuItem.header "Sheet"
+          [ MenuItem.header "Sheet  ⮟"
             MenuItem.viewItems
                 ([ MenuItem.create [ MenuItem.header "New Sheet" ]
                    MenuItem.create [ MenuItem.header "Import Sheet" ]
                    MenuItem.create [ MenuItem.header "Sheet with Design Hierarchy" ]
                 ] @ breadcrumbs)
           ]
-    let saveBtn model =
+          
+    let projectTab topLevel=
+            MenuItem.create
+              [ MenuItem.header "Project  ⮟"
+                MenuItem.viewItems
+                    [
+                      MenuItem.create
+                          [ MenuItem.header "New Project"
+                            MenuItem.onClick (fun _ -> 
+                                async {
+                                    do! (openProject model dispatch topLevel)
+                                } |> Async.StartImmediate
+                            )
+                            ]
+                      MenuItem.create [ MenuItem.header "Import Project" ]
+                      MenuItem.create [ MenuItem.header "CLose Project" ]
+                      MenuItem.create
+                          [ MenuItem.header "Demo"
+                            // MenuItem.onClick (fun _ -> loadDemoProject "2adder (4-bit)" model dispatch) ] ] ]
+                            MenuItem.onClick (fun _ -> loadDemoProject "3cpu" model dispatch) ] ] ]
+
+
+        
+    let saveBtn =
+
+            if model.SavedSheetIsOutOfDate  then 
+                Button.create
+                    [
+                      Button.content "Save"
+                      Button.background "LightGreen"
+                      Button.foreground "White"
+                      Button.onClick (fun _ -> 
+                            dispatch (StartUICmd SaveSheet)
+                            saveOpenFileActionWithModelUpdate model dispatch |> ignore
+                            dispatch <| Sheet(SheetT.DoNothing) //To update the savedsheetisoutofdate send a sheet message
+                            ) 
+                  ]
+
+            else
+                Button.create
+                    [
+                      Button.content "Save"
+                      Button.background (SolidColorBrush(Color.FromArgb(80uy, 170uy, 240uy, 150uy))) 
+                      Button.foreground "Green"
+                  ]
+    let projectPath, fileName =
         match model.CurrentProj with
-        | None ->
-            Button.create
-              [
-                  Button.content "Save"
-              ]
-        | Some project ->
-        Button.create
-          [
-              Button.content "Save"
-              Button.background "LightGreen"
-              Button.onClick (fun _ -> 
-                    dispatch (StartUICmd SaveSheet)
-                    saveOpenFileActionWithModelUpdate model dispatch |> ignore
-                    dispatch <| Sheet(SheetT.DoNothing) //To update the savedsheetisoutofdate send a sheet message
-                    ) 
-          ]
+        | None -> "no open project", "no open sheet"
+        | Some project -> project.ProjectPath, project.OpenFileName
+
     Border.create
         [ Border.borderThickness 1.0
           Border.zIndex 1
           Border.background "white"
-          Border.borderBrush (SolidColorBrush(Color.FromArgb(75uy, 0uy, 0uy, 0uy))) // 描边颜色
+          Border.borderBrush (SolidColorBrush(Color.FromArgb(75uy, 0uy, 0uy, 0uy))) 
           Border.padding 10.0
           Border.dock Dock.Top
           Border.child (
+            Component.create($"{projectPath}{fileName}", fun ctx ->
+              let topLevel = TopLevel.GetTopLevel(ctx.control)
               Menu.create
                   [
                     (*Menu.borderThickness 2.0*)
                     Menu.viewItems
                         [
-                          fileTab model
-                          MenuItem.create
-                              [ MenuItem.header "Project"
-                                MenuItem.viewItems
-                                    [
-                                      newProjectBtn model dispatch
-                                      MenuItem.create [ MenuItem.header "Import Project" ]
-                                      MenuItem.create [ MenuItem.header "CLose Project" ]
-                                      MenuItem.create
-                                          [ MenuItem.header "Demo"
-                                            // MenuItem.onClick (fun _ -> loadDemoProject "2adder (4-bit)" model dispatch) ] ] ]
-                                            MenuItem.onClick (fun _ -> loadDemoProject "3cpu" model dispatch) ] ] ]
-
-                          TextBlock.create [ TextBlock.text "Path/this_project/this_sheet" ]
-                          saveBtn model
+                          fileTab topLevel
+                          projectTab topLevel
+                          TextBlock.create [ TextBlock.text $"{projectPath}{fileName}" ]
+                          saveBtn 
                           Button.create
                               [
                                   Button.content "Info"
                                   Button.background "LightBlue"
-                              ] ] ]
+                                  Button.foreground "White"
+                              ] ] ])
           ) ]

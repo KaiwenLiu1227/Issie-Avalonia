@@ -29,6 +29,7 @@ let viewOnDiagramButtons model dispatch =
             Button.foreground "White"
             Button.background "LightGreen"
             Button.onClick func
+            Button.margin 4
             (*Button.Props [ canvasSmallButtonStyle; OnClick func ] 
             Button.Modifiers [
                 //Modifier.TextWeight TextWeight.Bold
@@ -36,17 +37,25 @@ let viewOnDiagramButtons model dispatch =
                 Modifier.BackgroundColor IsSuccess
                 ]*)
             ]
-    StackPanel.create [
-        StackPanel.dock Dock.Bottom
-        StackPanel.orientation Orientation.Horizontal
-        StackPanel.zIndex 1
-        StackPanel.children [
-            canvasBut (fun _ -> dispatch SheetT.KeyboardMsg.CtrlZ ) "< undo" 
-            canvasBut (fun _ -> dispatch SheetT.KeyboardMsg.CtrlY ) "redo >" 
-            canvasBut (fun _ -> dispatch SheetT.KeyboardMsg.CtrlC ) "copy" 
-            canvasBut (fun _ -> dispatch SheetT.KeyboardMsg.CtrlV ) "paste" 
+    DockPanel.create [
+        DockPanel.lastChildFill true 
+        DockPanel.children [
+            StackPanel.create [
+                //StackPanel.dock Dock.Bottom
+                StackPanel.verticalAlignment VerticalAlignment.Bottom
+                StackPanel.orientation Orientation.Horizontal
+                StackPanel.height 60
+                StackPanel.zIndex 1
+                StackPanel.children [
+                    canvasBut (fun _ -> dispatch SheetT.KeyboardMsg.CtrlZ ) "< undo" 
+                    canvasBut (fun _ -> dispatch SheetT.KeyboardMsg.CtrlY ) "redo >" 
+                    canvasBut (fun _ -> dispatch SheetT.KeyboardMsg.CtrlC ) "copy" 
+                    canvasBut (fun _ -> dispatch SheetT.KeyboardMsg.CtrlV ) "paste" 
+                ]
+            ]
         ]
     ]
+    
 
 
     
@@ -230,7 +239,29 @@ let viewRightTabs canvasState model dispatch =
                       Border.padding 10.0
                       Border.width 350
                       Border.child (
-                          StackPanel.create
+                          TabControl.create [
+                              TabControl.viewItems [
+                                  TabItem.create [
+                                      TabItem.header "Catalogue"
+                                      TabItem.fontSize 15
+                                      TabItem.onTapped (fun _ -> dispatch <| ChangeRightTab Catalogue)
+                                      TabItem.content (viewRightTab canvasState model dispatch)
+                                  ]
+                                  TabItem.create [
+                                      TabItem.header "Properties"
+                                      TabItem.fontSize 15
+                                      TabItem.onTapped (fun _ -> dispatch <| ChangeRightTab Properties)
+                                      TabItem.content (viewRightTab canvasState model dispatch)
+                                  ]
+                                  TabItem.create [
+                                      TabItem.header "Simulation"
+                                      TabItem.fontSize 15
+                                      TabItem.onTapped (fun _ -> dispatch <| ChangeRightTab Simulation)
+                                      TabItem.content (viewRightTab canvasState model dispatch)
+                                  ]
+                              ]
+                          ]
+                          (*StackPanel.create
                               [ StackPanel.children
                                     [ Menu.create
                                           [ Menu.viewItems
@@ -247,7 +278,7 @@ let viewRightTabs canvasState model dispatch =
                                                             dispatch <| ChangeRightTab Simulation) ] ] ]
                                       // buildTab
                                       viewRightTab canvasState model dispatch
-                                      ] ]
+                                      ] ]*)
                       ) ] ] ]
 
 let displayView model dispatch =
@@ -264,6 +295,7 @@ let displayView model dispatch =
                         DockPanel.contextMenu (
                             ContextMenus.makeTestContextMenu dispatch
                         )
+                        DockPanel.lastChildFill true
                         DockPanel.children
                           [ viewRightTabs canvasState model dispatch
                             topMenuView model dispatch

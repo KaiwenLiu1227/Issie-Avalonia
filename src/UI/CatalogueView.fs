@@ -5,6 +5,7 @@ open Avalonia.Controls
 open Avalonia.Controls.Shapes
 open Avalonia.FuncUI
 open Avalonia.FuncUI.DSL
+open Avalonia.Input
 open Avalonia.Media
 open Avalonia.Layout
 open Avalonia.FuncUI.Helpers
@@ -16,6 +17,7 @@ open Avalonia.FuncUI.Types
     View for catalogue in the right tab.
 *)
 
+open DrawModelType.SheetT
 open EEExtensions
 (*
 open DiagramStyle
@@ -52,6 +54,7 @@ let menuItem styles (label: string) onClick =
     TextBlock.create[
         TextBlock.text label
         TextBlock.onTapped onClick
+        TextBox.cursor (Cursor StandardCursorType.Hand)
     ] |> generalize
 
 let private createComponent compType label model dispatch =
@@ -905,7 +908,7 @@ let viewCatalogue model dispatch =
         let viewCatOfModel = fun model ->                 
             let styles = 
                 match model.Sheet.Action with
-                // | SheetT.InitialisedCreateComponent _ -> [Cursor "grabbing"]
+                | SheetT.InitialisedCreateComponent _ -> ["grabbing"]
                 | _ -> []
 
             let catTip1 name func (tip:string) = 
