@@ -43,9 +43,7 @@ let update (msg : Msg) (issieModel : ModelType.Model): ModelType.Model*Cmd<Model
         // Executed every update so performance is important.
         // Since normally state will be correct it is only necessary to make the checking
         // fast.
-        (*
         let start = TimeHelpers.getTimeMs()
-        *)
         let sModel = Optic.get symbol_ model
         let inputModel =
             sModel.Symbols
@@ -57,13 +55,9 @@ let update (msg : Msg) (issieModel : ModelType.Model): ModelType.Model*Cmd<Model
                                 model 
                             else
                                 Optic.set boundingBoxes_ (Symbol.getBoundingBoxes sModel) model))
-            (*
             |> ensureCanvasExtendsBeyondScreen
-        *)
         (inputModel, cmd)
-        (*
         |> RotateScale.postUpdateScalingBox
-        *)
         // |> (fun currentmodel -> {currentmodel with TmpModel = Some currentmodel})
     let stopwatch = Stopwatch.StartNew()
 

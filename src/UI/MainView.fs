@@ -3,6 +3,7 @@ module DiagramMainView
 open Avalonia.Controls
 open Avalonia.FuncUI
 open Avalonia.FuncUI.DSL
+open Avalonia.Layout
 open Avalonia.Media
 
 open ModelType
@@ -13,6 +14,42 @@ open SimulationView
 open UIPopups
 open ContextMenu
 
+
+//------------------Buttons overlaid on Draw2D Diagram----------------------------------//
+//--------------------------------------------------------------------------------------//
+
+let viewOnDiagramButtons model dispatch =
+    let sheetDispatch sMsg = dispatch (Sheet sMsg)
+    let dispatch = SheetT.KeyPress >> sheetDispatch
+
+     
+    let canvasBut func (label: string) = 
+        Button.create [
+            Button.content label
+            Button.foreground "White"
+            Button.background "LightGreen"
+            Button.onClick func
+            (*Button.Props [ canvasSmallButtonStyle; OnClick func ] 
+            Button.Modifiers [
+                //Modifier.TextWeight TextWeight.Bold
+                Modifier.TextColor IsLight
+                Modifier.BackgroundColor IsSuccess
+                ]*)
+            ]
+    StackPanel.create [
+        StackPanel.dock Dock.Bottom
+        StackPanel.orientation Orientation.Horizontal
+        StackPanel.zIndex 1
+        StackPanel.children [
+            canvasBut (fun _ -> dispatch SheetT.KeyboardMsg.CtrlZ ) "< undo" 
+            canvasBut (fun _ -> dispatch SheetT.KeyboardMsg.CtrlY ) "redo >" 
+            canvasBut (fun _ -> dispatch SheetT.KeyboardMsg.CtrlC ) "copy" 
+            canvasBut (fun _ -> dispatch SheetT.KeyboardMsg.CtrlV ) "paste" 
+        ]
+    ]
+
+
+    
 
 let init () =
     {
@@ -222,7 +259,6 @@ let displayView model dispatch =
     Grid.create
         [ Grid.children
               [
-                // Your main content here
                 DockPanel.create
                     [
                         DockPanel.contextMenu (
@@ -231,7 +267,8 @@ let displayView model dispatch =
                         DockPanel.children
                           [ viewRightTabs canvasState model dispatch
                             topMenuView model dispatch
-                            SheetDisplay.view model.Sheet 50.0 [] sheetDispatch ] ]
+                            SheetDisplay.view model.Sheet 50.0 [] sheetDispatch
+                            viewOnDiagramButtons model dispatch] ]
                 // Overlay
                 overlayView model dispatch ] ]
     |> generalize

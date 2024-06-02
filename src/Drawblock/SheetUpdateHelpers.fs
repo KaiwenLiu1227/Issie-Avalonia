@@ -258,10 +258,10 @@ let mDownUpdate
         (model: Model) 
         (mMsg: MouseT) 
             : Model * Cmd<ModelType.Msg> =
-    (*let newModel =
+    let newModel =
         match model.TmpModel with
         | None -> model
-        | Some newModel -> newModel*)
+        | Some newModel -> newModel
     // printfn "running mDownUpdate"
     //printfn "mDownUpdate Action: %A" model.Action
     match model.Action with

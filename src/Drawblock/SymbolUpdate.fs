@@ -65,8 +65,8 @@ let generateIOLabel (model: Model) (compType: ComponentType) (name:string) : str
 /// Returns the number of the component label (i.e. the number 1 from IN1 or ADDER16.1)
 let getLabelNumber (str : string) = 
     let index = Regex.Match(str, @"\d+$")
-    match index with
-    | null -> 0
+    match index.Value with
+    | "" -> 0
     | _ -> int index.Value
 
 /// Generates the label number for compType (i.e. the number 1 in IN1 or ADDER16.1) in a string format

@@ -1,5 +1,6 @@
 ﻿module Program
 
+open Avalonia.FuncUI.Types
 open Elmish
 open Avalonia
 open Avalonia.Controls
@@ -9,6 +10,7 @@ open Avalonia.FuncUI.Elmish
 open Avalonia.Controls.ApplicationLifetimes
 open Avalonia.Input
 open ModelType
+open DrawModelType
 open Optics
 open Optics.Operators
 
@@ -52,12 +54,23 @@ type MainWindow() as this =
         base.Width <- 1200.0
         base.Title <- "Issie Avalonia"
         
+        let subscriptions _ =
+            let keyDownSub (dispatch: Msg -> unit) =
+                this.KeyDown.Subscribe(fun eventArgs ->
+                    if eventArgs.Key = Input.Key.Space then// Check for spacebar
+                        // key.preventDefault() // Disable scrolling with spacebar
+                        dispatch (Sheet (SheetT.Msg.ManualKeyDown (eventArgs.Key.ToString())))
+                    else
+                        dispatch (Sheet (SheetT.Msg.ManualKeyDown (eventArgs.Key.ToString())))
+                    )
+            [[ nameof keyDownSub ], keyDownSub ]
+        
         this.AttachDevTools();
         Program.mkProgram init update view' 
         |> Program.withHost this
         // |> Program.withConsoleTrace
+        |> Program.withSubscription subscriptions
         |> Program.runWithAvaloniaSyncDispatch ()
-        // |> Program.withSubscription subscriptions
         // |> Program.run    
 
 type App() =

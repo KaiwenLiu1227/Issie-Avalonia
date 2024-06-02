@@ -949,9 +949,9 @@ let private viewSimulationData (step: int) (simData : SimulationData) model disp
                         TextBox.background "LightGreen"
                         TextBox.foreground "White"
                         TextBox.borderThickness 0.0
-                        (*TextBox.onTextChanged (
+                        TextBox.onTextChanged (
                             parseInt >> SetPopupDialogInt >> dispatch
-                            )*)
+                            )
                         ] 
                      Button.create [
                         Button.background "LightGreen"
