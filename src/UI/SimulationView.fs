@@ -832,8 +832,7 @@ let simulateWithProgressBar (simProg: SimulationProgress) (model:Model) =
     
 
 let simulationClockChangeAction dispatch simData (model': Model) =
-    []
-    (*let dialog = model'.PopupDialogData
+    let dialog = model'.PopupDialogData
     let clock = 
         match dialog.Int with
         | None -> failwithf "What - must have some number from dialog"
@@ -895,7 +894,7 @@ let simulationClockChangeAction dispatch simData (model': Model) =
         |> Seq.map Elmish.Cmd.ofMsg 
         |> Elmish.Cmd.batch
         |> ExecCmdAsynch
-        |> dispatch*)
+        |> dispatch
 
 
 
