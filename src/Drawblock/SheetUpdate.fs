@@ -897,9 +897,7 @@ let init () =
 
     {
         Wire = wireModel
-        (*
         PopupViewFunc = None
-        *)
         PopupDialogData = {Text=None; Int=None; Int2=None}
         BoundingBoxes = boundingBoxes
         LastValidBoundingBoxes = boundingBoxes

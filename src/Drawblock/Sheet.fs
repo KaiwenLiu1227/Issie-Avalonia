@@ -200,7 +200,6 @@ module SheetInterface =
             dispatch <| Wire (BusWireT.Symbol (SymbolT.ResetModel ) ) 
 
         /// Returns a list of selected components
-        (*
         member this.GetSelectedComponents =
             this.SelectedComponents
             |> List.collect ( fun compId ->
@@ -221,7 +220,6 @@ module SheetInterface =
         /// Returns a list of selected components and connections in the form of (Component list * Connection list)
         member this.GetSelectedCanvasState =
             this.GetSelectedComponents, this.GetSelectedConnections
-            *)
 
         /// Given a list of connIds, select those connections
         member this.SelectConnections dispatch on connIds =

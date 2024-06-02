@@ -38,7 +38,7 @@ let init () =
       LastUsedDialogWidth = 1
       CurrentStepSimulationStep = None
       CurrentTruthTable = None
-      // TTConfig = TruthTableUpdate.tTTypeInit
+      (*TTConfig = TruthTableUpdate.tTTypeInit*)
       WaveSim = Map.empty
       WaveSimSheet = None
       RightPaneTabVisible = Catalogue
@@ -48,9 +48,8 @@ let init () =
       Clipboard = [], []
       LastCreatedComponent = None
       SavedSheetIsOutOfDate = false
-      (*
-        PopupViewFunc = None
-        PopupDialogData = {
+      PopupViewFunc = None
+      PopupDialogData = {
             ProjectPath = ""
             Text = None
             ImportDecisions = Map.empty
@@ -71,7 +70,8 @@ let init () =
             IntList = None
             IntList2 = None
         }
-        Notifications = {
+        
+      Notifications = {
             FromDiagram = None
             FromSimulation = None
             FromWaveSim = None
@@ -79,7 +79,7 @@ let init () =
             FromMemoryEditor = None
             FromProperties = None
         }
-        TopMenuOpenState = Closed*)
+      TopMenuOpenState = Closed
       DividerDragMode = DragModeOff
       WaveSimViewerWidth = 0
       ConnsOfSelectedWavesAreHighlighted = false
@@ -190,13 +190,14 @@ let viewRightTabs canvasState model dispatch =
               [ Border.create
                     [ Border.borderThickness 1.0
                       Border.borderBrush (SolidColorBrush(Color.FromArgb(75uy, 0uy, 0uy, 0uy)))
-                      Border.padding 10.0
                       Border.width 350
                       Border.child (
                           StackPanel.create
                               [ StackPanel.children
                                     [ Menu.create
-                                          [ Menu.viewItems
+                                          [ Menu.borderThickness 1.0
+                                            Menu.borderBrush (SolidColorBrush(Color.FromArgb(75uy, 0uy, 0uy, 0uy))) 
+                                            Menu.viewItems
                                                 [ MenuItem.create
                                                       [ MenuItem.header "Catalogue"
                                                         MenuItem.onClick (fun _ -> dispatch <| ChangeRightTab Catalogue) ]

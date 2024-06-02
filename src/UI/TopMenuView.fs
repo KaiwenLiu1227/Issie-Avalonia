@@ -188,13 +188,12 @@ let topMenuView model dispatch =
         [ Border.borderThickness 1.0
           Border.zIndex 1
           Border.background "white"
-          Border.borderBrush (SolidColorBrush(Color.FromArgb(75uy, 0uy, 0uy, 0uy))) // 描边颜色
+          Border.borderBrush (SolidColorBrush(Color.FromArgb(75uy, 0uy, 0uy, 0uy))) 
           Border.padding 10.0
           Border.dock Dock.Top
           Border.child (
               Menu.create
                   [
-                    (*Menu.borderThickness 2.0*)
                     Menu.viewItems
                         [
                           fileTab model
