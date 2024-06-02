@@ -58,6 +58,7 @@ let menuItem styles (label: string) onClick =
     ] |> generalize
 
 let private createComponent compType label model dispatch =
+    printfn "create"
     Sheet (SheetT.InitialiseCreateComponent (tryGetLoadedComponents model, compType, label)) |> dispatch
 
 // Anything requiring a standard label should be checked and updated with the correct number suffix in Symbol/Sheet, 
@@ -869,21 +870,26 @@ let private makeMenuGroupWithTip styles  title tip menuList =
 let mutable firstTip = true
 
 let private makeMenuGroup (title: string) (menuList: IView List) =
-
-    (*Expander.create[
-        Expander.header title
-        Expander.content (
-            menuList
+    let menu = StackPanel.create[
+        StackPanel.children (
+             menuList
             )
-    ]*)
-    let title = TextBlock.create [
+    ]
+    Expander.create[
+        Expander.header title
+        Expander.width 310
+        Expander.margin 10
+        Expander.borderThickness 0.0
+        Expander.content menu
+    ] |> generalize
+    (*let title = TextBlock.create [
         TextBlock.text title
     ]
     StackPanel.create[
         StackPanel.children (
             [title] @ menuList
             )
-    ]
+    ]*)
 
 let compareModelsApprox (m1:Model) (m2:Model) =
 

@@ -1,6 +1,7 @@
 module DiagramMainView
 
 open Avalonia.Controls
+open Avalonia.Controls.Documents
 open Avalonia.FuncUI
 open Avalonia.FuncUI.DSL
 open Avalonia.Layout
@@ -158,20 +159,41 @@ let private  viewRightTab canvasState model dispatch =
     let pane = model.RightPaneTabVisible
     match pane with
     | Catalogue | Transition ->
-        CatalogueView.viewCatalogue model dispatch        
-        (*div [ Style [Width "90%"; MarginLeft "5%"; MarginTop "15px" ; Height "calc(100%-100px)"] ] [
-            Heading.h4 [] [ str "Catalogue" ]
-            div [ Style [ MarginBottom "15px" ; Height "100%"; OverflowY OverflowOptions.Auto] ] 
-                [ str "Click on a component to add it to the diagram. Hover on components for details." ]
-            CatalogueView.viewCatalogue model dispatch
-        ]*)
-    (*
-    | Properties ->
-        div [ Style [Width "90%"; MarginLeft "5%"; MarginTop "15px" ] ] [
-            Heading.h4 [] [ str "Component properties" ]
-            SelectedComponentView.viewSelectedComponent model dispatch
+        StackPanel.create [
+            StackPanel.orientation Orientation.Vertical
+            StackPanel.children [
+                TextBlock.create [
+                    TextBlock.text "Catalogue"
+                    //TextBlock.fontStyle FontStyle.Oblique
+                    TextBlock.fontSize 20
+                    TextBox.margin 10
+                ]
+                TextBlock.create [
+                    TextBlock.text "Click on a component to add it to the diagram. Hover on components for details"
+                    TextBox.margin 10
+                ]
+                CatalogueView.viewCatalogue model dispatch   
+            ]
         ]
-        *)
+             
+    | Properties ->
+        StackPanel.create [
+            StackPanel.orientation Orientation.Vertical
+            StackPanel.children [
+                TextBlock.create [
+                    TextBlock.text "Component properties"
+                    //TextBlock.fontStyle FontStyle.Oblique
+                    TextBlock.fontSize 20
+                ]
+                TextBlock.create [
+                    TextBlock.text "Click on a component to add it to the diagram. Hover on components for details"
+                    TextBlock.textWrapping TextWrapping.Wrap
+                    TextBlock.width 300.0
+                ]
+                // TODO Implement SelectedComponentView
+                // SelectedComponentView.viewSelectedComponent model dispatch
+            ]
+        ]
 
     | Simulation ->
         let subtabs =
@@ -236,7 +258,6 @@ let viewRightTabs canvasState model dispatch =
               [ Border.create
                     [ Border.borderThickness 1.0
                       Border.borderBrush (SolidColorBrush(Color.FromArgb(75uy, 0uy, 0uy, 0uy)))
-                      Border.padding 10.0
                       Border.width 350
                       Border.child (
                           TabControl.create [
@@ -261,24 +282,6 @@ let viewRightTabs canvasState model dispatch =
                                   ]
                               ]
                           ]
-                          (*StackPanel.create
-                              [ StackPanel.children
-                                    [ Menu.create
-                                          [ Menu.viewItems
-                                                [ MenuItem.create
-                                                      [ MenuItem.header "Catalogue"
-                                                        MenuItem.onClick (fun _ -> dispatch <| ChangeRightTab Catalogue) ]
-                                                  MenuItem.create
-                                                      [ MenuItem.header "Properties"
-                                                        MenuItem.onClick (fun _ ->
-                                                            dispatch <| ChangeRightTab Properties) ]
-                                                  MenuItem.create
-                                                      [ MenuItem.header "Simulation"
-                                                        MenuItem.onClick (fun _ ->
-                                                            dispatch <| ChangeRightTab Simulation) ] ] ]
-                                      // buildTab
-                                      viewRightTab canvasState model dispatch
-                                      ] ]*)
                       ) ] ] ]
 
 let displayView model dispatch =

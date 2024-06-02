@@ -210,7 +210,7 @@ let topMenuView model dispatch =
                         [
                           fileTab topLevel
                           projectTab topLevel
-                          TextBlock.create [ TextBlock.text $"{projectPath}{fileName}" ]
+                          TextBlock.create [ TextBlock.text $"{projectPath} {fileName}" ]
                           saveBtn 
                           Button.create
                               [

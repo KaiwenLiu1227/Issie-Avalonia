@@ -52,6 +52,7 @@ type MainWindow() as this =
     do
         base.Height <- 700.0
         base.Width <- 1200.0
+        base.Icon <- WindowIcon("static\icon.png")
         base.Title <- "Issie Avalonia"
         
         let subscriptions _ =
