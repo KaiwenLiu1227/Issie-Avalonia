@@ -947,6 +947,9 @@ let private viewSimulationData (step: int) (simData : SimulationData) model disp
                         ] 
                      TextBox.create [
                         TextBox.text (sprintf "%d" step)
+                        TextBox.background "LightGreen"
+                        TextBox.foreground "White"
+                        TextBox.borderThickness 0.0
                         (*TextBox.onTextChanged (
                             parseInt >> SetPopupDialogInt >> dispatch
                             )*)

@@ -382,7 +382,7 @@ let update (msg : Msg) oldModel =
                         VerilogCode = None;
                         VerilogErrors = [];
                     }}
-        |> withNoMsg
+        |> withNoMsg *)
 
     | SetPopupDialogText text ->
         model
@@ -447,7 +447,7 @@ let update (msg : Msg) oldModel =
         model
         |> map (popupDialogData_ >-> progress_) (Option.map updateFn)
         |> withNoMsg
-        *)
+        
 
     | SimulateWithProgressBar simPars ->
         SimulationView.simulateWithProgressBar simPars model

@@ -44,9 +44,7 @@ type ComponentGroup =
 /// control checkboxes in waveform simulator wave selection
 type CheckBoxStyle =
     | PortItem of Wave * string
-    (*
     | ComponentItem of FastComponent
-    *)
     | GroupItem of ComponentGroup * string list
     | SheetItem of string list
 
@@ -235,15 +233,11 @@ type WaveSimModel = {
     /// If the ram selection modal is visible.
     RamModalActive: bool
     /// List of RAM components on the sheet.
-    (*
     RamComps: FastComponent list
-    *)
     /// Map of which RAM components have been selected.
     SelectedRams: Map<FComponentId, string>
     /// FastSimulation used in the wave simulator.
-    (*
     FastSim: FastSimulation
-    *)
     /// String which the user is searching the list of waves by.
     SearchString: string
     /// What is shown in wave sim sheet detail elements
@@ -568,10 +562,10 @@ type Model = {
     (*/// function to create popup pane if present
     PopupViewFunc : ((Msg -> Unit) -> Model -> Fable.React.ReactElement) option
     /// function to create spinner popup pane if present (overrides otehr popups)
-    SpinnerPayload : SpinPayload option
+    SpinnerPayload : SpinPayload option *)
     /// data to populate popup (may not all be used)
     PopupDialogData : PopupDialogData
-    /// record containing functions that create react elements of notifications
+    (*/// record containing functions that create react elements of notifications
     Notifications : Notifications
     /// State of menus for sheets, projects etc
     TopMenuOpenState : TopMenu*)
@@ -609,9 +603,7 @@ let sheet_ = Lens.create (fun a -> a.Sheet) (fun s a -> {a with Sheet = s})
 // let tTType_ = Lens.create (fun a -> a.TTConfig) (fun s a -> {a with TTConfig = s})
 let currentStepSimulationStep_ = Lens.create (fun a -> a.CurrentStepSimulationStep) (fun s a -> {a with CurrentStepSimulationStep = s})
 let currentTruthTable_ = Lens.create (fun a -> a.CurrentTruthTable) (fun s a -> {a with CurrentTruthTable = s})
-(*
 let popupDialogData_ = Lens.create (fun a -> a.PopupDialogData) (fun p a -> {a with PopupDialogData = p})
-*)
 let selectedComponent_ = Lens.create (fun a -> a.SelectedComponent) (fun s a -> {a with SelectedComponent = s})
 let userData_ = Lens.create (fun a -> a.UserData) (fun s a -> {a with UserData = s})
 let uISheetTrail_ = Lens.create (fun a -> a.UISheetTrail) (fun s a -> {a with UISheetTrail = s})

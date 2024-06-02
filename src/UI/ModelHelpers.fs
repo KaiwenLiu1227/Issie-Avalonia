@@ -35,13 +35,11 @@ let initWSModel: WaveSimModel =
       WaveformColumnWidth = Constants.initialWaveformColWidth
       WaveModalActive = false
       RamModalActive = false
-      (*
-    RamComps = []
-    *)
+      RamComps = []
       SelectedRams = Map.empty
-      (*FastSim = 
+      FastSim = 
         printfn "Creating initWSModel"
-        FastCreate.simulationPlaceholder // placeholder*)
+        FastCreate.simulationPlaceholder // placeholder
       SearchString = ""
       ShowComponentDetail = Set.empty
       ShowSheetDetail = Set.empty
