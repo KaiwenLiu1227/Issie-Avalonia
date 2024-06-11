@@ -123,7 +123,8 @@ let productionBuild = false
 #endif
 
 /// trace UI execution: "view" - mark view function. "update" print update messages.
-let mutable debugTraceUI: string Set = Set ["update"]
+let mutable debugTraceUI: string Set = Set ["update"; ""]
+// let mutable debugTraceUI: string Set = Set []
 
 /// Call debugAction() and print its result if debugTraceUI mutable contains string traceCode
 let traceIf traceCode debugAction =

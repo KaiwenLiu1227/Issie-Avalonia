@@ -35,7 +35,7 @@ let getActivePressedKeys model =
 
 let getDrawBlockPos (ev:Input.PointerEventArgs) (headerHeight: float) (sheetModel:Model) =
     let newPos = ev.GetPosition(null)
-    let roundUp n = Math.Ceiling(n / 5.0) * 5.0
+    let roundUp n = Math.Ceiling(n / 1.0) * 1.0
     // Apply the function to both X and Y coordinates
     let roundedX = roundUp newPos.X
     let roundedY = roundUp newPos.Y
@@ -80,7 +80,7 @@ let displaySvgWithZoom
         // right button oprations are only used for context menus
         //if int ev.button = 0 then // button = 0 => left, button = 2 => right
             let newPos = ev.GetPosition(null) 
-            let roundUp n = Math.Ceiling(n / 5.0) * 5.0
+            let roundUp n = Math.Ceiling(n / 1.0) * 1.0
             // Apply the function to both X and Y coordinates
             let roundedX = roundUp newPos.X
             let roundedY = roundUp newPos.Y
@@ -108,6 +108,7 @@ let displaySvgWithZoom
         DockPanel.onKeyUp (fun ev -> onkeyup ev)
         DockPanel.children [
             Canvas.create [
+                // TODO zoom of canvas need to implemented, current version has wrong position offset
                 (*Canvas.height (model.CanvasSize * zoom)
                 Canvas.width (model.CanvasSize * zoom)*)
                 Canvas.background "White"
@@ -220,7 +221,7 @@ let view
 
                 let arrowHeadTopRight = ((makeLineAttr (shapePoints[1].X) shapePoints[1].Y)) + ((makeLineAttr (shapePoints[2].X) shapePoints[2].Y)) + ((makeLineAttr (shapePoints[3].X) shapePoints[3].Y)) + ((makeLineAttr (shapePoints[4].X) shapePoints[4].Y))+ ((makeLineAttr (shapePoints[5].X) shapePoints[5].Y))
                 let arrowHeadBottomLeft = ((makeLineAttr (shapePoints[6].X) shapePoints[6].Y)) + ((makeLineAttr (shapePoints[7].X) shapePoints[7].Y)) + ((makeLineAttr (shapePoints[8].X) shapePoints[8].Y)) + ((makeLineAttr (shapePoints[9].X) shapePoints[9].Y))+ ((makeLineAttr (shapePoints[10].X) shapePoints[10].Y))
-                (createAnyPath (symbol.Pos+shapePoints[0])(arrowHeadTopRight+arrowHeadBottomLeft) "grey" strokeWidth outlineColour)
+                (createAnyPath (symbol.Pos+shapePoints[0])(arrowHeadTopRight+arrowHeadBottomLeft) "gray" strokeWidth outlineColour)
             
             | SymbolT.RotateButton _ ->
             
@@ -307,4 +308,4 @@ let view
 
     | _ ->
         displaySvgWithZoom model headerHeight style ( displayElements @ [ dragToSelectBox ] ) dispatch
-    |> TimeHelpers.instrumentInterval "SheetView" start
+    // |> TimeHelpers.instrumentInterval "SheetView" start

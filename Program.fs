@@ -39,9 +39,9 @@ let view' model dispatch =
     let start = TimeHelpers.getTimeMs()
     view model dispatch
     |> (fun view ->
-        //if Set.contains "view" JSHelpers.debugTraceUI then
+        if Set.contains "view" JSHelpers.debugTraceUI then
             TimeHelpers.instrumentInterval ">>>View" start view
-        //else
+        else
             view)
 
 let mutable firstPress = true

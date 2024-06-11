@@ -320,7 +320,6 @@ type TTMsg =
     | SetPopupAlgebraInputs of SimulationIO list option
     | SetPopupAlgebraError of SimulationError option
 
-
 type Msg =
     | ShowExitDialog
     | Sheet of DrawModelType.SheetT.Msg
@@ -431,8 +430,7 @@ type Msg =
     | SendSeqMsgAsynch of seq<Msg>
     | ContextMenuAction of e: Input.PointerEventArgs * dispatch: (Msg -> unit)
     | ContextMenuItemClick of menuType:string * item:string * dispatch: (Msg -> unit)
-
-
+    
 //================================//
 // Componenents loaded from files //
 //================================//
@@ -466,12 +464,12 @@ type UserData = {
 type SpinnerState =
    | WaveSimSpinner
 
-(*type SpinPayload = {
+type SpinPayload = {
     Payload: Model -> Model
     Name: string
     ToDo: int
     Total: int
-    }*)
+    }
 
 type TTType = {
     /// bits associated with the maximum number of input rows allowed in a Truth Table
@@ -501,94 +499,100 @@ let hiddenColumns_ = Lens.create (fun a -> a.HiddenColumns) (fun s a -> {a with 
 let sortType_ = Lens.create (fun a -> a.SortType) (fun s a -> {a with SortType = s})
 let algebraIns_ = Lens.create (fun a -> a.AlgebraIns) (fun s a -> {a with AlgebraIns = s})
 let gridCache_ = Lens.create (fun a -> a.GridCache) (fun s a -> {a with GridCache = s})
+
+// TODO following attribute in model not implemented yet    
+(*/// If the application has a modal spinner waiting for simulation
+Spinner: (Model -> Model) option
+/// style info for the truth table
+TTConfig: TTType
+/// function to create popup pane if present
+PopupViewFunc : ((Msg -> Unit) -> Model -> Fable.React.ReactElement) option
+/// function to create spinner popup pane if present (overrides otehr popups)
+SpinnerPayload : SpinPayload option 
+/// record containing functions that create react elements of notifications
+Notifications : Notifications
+/// State of menus for sheets, projects etc
+TopMenuOpenState : TopMenu*)
+
+
+[<CustomEquality; NoComparison>]
 type Model = {
     UserData: UserData
-    /// Map of sheet name to WaveSimModel
     WaveSim : Map<string, WaveSimModel>
-
-    /// which top-level sheet is used by wavesim
     WaveSimSheet: string option
-
-    /// A breadcrumb-like trail of visited sheets used for UI back button
     UISheetTrail: string list
-
-    /// If the application has a modal spinner waiting for simulation
-    (*
-    Spinner: (Model -> Model) option
-    *)
-        
-    /// Draw Canvas
     Sheet: DrawModelType.SheetT.Model
-
-    /// true during period when a sheet or project is loading
     IsLoading: bool
-
-    /// last time check for changes was made
     LastChangeCheckTime: float
-
-    /// top-level canvas used for current wave simulation
-    LastSimulatedCanvasState: CanvasState option // reduced (without layout) canvas state
-    /// used to determine whether current canvas has been saved (includes any change)
+    LastSimulatedCanvasState: CanvasState option
     LastDetailedSavedState: CanvasState
-    /// components and connections currently selected
-
     CurrentSelected: Component list * Connection list
-    /// component ids and connection ids previously selected (used to detect changes)
     LastSelectedIds: string list * string list
-    /// last used bus width in bits - used as default in next component create dialog
     LastUsedDialogWidth: int
-    /// component currently selected in properties dialog
-    SelectedComponent : Component option // None if no component is selected.
-    /// used during step simulation: simgraph for current clock tick
-    CurrentStepSimulationStep : Result<SimulationData,SimulationError> option // None if no simulation is running.
-    /// stores the generated truth table 
-    CurrentTruthTable: Result<TruthTable,SimulationError> option // None if no Truth Table is being displayed.
-    /// style info for the truth table
-    // TTConfig: TTType
-    /// which of the tabbed panes is currently visible
+    SelectedComponent : Component option
+    CurrentStepSimulationStep : Result<SimulationData,SimulationError> option
+    CurrentTruthTable: Result<TruthTable,SimulationError> option
     RightPaneTabVisible : RightTab
-    /// which of the subtabs for the right pane simulation is visible
     SimSubTabVisible: SimSubTab
-    /// components and connections which are highlighted
     Hilighted : (ComponentId list * ConnectionId list) * ConnectionId list
-    /// Components and connections that have been selected and copied.
-    Clipboard : CanvasState 
-    /// Track the last added component
-    LastCreatedComponent : Component option 
-    /// used to enable "SAVE" button
+    Clipboard : CanvasState
+    LastCreatedComponent : Component option
     SavedSheetIsOutOfDate : bool
-    /// the project contains, as loadable components, the state of each of its sheets
     CurrentProj : Project option
-    (*/// function to create popup pane if present
-    PopupViewFunc : ((Msg -> Unit) -> Model -> Fable.React.ReactElement) option
-    /// function to create spinner popup pane if present (overrides otehr popups)
-    SpinnerPayload : SpinPayload option *)
-    /// data to populate popup (may not all be used)
     PopupDialogData : PopupDialogData
-    (*/// record containing functions that create react elements of notifications
-    Notifications : Notifications
-    /// State of menus for sheets, projects etc
-    TopMenuOpenState : TopMenu*)
-    /// used to determine whether mouse is currently dragging the divider, or used normally
     DividerDragMode: DragMode
-    /// viewer width in pixels altered by dragging the divider
     WaveSimViewerWidth: int
-    /// if true highlight connections from wavesim editor
     ConnsOfSelectedWavesAreHighlighted: bool
-    /// Contains a list of pending messages
-    (*
     Pending: Msg list
-    *)
     UIState: UICommandType Option
-    /// if true the "build" tab appears on the RHS
     BuildVisible: bool
-} 
+} with
+    override this.Equals(other) =
+        match other with
+        | :? Model as m ->
+            this.UserData = m.UserData &&
+            this.WaveSim = m.WaveSim &&
+            this.WaveSimSheet = m.WaveSimSheet &&
+            this.UISheetTrail = m.UISheetTrail &&
+            this.Sheet = m.Sheet &&
+            this.IsLoading = m.IsLoading &&
+            this.LastChangeCheckTime = m.LastChangeCheckTime &&
+            this.LastSimulatedCanvasState = m.LastSimulatedCanvasState &&
+            this.LastDetailedSavedState = m.LastDetailedSavedState &&
+            this.CurrentSelected = m.CurrentSelected &&
+            this.LastSelectedIds = m.LastSelectedIds &&
+            this.LastUsedDialogWidth = m.LastUsedDialogWidth &&
+            this.SelectedComponent = m.SelectedComponent &&
+            this.CurrentStepSimulationStep = m.CurrentStepSimulationStep &&
+            this.CurrentTruthTable = m.CurrentTruthTable &&
+            this.RightPaneTabVisible = m.RightPaneTabVisible &&
+            this.SimSubTabVisible = m.SimSubTabVisible &&
+            this.Hilighted = m.Hilighted &&
+            this.Clipboard = m.Clipboard &&
+            this.LastCreatedComponent = m.LastCreatedComponent &&
+            this.SavedSheetIsOutOfDate = m.SavedSheetIsOutOfDate &&
+            this.CurrentProj = m.CurrentProj &&
+            this.PopupDialogData = m.PopupDialogData &&
+            this.DividerDragMode = m.DividerDragMode &&
+            this.WaveSimViewerWidth = m.WaveSimViewerWidth &&
+            this.ConnsOfSelectedWavesAreHighlighted = m.ConnsOfSelectedWavesAreHighlighted &&
+            this.UIState = m.UIState &&
+            this.BuildVisible = m.BuildVisible
+        | _ -> false
 
-    with member this.WaveSimOrCurrentSheet =
-            match this.WaveSimSheet, this.CurrentProj with
-            | None, Some {OpenFileName = name} -> name
-            | Some name, _ -> name
-            | None, None -> failwithf "What? Project is not open cannot guess sheet!"
+    override this.GetHashCode() =
+        hash (this.UserData, this.WaveSim, this.WaveSimSheet, this.UISheetTrail, this.Sheet, this.IsLoading,
+              this.LastChangeCheckTime, this.LastSimulatedCanvasState, this.LastDetailedSavedState,
+              this.CurrentSelected, this.LastSelectedIds, this.LastUsedDialogWidth, this.SelectedComponent,
+              this.CurrentStepSimulationStep, this.CurrentTruthTable, this.RightPaneTabVisible,
+              this.SimSubTabVisible, this.Hilighted, this.Clipboard, this.LastCreatedComponent,
+              this.SavedSheetIsOutOfDate, this.CurrentProj, this.PopupDialogData, this.DividerDragMode,
+              this.WaveSimViewerWidth, this.ConnsOfSelectedWavesAreHighlighted, this.UIState, this.BuildVisible)
+    member this.WaveSimOrCurrentSheet =
+        match this.WaveSimSheet, this.CurrentProj with
+        | None, Some {OpenFileName = name} -> name
+        | Some name, _ -> name
+        | None, None -> failwithf "What? Project is not open cannot guess sheet!"
 
 let waveSimSheet_ = Lens.create (fun a -> a.WaveSimSheet) (fun s a -> {a with WaveSimSheet = s})
 let waveSim_ = Lens.create (fun a -> a.WaveSim) (fun s a -> {a with WaveSim = s})

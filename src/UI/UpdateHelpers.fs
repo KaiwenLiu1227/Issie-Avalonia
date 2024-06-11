@@ -767,7 +767,7 @@ let updateTimeStamp model =
 let findChange (model : Model) : bool = 
     let last = model.LastChangeCheckTime // NB no check to reduce total findChange time implemented yet - TODO if needed
     let start = TimeHelpers.getTimeMs()
-
+    false
     match model.CurrentProj with
     | None -> false
     | Some prj ->
@@ -778,7 +778,7 @@ let findChange (model : Model) : bool =
         let canv = savedComponent.CanvasState
         let canv' = model.Sheet.GetCanvasState ()
         (canv <> canv') && not (compareCanvas 100. canv canv')
-        |> TimeHelpers.instrumentInterval "findChange" start
+        |> TimeHelpers.instrumentInterval ">>findChange" start
 
 /// Needed so that constant properties selection will work
 /// Maybe good idea for other things too?
@@ -838,7 +838,7 @@ let sheetMsg sMsg model =
     {sModel with SavedSheetIsOutOfDate = findChange sModel}, sCmd
 
 let executePendingMessagesF n model =
-    (*if n = (List.length model.Pending)
+    if n = (List.length model.Pending)
     then 
         getLastMouseMsg model.Pending
         |> function
@@ -849,7 +849,7 @@ let executePendingMessagesF n model =
             | _ -> failwithf "shouldn't happen "
         
     //ignore the exectue message
-    else *)
+    else 
         model, Cmd.none
 
 

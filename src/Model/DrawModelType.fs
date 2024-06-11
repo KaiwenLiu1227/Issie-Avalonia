@@ -234,7 +234,6 @@ module SymbolT =
         }
 
     //----------------------------Message Type-----------------------------------//
-
     /// The different messages coming from sheet, normally represent events
     type Msg =
         | MouseMsg of MouseT

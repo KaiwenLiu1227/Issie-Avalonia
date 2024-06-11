@@ -50,19 +50,19 @@ let update (msg : Msg) oldModel =
         
     //Add the message to the pending queue if it is a mouse drag message
     let model =
-        (*if matchMouseMsg (fun mMsg -> mMsg.Op = DrawHelpers.Drag) msg then
+        if matchMouseMsg (fun mMsg -> mMsg.Op = DrawHelpers.Drag) msg then
             {oldModel with Pending = msg :: oldModel.Pending}
-        else*)
+        else
             oldModel
     
     //Check if the current message is stored as pending, if so execute all pending messages currently in the queue
     let testMsg, cmd =
-        (*List.tryFind (fun x -> isSameMsg x msg) model.Pending
+        List.tryFind (fun x -> isSameMsg x msg) model.Pending
         |> function
         | Some _ ->
             //Add any message recieved to the pending message queue
             DoNothing, Cmd.ofMsg (ExecutePendingMessages (List.length model.Pending))
-        | None ->*)
+        | None ->
             msg, Cmd.none
     let model = updateAllMemoryCompsIfNeeded model
     //-------------------------------------------------------------------------------//

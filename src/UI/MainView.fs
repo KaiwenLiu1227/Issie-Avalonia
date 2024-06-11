@@ -31,12 +31,6 @@ let viewOnDiagramButtons model dispatch =
             Button.background "LightGreen"
             Button.onClick func
             Button.margin 4
-            (*Button.Props [ canvasSmallButtonStyle; OnClick func ] 
-            Button.Modifiers [
-                //Modifier.TextWeight TextWeight.Bold
-                Modifier.TextColor IsLight
-                Modifier.BackgroundColor IsSuccess
-                ]*)
             ]
     DockPanel.create [
         DockPanel.lastChildFill true 
@@ -130,9 +124,7 @@ let init () =
       DividerDragMode = DragModeOff
       WaveSimViewerWidth = 0
       ConnsOfSelectedWavesAreHighlighted = false
-      (*
-        Pending = []
-        *)
+      Pending = []
       UIState = None
       BuildVisible = false }
 

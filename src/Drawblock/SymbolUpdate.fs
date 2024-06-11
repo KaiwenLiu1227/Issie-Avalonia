@@ -675,7 +675,7 @@ let checkSymbolIntegrity (sym: Symbol) =
 
 
 /// Update function which displays symbols
-let update (msg : Msg) (model : Model): Model*Cmd<'a>  =     
+let update' (msg : Msg) (model : Model): Model*Cmd<'a>  =     
     match msg with
     | UpdateBoundingBoxes ->
         // message used to update symbol bounding boxes in sheet.
@@ -863,7 +863,14 @@ let update (msg : Msg) (model : Model): Model*Cmd<'a>  =
                 (fun _ sym ->  Optic.map appearance_ (set colour_ (getSymbolColour sym.Component.Type sym.IsClocked theme)) sym)
         {model with Theme=theme; Symbols = resetSymbols}, Cmd.none
 
-
+let update (msg : Msg) (model : Model) =
+    let start = TimeHelpers.getTimeMs()
+    update' msg model
+    |> (fun update' ->
+        if Set.contains "symbolUpdate" JSHelpers.debugTraceUI then
+            TimeHelpers.instrumentInterval ">>>SymbolUpdate" start update'
+        else
+            update')
 
 // ----------------------interface to Issie----------------------------- //
 let extractComponent (symModel: Model) (sId:ComponentId) : Component = 

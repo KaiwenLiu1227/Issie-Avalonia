@@ -399,7 +399,7 @@ let mDownUpdate
                     { model with
                         SelectedWires = newWires;
                         Action = Idle;
-                        TmpModel = Some model;
+                        // TmpModel = Some model;
                         PrevWireSelection = model.SelectedWires},
                     Cmd.batch [wireCmd (BusWireT.SelectWires newWires); sheetCmd msg]
                 | _ -> 

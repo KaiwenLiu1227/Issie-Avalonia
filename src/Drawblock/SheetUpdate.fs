@@ -31,7 +31,8 @@ importReadUart
 *)
 
 
-let update (msg : Msg) (issieModel : ModelType.Model): ModelType.Model*Cmd<ModelType.Msg> =
+
+let update' (msg : Msg) (issieModel : ModelType.Model): ModelType.Model*Cmd<ModelType.Msg> =
     /// In this module model = Sheet model
     let model = issieModel.Sheet
 
@@ -59,7 +60,6 @@ let update (msg : Msg) (issieModel : ModelType.Model): ModelType.Model*Cmd<Model
         (inputModel, cmd)
         |> RotateScale.postUpdateScalingBox
         // |> (fun currentmodel -> {currentmodel with TmpModel = Some currentmodel})
-    let stopwatch = Stopwatch.StartNew()
 
     let newModel =
         match msg with
@@ -80,7 +80,7 @@ let update (msg : Msg) (issieModel : ModelType.Model): ModelType.Model*Cmd<Model
             | Down when mouseAlreadyDown = true -> model, Cmd.none
             | Down -> mDownUpdate model mMsg
             | Drag -> 
-                //printfn "running sheet.update"
+                // printfn "Dragging"
                 mDragUpdate model mMsg
             | Up -> mUpUpdate model mMsg
             | Move -> mMoveUpdate model mMsg    
@@ -857,20 +857,12 @@ let update (msg : Msg) (issieModel : ModelType.Model): ModelType.Model*Cmd<Model
         | ToggleNet _ | DoNothing | _ -> model, Cmd.none
         
         | _ -> model, Cmd.none
-    stopwatch.Stop()
-    (*
-    if stopwatch.ElapsedMilliseconds < 10 then
-        printfn $"Update function {msg} took {stopwatch.ElapsedMilliseconds} ms" 
-        *)
-    
     // Function to update TmpModel within the model
     let updateTmpModel (model, cmd) =
         // Create a new model with TmpModel set to an empty list
         let updatedModel = { model with TmpModel = None }
-        // Return new tuple with updated model and existing command
         (updatedModel, cmd)
 
-    // Usage
     updateTmpModel newModel
     |> postUpdateChecks
     // |> Optic.map fst_ postUpdateChecks
@@ -883,6 +875,15 @@ let emptySnap: SnapXY =
         SnapX = emptyInfo
         SnapY = emptyInfo
     }
+    
+let update (msg : Msg) (issieModel : ModelType.Model) =
+    let start = TimeHelpers.getTimeMs()
+    update' msg issieModel
+    |> (fun update' ->
+        if Set.contains "sheetUpdate" JSHelpers.debugTraceUI then
+            TimeHelpers.instrumentInterval ">>>SheetUpdate" start update'
+        else
+            update')
     
 /// Init function
 let init () =
