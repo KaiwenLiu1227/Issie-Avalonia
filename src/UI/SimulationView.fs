@@ -43,13 +43,12 @@ module Constants =
     let ncPortDist = 30.
 
 /// save verilog file
-/// TODO: the simulation error display here is shared with step simulation and also waveform simulation -
 /// maybe it should be a subfunction.
 let verilogOutput (vType: Verilog.VMode) (model: Model) (dispatch: Msg -> Unit) =
     printfn "Verilog output"
     match MenuHelpers.updateProjectFromCanvas model dispatch, model.Sheet.GetCanvasState() with
         | Some proj, state ->
-            match model.UIState with  //TODO should this be its own UI operation?
+            match model.UIState with  
             | Some _ ->
                 () // do nothing if in middle of I/O operation
             (*| None ->
@@ -924,6 +923,7 @@ let private viewSimulationData (step: int) (simData : SimulationData) model disp
         | false -> makeIOLabel "" 1
         | true ->
              StackPanel.create [
+                 StackPanel.margin 10
                  StackPanel.orientation Orientation.Horizontal
                  StackPanel.children [
                      Button.create [
@@ -1088,6 +1088,7 @@ let viewSimulation canvasState model dispatch =
                     Button.content buttonText
                     Button.onClick (fun _ -> startSimulation())
                     Button.background buttonColor
+                    Button.foreground "White"
                 ]
             ]
         ]
@@ -1112,11 +1113,11 @@ let viewSimulation canvasState model dispatch =
             | Ok simData ->
                 Button.create
                     [ 
-                        // Button.background "Grey"
-                        Button.content "Save current input values as default"
+                        Button.background "LightBlue"
+                        Button.foreground "White"
+                        Button.content "Save input as default"
                         // Button.Disabled (InputDefaultsEqualInputs simData.FastSim model simData.ClockTickNumber)
                         Button.onClick (fun _ -> setInputDefaultsFromInputs simData.FastSim dispatch simData.ClockTickNumber) ; 
-                        // Button.Props [Style [Display DisplayOptions.Inline; Float FloatOptions.Right ]]
                     ]
         let confirmRefreshPopup (model:Model) dispatch simData =
             []
@@ -1196,20 +1197,22 @@ let viewSimulation canvasState model dispatch =
             | true, Ok _ -> createRefreshButtonForSimData sim model dispatch
             | true, Error _ -> createRefreshButtonError
             | _ -> emptyRefreshSVG*)
-    
-        StackPanel.create [
-            StackPanel.children (
-                [Button.create
+        let stopSimulationButton =
+            Button.create
                     [
                         Button.background "Red"
+                        Button.foreground "White"
                         Button.content "End simulation" 
                         Button.onClick (fun _ ->
                             simReset dispatch
                             dispatch EndSimulation);
                         // Button.Props [Style [Display DisplayOptions.Inline; Float FloatOptions.Left;]]]
-                    ]] @
+                    ]
+        StackPanel.create [
+            StackPanel.children (
+                [ splittedLine stopSimulationButton setDefaultButton]
                 // refreshButton
-                [setDefaultButton] @
+                @
                 body
             )
         ]

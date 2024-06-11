@@ -22,6 +22,7 @@
         <Compile Include="src\Common\TimeHelpers.fs" />
         <Compile Include="src\Common\WidthInferer.fs" />
         <Compile Include="src\Common\JSHelpers.fs" />
+        <Compile Include="src\Common\AvaloniaHelpers.fs" />
         <!--<Compile Include="src\Common\WidthInferer.fs" />-->
 
         <!-- simulator -->
@@ -94,6 +95,7 @@
         <Compile Include="src\UI\MainView.fs"/>
         <Compile Include="src\UI\UpdateHelpers.fs" />
         <Compile Include="src\UI\Update.fs"/>
+        <Compile Include="src\UI\WaveSim\WaveSim.fs" />
 
         <Compile Include="Program.fs"/>
 

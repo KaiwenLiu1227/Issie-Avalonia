@@ -262,7 +262,7 @@ let makePathFromAttr (attr:string) (pathParameters: Path) =
             *)
     ] |> generalize
 
-/// Makes a path ReactElement, points are to be given as an XYPos record element.
+/// Makes a path Element, points are to be given as an XYPos record element.
 /// Please note that this function is designed to create ONLY "Move to - Bézier Curve"
 ///paths (this is what the "M" and "C" attributes stand for) and NOT a generalized SVG path element.
 let makeAnyPath (startingPoint: XYPos) (pathAttr:string) (pathParameters: Path) =
@@ -270,7 +270,7 @@ let makeAnyPath (startingPoint: XYPos) (pathAttr:string) (pathParameters: Path) 
     let dAttr = sprintf "M %f %f %s" x1 y1 pathAttr
     makePathFromAttr dAttr pathParameters
 
-/// Makes a path ReactElement, points are to be given as an XYPos record element.
+/// Makes a path Element, points are to be given as an XYPos record element.
 /// Please note that this function is designed to create ONLY "Move to - Bézier Curve"
 ///paths (this is what the "M" and "C" attributes stand for) and NOT a generalized SVG path element.
 let makePath (startingPoint: XYPos) (startingControlPoint: XYPos) (endingControlPoint: XYPos) (endingPoint: XYPos) (pathParameters: Path) =

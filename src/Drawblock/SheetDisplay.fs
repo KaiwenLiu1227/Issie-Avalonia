@@ -93,13 +93,13 @@ let displaySvgWithZoom
                 Pos = getDrawBlockPos ev headerHeight model                }
             
     let wheelUpdate (ev: Input.PointerWheelEventArgs) =
-        // if List.exists (fun (k,_) -> k = "CONTROL") (getActivePressedKeys model) then
+         if List.exists (fun (k,_) -> k = "CONTROL") (getActivePressedKeys model) then
             // ev.preventDefault()
             if ev.Delta.Y  > 0.0 then // Wheel Down
                 dispatch <| KeyPress ZoomOut
             else
                 dispatch <| KeyPress ZoomIn
-       //  else () // Scroll normally if Ctrl is not held down
+         else () // Scroll normally if Ctrl is not held down
     let cursorText = model.CursorType.Text()
     let firstView = viewIsAfterUpdateScroll
     viewIsAfterUpdateScroll <- false        
@@ -149,6 +149,7 @@ let view
 
 
     let gridSize = Constants.gridSize
+    // TODO grid need to be implemented
     (*let grid =
         svg [ SVGAttr.Width wholeCanvas; SVGAttr.Height wholeCanvas; SVGAttr.XmlSpace "http://www.w3.org/2000/svg" ] [
             defs [] [
@@ -250,7 +251,7 @@ let view
                 let touchUp = ((makeLineAttr (curvyShape[7].X) curvyShape[7].Y)) + ((makeLineAttr (curvyShape[8].X) curvyShape[8].Y)) + ((makeLineAttr (curvyShape[9].X) curvyShape[9].Y)) 
                 let arcAttr2  = makePartArcAttr (7.*W/18.)(curvyShape[10].Y) (curvyShape[10].X) (curvyShape[11].Y) (curvyShape[11].X)
 
-                (createAnyPath (symbol.Pos + curvyShape[0]) (arrowHead+arcAttr1+touchUp+arcAttr2) "grey" strokeWidth outlineColour) 
+                (createAnyPath (symbol.Pos + curvyShape[0]) (arrowHead+arcAttr1+touchUp+arcAttr2) "gray" strokeWidth outlineColour) 
 
 
     let scalingBox = 

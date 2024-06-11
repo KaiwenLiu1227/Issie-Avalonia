@@ -140,19 +140,40 @@ let init () =
 
 let viewSimSubTab canvasState model dispatch =
     match model.SimSubTabVisible with
-    | StepSim -> 
-        SimulationView.viewSimulation canvasState model dispatch
-    | _ ->
-        StackPanel.create[]
-        
-    (*| TruthTable ->
-        div [ Style [Width "90%"; MarginLeft "5%"; MarginTop "15px" ] ] [
-            Heading.h4 [] [ str "Truth Tables" ]
-            TruthTableView.viewTruthTable canvasState model dispatch
+    | StepSim ->
+        StackPanel.create [
+            StackPanel.children [
+                TextBlock.create [
+                    TextBlock.text "Step Simulation"
+                    TextBlock.fontSize 20
+                ]
+                SimulationView.viewSimulation canvasState model dispatch
+            ]
+
         ]
-    | WaveSim -> 
-        div [ Style [Width "100%"; Height "calc(100% - 72px)"; MarginTop "15px" ] ]
-            [ viewWaveSim canvasState model dispatch ]*)
+    | TruthTable ->
+        StackPanel.create [
+            StackPanel.children [
+            TextBlock.create [
+                TextBlock.text "Truth table"
+                TextBlock.fontSize 20
+            ]
+            // TODO The truth table simulation view need to implement, for model and update checkout if there is an undefined datatype
+            // TruthTableView.viewTruthTable canvasState model dispatch
+        ]
+        ]
+    | WaveSim ->
+        StackPanel.create [
+            StackPanel.children [
+            TextBlock.create [
+                TextBlock.text "Wave simulation"
+                TextBlock.fontSize 20
+            ]
+            // TODO The wave simulation view need to implement, for model and update checkout if there is an undefined datatype
+            // TruthTableView.viewTruthTable canvasState model dispatch
+        ]
+        ]
+        
 
 /// Display the content of the right tab.
 let private  viewRightTab canvasState model dispatch =
@@ -187,7 +208,7 @@ let private  viewRightTab canvasState model dispatch =
                 ]
                 TextBlock.create [
                     TextBlock.text "Click on a component to add it to the diagram. Hover on components for details"
-                    TextBlock.textWrapping TextWrapping.Wrap
+                    TextBlock.textWrapping Avalonia.Media.TextWrapping.Wrap
                     TextBlock.width 300.0
                 ]
                 // TODO Implement SelectedComponentView

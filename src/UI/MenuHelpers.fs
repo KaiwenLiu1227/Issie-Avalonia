@@ -4,8 +4,8 @@ open EEExtensions
 
 
 open Helpers
-(*open JSHelpers
-open DiagramStyle*)
+open JSHelpers
+(*open DiagramStyle*)
 open ModelType
 open ModelHelpers
 open CommonTypes
@@ -783,10 +783,10 @@ let openDemoProjectFromPath (path: string) model dispatch =
             // displayFileErrorNotification err dispatch
             ()
         | Ok (componentsToResolve: LoadStatus list) ->
-            // traceIf "project" (fun () -> "resolving popups...")
+            traceIf "project" (fun () -> "resolving popups...")
             
             resolveComponentOpenPopup path [] componentsToResolve model dispatch
-            // traceIf "project" (fun () ->  "project successfully opened.")
+            traceIf "project" (fun () ->  "project successfully opened.")
         ())
 
 /// open an existing project from its path
